@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>لوحة التحكم - المتجر</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Almarai:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/img/favicon.svg" />
+<link rel="stylesheet" href="/css/style.css" />
+<script src="/js/chart.min.js"></script>
+
+</head>
+<body class="font-sans bg-slate-50 text-slate-900 min-h-screen">
+
+  <!-- شاشة تسجيل الدخول وإنشاء الحساب واستعادة كلمة المرور -->
+  <div id="loginScreen" class="min-h-screen flex items-center justify-center px-4 py-8">
+    <div class="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-2xl w-full max-w-md space-y-6">
+      
+      <!-- شعار المنصة وعنوانها -->
+      <div class="text-center space-y-1">
+        <div class="inline-flex items-center justify-center w-14 h-14 bg-blue-600/10 border border-blue-600 text-blue-600 rounded-2xl text-2xl font-black mb-1">
+          🛍️
+        </div>
+        <h1 class=" text-2xl font-black text-slate-900">لوحة تحكم المتجر الإلكتروني</h1>
+        <p class="text-xs text-slate-900/60 font-bold">منصة إدارة المتاجر والمبيعات الإلكترونية الشاملة</p>
+      </div>
+
+      <!-- أزرار التبديل بين الدخول والتسجيل -->
+      <div class="grid grid-cols-2 bg-slate-50 p-1 rounded-xl border border-slate-200/20 text-xs font-black">
+        <button type="button" id="tabAuthLogin" 
+          onclick="document.getElementById('loginForm').classList.remove('hidden'); document.getElementById('registerForm').classList.add('hidden'); document.getElementById('forgotPasswordSection').classList.add('hidden'); if(document.getElementById('emailVerifySection')) document.getElementById('emailVerifySection').classList.add('hidden'); this.className='py-2.5 rounded-lg bg-white border border-slate-200 shadow-sm text-slate-900 transition-all duration-300 cursor-pointer'; document.getElementById('tabAuthRegister').className='py-2.5 rounded-lg text-slate-900/70 hover:text-slate-900 transition-all duration-300 flex items-center justify-center gap-1 cursor-pointer';"
+          class="py-2.5 rounded-lg bg-white border border-slate-200 shadow-sm text-slate-900 transition-all duration-300 cursor-pointer">
+          🔐 تسجيل الدخول
+        </button>
+        
+      </div>
+
+      <!-- 1. نموذج تسجيل الدخول -->
+      <form id="loginForm" class="space-y-4">
+        <div class="space-y-1">
+          <label class="text-xs font-black text-slate-900 block">البريد الإلكتروني أو اسم المستخدم:</label>
+          <input required name="username" type="text" placeholder="name@example.com" class="field w-full px-3.5 py-2.5 text-sm font-bold text-slate-900 rounded-xl" autocomplete="username" />
+        </div>
+        <div class="space-y-1">
+          <div class="flex justify-between items-center">
+            <label class="text-xs font-black text-slate-900 block">كلمة المرور:</label>
+            <button type="button" id="showForgotPasswordBtn" class="text-xs text-blue-600 hover:text-blue-600-dark font-black underline">نسيت كلمة المرور؟</button>
+          </div>
+          <input required name="password" type="password" placeholder="••••••••" class="field w-full px-3.5 py-2.5 text-sm font-bold text-slate-900 rounded-xl" autocomplete="current-password" />
+        </div>
+        <p id="loginError" class="text-blue-500 text-xs font-black hidden bg-rose-50 p-2.5 rounded-xl border border-rose-200"></p>
+        <button type="submit" id="loginSubmitBtn" class="btn-primary w-full py-3 rounded-xl font-black text-sm shadow-md cursor-pointer">دخول إلى لوحة التحكم 🚀</button>
+        <button type="button" id="emergencySupportBtn" class="w-full py-2.5 rounded-xl font-black text-sm text-blue-600-dark border border-blue-600-light bg-blue-600-50 hover:bg-blue-600-100">💬 تواصل مع فريق الدعم</button>
+      </form>
+
+      <!-- 2. نموذج إنشاء حساب جديد (7 أيام تجربة مجانية) -->
+      
+
+      <!-- 3. نموذج استعادة كلمة المرور عبر OTP -->
+      </div></div>
+
+  <!-- لوحة التحكم -->
+  <div id="dashboard" class="hidden">
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30">
+      <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <h1 class=" text-xl font-black text-slate-900">🛠️ لوحة تحكم المتجر</h1>
+          
+        </div>
+        <div class="flex items-center gap-2 sm:gap-3">
+          <span id="userGreeting" class="text-xs font-black text-slate-900/70 hidden sm:inline"></span>
+          <a id="vendorStoreLink" href="/" target="_blank" class="btn-primary text-xs px-3 py-1.5 rounded-lg font-black flex items-center gap-1.5 shadow-sm">
+            <span>🏪</span>
+            <span>رابط Kalkoul Store</span>
+            <span class="text-[10px]">↗</span>
+          </a>
+          <button id="contactTeamBtn" type="button" class="btn-outline text-xs px-3 py-1.5 rounded-lg font-black flex items-center gap-1.5" title="التواصل مع فريق العمل عبر واتساب">
+            <span>💬</span>
+            <span>فريق العمل</span>
+          </button>
+          <button id="copyVendorStoreLinkBtn" type="button" class="btn-outline text-xs px-2.5 py-1.5 rounded-lg font-black hidden md:inline-flex items-center gap-1" title="نسخ رابط متجرك للزبائن">
+            📋 <span>نسخ الرابط</span>
+          </button>
+          <button id="logoutBtn" class="btn-outline text-sm px-3 py-1.5 rounded-lg font-black">خروج</button>
+        </div>
+      </div>
+
+      
+
+      <div class="max-w-7xl mx-auto px-4 flex gap-1 border-t overflow-x-auto no-scrollbar">
+        <button data-tab="products" class="admin-tab-btn active-tab px-4 py-2 text-sm font-bold border-b border-transparent whitespace-nowrap">المنتجات</button>
+        <button data-tab="categories" class="admin-tab-btn px-4 py-2 text-sm font-bold border-b border-transparent whitespace-nowrap">التصنيفات</button>
+        <button data-tab="orders" class="admin-tab-btn px-4 py-2 text-sm font-bold border-b border-transparent whitespace-nowrap">الطلبات</button>
+        <button data-tab="profit" class="admin-tab-btn px-4 py-2 text-sm font-bold border-b border-transparent whitespace-nowrap">الأرباح (30 يوم)</button>
+        <button data-tab="campaigns" class="admin-tab-btn px-4 py-2 text-sm font-black border-b border-transparent whitespace-nowrap text-blue-600-dark">📊 أداء الإعلانات & ROI</button>
+        <button data-tab="calculator" class="admin-tab-btn px-4 py-2 text-sm font-bold border-b border-transparent whitespace-nowrap">حاسبة التسعير والإعلانات</button>
+        <button data-tab="shipping-settings" class="admin-tab-btn px-4 py-2 text-sm font-black border-b border-transparent whitespace-nowrap text-blue-700 hover:text-blue-900">🚚 إعدادات الشحن و API</button>
+        <button data-tab="delivery" class="admin-tab-btn px-4 py-2 text-sm font-bold border-b border-transparent whitespace-nowrap">أسعار التوصيل (الولايات)</button>
+        <button data-tab="social" class="admin-tab-btn px-4 py-2 text-sm font-bold border-b border-transparent whitespace-nowrap">الربط مع السوشيال ميديا</button>
+        
+        
+        <button data-tab="reset" class="admin-tab-btn px-4 py-2 text-sm font-black border-b border-transparent whitespace-nowrap text-rose-700 hover:text-rose-900">⚙️ إعادة التعيين</button>
+      </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-6">
+
+      <!-- تبويب المنتجات -->
+      <section id="tab-products" class="tab-content space-y-4">
+        <div class="flex justify-between items-center">
+          <h2 class=" text-xl">المنتجات</h2>
+          <button id="newProductBtn" class="btn-primary px-4 py-2 rounded-lg text-sm font-extrabold">+ منتج جديد</button>
+        </div>
+        <div id="lowStockAlert" class="hidden bg-amber-50 border border-amber-400 rounded-2xl p-4 text-amber-950">
+          <div class="flex items-center justify-between gap-3">
+            <p class="font-black">تنبيه: مخزون منخفض</p>
+            <span id="lowStockCount" class="bg-amber-500 text-white rounded-full px-2 py-0.5 text-xs font-black">0</span>
+          </div>
+          <div id="lowStockItems" class="mt-2 text-xs font-bold space-y-1"></div>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-2">
+          <input id="productSearchInput" class="field flex-1 px-3 py-2 text-sm" placeholder="بحث باسم المنتج أو الرمز..." />
+          <select id="productStockFilter" class="field px-3 py-2 text-sm"><option value="all">كل المخزون</option><option value="low">5 قطع أو أقل</option><option value="available">متوفر</option><option value="out">نفد المخزون</option></select>
+          <select id="productStatusFilter" class="field px-3 py-2 text-sm"><option value="all">كل الحالات</option><option value="active">مفعّل</option><option value="inactive">معطّل</option></select>
+        </div>
+        <div id="productsTable" class="bg-white rounded-2xl border border-slate-200 overflow-x-auto"></div>
+      </section>
+
+      <!-- تبويب التصنيفات -->
+      <section id="tab-categories" class="tab-content hidden space-y-4">
+        <div class="flex justify-between items-center">
+          <h2 class=" text-xl">التصنيفات</h2>
+          <button id="addRootCategoryBtn" class="btn-primary px-4 py-2 rounded-lg text-sm font-extrabold">+ إضافة تصنيف رئيسي</button>
+        </div>
+        <p class="text-sm text-slate-900/60">اضغط على زر <span class="font-extrabold">+</span> بجانب أي تصنيف لإضافة تصنيف فرعي بداخله، بأي عدد من المستويات.</p>
+        <div id="categoryTree" class="bg-white rounded-2xl border border-slate-200 p-4 space-y-2"></div>
+      </section>
+
+      <!-- تبويب الطلبات -->
+      <section id="tab-orders" class="tab-content hidden space-y-4">
+        <div class="flex justify-between items-center flex-wrap gap-2">
+          <h2 class=" text-xl font-black">الطلبات</h2>
+          <button id="quickResetStatsBtn" type="button" class="btn-outline px-3 py-1.5 rounded-lg text-xs font-black text-rose-700 border-rose-700 hover:bg-rose-50 flex items-center gap-1">🔄 تصفير الحسابات والطلبات (0)</button>
+        </div>
+
+        <!-- ملخص الأرباح -->
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+          <div class="bg-white border border-slate-200 rounded-2xl p-4">
+            <p class="text-xs text-slate-900/50 font-bold mb-1">مبيعات الطلبات المسلَّمة</p>
+            <p id="statSales" class=" text-2xl text-blue-600-dark">0 دج</p>
+          </div>
+          <div class="bg-white border border-slate-200 rounded-2xl p-4">
+            <p class="text-xs text-slate-900/50 font-bold mb-1">خسائر شحن الطلبات الملغاة (Retour)</p>
+            <p id="statShipping" class=" text-2xl text-blue-500">0 دج</p>
+            <p id="statCancelledAfterShipping" class="text-[11px] text-slate-900/40 mt-1"></p>
+          </div>
+          <div class="bg-white border border-slate-200 rounded-2xl p-4 col-span-2 md:col-span-1">
+            <p class="text-xs text-slate-900/50 font-bold mb-1">صافي الربح</p>
+            <p id="statNet" class=" text-2xl">0 دج</p>
+          </div>
+        </div>
+        <p class="text-xs text-slate-900/40">
+          المبيعات تُحتسب من الطلبات المسلَّمة فعليًا. تكلفة الشحن للبضاعة المسلَّمة يدفعها الزبون، بينما تُخصم فقط تكاليف شحن الطلبات الملغاة بعد خروجها للتوصيل كخسارة على المتجر.
+        </p>
+
+        <!-- فلترة: الطلبات الحالية / الأرشيف -->
+        <div class="flex gap-2 flex-wrap">
+          <button data-orderfilter="active" class="order-filter-btn cat-btn active-cat px-4 py-1.5 rounded-full text-sm">الطلبات الحالية</button>
+          <button data-orderfilter="delivered" class="order-filter-btn cat-btn px-4 py-1.5 rounded-full text-sm">المسلَّمة ✅</button>
+          <button data-orderfilter="failed_delivery" class="order-filter-btn cat-btn px-4 py-1.5 rounded-full text-sm">تعذر التوصيل ⚠️</button>
+          <button data-orderfilter="returned" class="order-filter-btn cat-btn px-4 py-1.5 rounded-full text-sm">المرتجعات 🔄</button>
+          <button data-orderfilter="cancelled" class="order-filter-btn cat-btn px-4 py-1.5 rounded-full text-sm">الملغاة ❌</button>
+          <button data-orderfilter="all" class="order-filter-btn cat-btn px-4 py-1.5 rounded-full text-sm">الكل</button>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-2">
+          <input id="orderSearchInput" class="field flex-1 px-3 py-2 text-sm" placeholder="بحث برقم الطلب أو اسم العميل أو الهاتف..." />
+          <input id="orderDateFrom" type="date" class="field px-3 py-2 text-sm" title="من تاريخ" />
+          <input id="orderDateTo" type="date" class="field px-3 py-2 text-sm" title="إلى تاريخ" />
+        </div>
+
+        <div id="ordersTable" class="bg-white rounded-2xl border border-slate-200 overflow-x-auto"></div>
+      </section>
+
+      <!-- تبويب الأرباح 30 يوم -->
+      <section id="tab-profit" class="tab-content hidden space-y-4">
+        <h2 class=" text-xl">الأرباح والخسائر - آخر 30 يومًا</h2>
+        <p class="text-sm text-slate-900/60">يُحسب الربح هنا من الفرق الحقيقي بين سعر البيع وسعر الشراء المسجَّل وقت كل عملية بيع، لكل الطلبات "تم التسليم" خلال آخر 30 يومًا، مطروحًا منه خسائر شحن الطلبات التي أُلغيت بعد خروجها للتوصيل (Retour).</p>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div class="bg-white border border-slate-200 rounded-2xl p-4">
+            <p class="text-xs text-slate-900/50 font-bold mb-1">إجمالي المبيعات</p>
+            <p id="profitRevenue" class=" text-xl text-blue-600-dark">0 دج</p>
+          </div>
+          <div class="bg-white border border-slate-200 rounded-2xl p-4">
+            <p class="text-xs text-slate-900/50 font-bold mb-1">تكلفة البضاعة المباعة</p>
+            <p id="profitCogs" class=" text-xl text-blue-500">0 دج</p>
+          </div>
+          <div class="bg-white border border-slate-200 rounded-2xl p-4">
+            <p class="text-xs text-slate-900/50 font-bold mb-1">خسائر شحن الملغاة (Retour)</p>
+            <p id="profitShipping" class=" text-xl text-blue-500">0 دج</p>
+          </div>
+          <div class="bg-white border border-slate-200 rounded-2xl p-4">
+            <p class="text-xs text-slate-900/50 font-bold mb-1">صافي الربح</p>
+            <p id="profitNet" class=" text-xl">0 دج</p>
+          </div>
+        </div>
+        <p id="profitMeta" class="text-xs text-slate-900/40"></p>
+        <!-- مخطط بياني لتطور المبيعات والربح -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-3">
+          <h3 class=" text-base font-black">📊 نظرة عامة على الهيكل المالي للطلبات المسلَّمة</h3>
+          <div class="h-64 relative">
+            <canvas id="profitStructureChart"></canvas>
+          </div>
+        </div>
+
+        <div>
+          <h3 class=" text-lg mb-2">الأكثر ربحًا (أعلى 10 منتجات)</h3>
+
+          <div id="profitTopProducts" class="bg-white rounded-2xl border border-slate-200 overflow-x-auto"></div>
+        </div>
+      </section>
+
+      <!-- تبويب أداء الإعلانات و ROI الحقيقي -->
+      <section id="tab-campaigns" class="tab-content hidden space-y-6">
+
+        <!-- رأس الصفحة وملخص الكل -->
+        <div>
+          <h2 class=" text-2xl font-black">📊 أداء الإعلانات والأرباح الحقيقية</h2>
+          <p class="text-sm text-slate-900/70 mt-1">
+            تتبع كل حملة إعلانية وقس أداءها الحقيقي (Real ROAS & CPA) بناءً على الطلبات المسلَّمة فعلياً وخسائر الإرجاع ومصاريف الإعلانات.
+          </p>
+        </div>
+
+        <!-- بطاقات الملخص العام -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="campaignSummaryCards">
+          <div class="bg-white border border-slate-200 rounded-2xl p-4">
+            <p class="text-xs text-slate-900/50 font-black mb-1">إجمالي مصاريف الإعلانات</p>
+            <p id="cmpTotalSpend" class=" text-xl text-blue-500">0 دج</p>
+          </div>
+          <div class="bg-white border border-slate-200 rounded-2xl p-4">
+            <p class="text-xs text-slate-900/50 font-black mb-1">مبيعات الطلبات المسلَّمة</p>
+            <p id="cmpTotalRevenue" class=" text-xl text-blue-600-dark">0 دج</p>
+          </div>
+          <div class="bg-white border border-slate-200 rounded-2xl p-4">
+            <p class="text-xs text-slate-900/50 font-black mb-1">صافي الربح الحقيقي</p>
+            <p id="cmpTotalNet" class=" text-xl">0 دج</p>
+          </div>
+          <div class="bg-white border border-slate-200 rounded-2xl p-4">
+            <p class="text-xs text-slate-900/50 font-black mb-1">Real ROAS الإجمالي</p>
+            <p id="cmpTotalRoas" class=" text-xl">0×</p>
+          </div>
+        </div>
+
+        <!-- قسم المنحنى البياني الزمني للمبيعات والأرباح والإعلانات -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 space-y-3">
+          <div class="flex items-center justify-between flex-wrap gap-2">
+            <div>
+              <h3 class=" text-lg font-black">📈 منحنى الأداء اليومي والنمو (آخر 14 يومًا)</h3>
+              <p class="text-xs text-slate-900/60">تتبع حركة المبيعات وصافي الربح ومصاريف الإعلان يومًا بيوم لمعرفة تأثير الإعلانات على نمو المتجر</p>
+            </div>
+            <span class="text-xs bg-blue-600/10 text-blue-600-dark font-black px-3 py-1 rounded-full">منحنى زمني تفاعلي</span>
+          </div>
+          <div class="h-72 relative">
+            <canvas id="dailyTrendLineChart"></canvas>
+          </div>
+        </div>
+
+        <!-- قسم الرسومات البيانية والمقارنة -->
+        <div class="grid lg:grid-cols-2 gap-5">
+          <!-- مخطط 1: مقارنة المبيعات vs الأرباح vs مصاريف الإعلانات مع وبدون إعلانات -->
+          <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class=" text-base font-black">📈 مقارنة الحملات الإعلانية vs الزيارات المباشرة (Organic)</h3>
+              <span class="text-xs bg-blue-600/10 text-blue-600-dark font-black px-2 py-0.5 rounded-md">تحليل الأداء</span>
+            </div>
+            <p class="text-xs text-slate-900/60">يقارن المبيعات المسلمة وصافي الربح ومصاريف كل مصدر (فيسبوك، تيك توك، مباشر...)</p>
+            <div class="h-64 relative">
+              <canvas id="campaignCompareChart"></canvas>
+            </div>
+          </div>
+
+          <!-- مخطط 2: توزيع المنصات و Real ROAS لكل منصة -->
+          <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class=" text-base font-black">🎯 عائد الإنفاق الإعلاني (Real ROAS) حسب المنصة</h3>
+              <span class="text-xs bg-yellow-500/10 text-yellow-600 font-black px-2 py-0.5 rounded-md">كفاءة المنصات</span>
+            </div>
+            <p class="text-xs text-slate-900/60">أي المنصات تعتلي القمة في إرجاع الأرباح الحقيقية لمتجرك؟ (الخط الأصفر = 1x تعادل)</p>
+            <div class="h-64 relative">
+              <canvas id="platformRoasChart"></canvas>
+            </div>
+          </div>
+
+          <!-- مخطط 3: دائرة نسبية لحالات طلبات الإعلانات (المسلَّمة vs قيد التوصيل/المعالجة vs الملغاة) -->
+          <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class=" text-base font-black">🍩 دائرة نسبية: فاعلية وحالات طلبات الإعلانات</h3>
+              <span class="text-xs bg-blue-600/10 text-blue-600-dark font-black px-2 py-0.5 rounded-md">نسبة النجاح الإعلاني</span>
+            </div>
+            <p class="text-xs text-slate-900/60">توزيع نسبي لحالات الطلبات القادمة من الإعلانات لمعرفة نسبة التسليم والإلغاء بدقة</p>
+            <div class="h-64 relative flex items-center justify-center">
+              <canvas id="adStatusDonutChart"></canvas>
+            </div>
+          </div>
+
+          <!-- مخطط 4: دائرة نسبية للمنتجات الأكثر تسليماً مقابل الأكثر إلغاءً من الإعلانات -->
+          <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class=" text-base font-black">📦 المنتجات الأكثر تسليماً vs الأكثر إلغاءً من الإعلانات</h3>
+              <span class="text-xs bg-rose-50 text-rose-700 font-black px-2 py-0.5 rounded-md">تحليل المنتجات الإعلانية</span>
+            </div>
+            <p class="text-xs text-slate-900/60">اكتشف أي المنتجات تحقق أعلى مبيعات فعلية وأيها تسبب أكبر نسبة إلغاء وخسائر شحن</p>
+            <div class="h-64 relative flex items-center justify-center">
+              <canvas id="adProductEffectivenessChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- تسجيل مصاريف إعلانية جديدة -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 space-y-3">
+          <h3 class=" text-lg font-black">💵 تسجيل مصاريف إعلانية</h3>
+          <p class="text-xs text-slate-900/60">أدخل مبلغ الإنفاق الإعلاني لكل حملة يدوياً. استخدم <b>نفس اسم الحملة المكتوب في رابط الإعلان</b> (utm_campaign=اسم_الحملة) للربط التلقائي بالطلبات.</p>
+          <form id="addSpendForm" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div>
+              <label class="text-xs font-black text-slate-900/70 block mb-1">اسم الحملة <span class="text-rose-500">*</span></label>
+              <input required id="spendCampaignName" type="text" placeholder="مثال: summer_sale أو kampania_1" class="field w-full px-3 py-2 text-sm" dir="ltr" />
+            </div>
+            <div>
+              <label class="text-xs font-black text-slate-900/70 block mb-1">المنصة</label>
+              <select id="spendSource" class="field w-full px-3 py-2 text-sm">
+                <option value="facebook">🔵 فيسبوك</option>
+                <option value="tiktok">⚫ تيك توك</option>
+                <option value="instagram">📸 انستغرام</option>
+                <option value="google">🔴 جوجل</option>
+                <option value="snapchat">🟡 سناب شات</option>
+                <option value="other">📌 أخرى</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs font-black text-slate-900/70 block mb-1">المبلغ المنفق (دج) <span class="text-rose-500">*</span></label>
+              <input required id="spendAmount" type="number" min="0.01" step="0.01" placeholder="مثال: 5000" class="field w-full px-3 py-2 text-sm" />
+            </div>
+            <div>
+              <label class="text-xs font-black text-slate-900/70 block mb-1">التاريخ</label>
+              <input id="spendDate" type="date" class="field w-full px-3 py-2 text-sm" />
+            </div>
+            <div class="sm:col-span-2 lg:col-span-3">
+              <label class="text-xs font-black text-slate-900/70 block mb-1">ملاحظات (اختياري)</label>
+              <input id="spendNotes" type="text" placeholder="مثال: حملة فيديو القميص الكتاني - 3 أيام" class="field w-full px-3 py-2 text-sm" />
+            </div>
+            <div class="flex items-end">
+              <button id="spendSubmitBtn" type="submit" class="btn-primary w-full py-2.5 rounded-xl text-sm font-black">+ تسجيل المصاريف</button>
+            </div>
+          </form>
+          <p id="spendFormError" class="text-rose-600 text-xs font-black hidden"></p>
+        </div>
+
+        <!-- جدول الحملات وأدائها -->
+        <div>
+          <div class="flex items-center justify-between flex-wrap gap-2 mb-3">
+            <h3 class=" text-xl font-black">أداء الحملات — ROI الحقيقي لكل حملة</h3>
+            <button id="refreshCampaignsBtn" class="btn-outline px-3 py-1.5 rounded-lg text-sm font-black">🔄 تحديث</button>
+          </div>
+          <div class="flex flex-col sm:flex-row gap-2 mb-3">
+            <input id="campaignSearchInput" class="field flex-1 px-3 py-2 text-sm" placeholder="بحث باسم الحملة..." />
+            <select id="campaignProfitFilter" class="field px-3 py-2 text-sm"><option value="all">كل النتائج</option><option value="profit">ربح موجب</option><option value="loss">خسارة</option></select>
+            <input id="campaignRoasFilter" type="number" min="0" step="0.1" class="field px-3 py-2 text-sm" placeholder="ROAS أدنى" />
+          </div>
+          <div class="bg-white rounded-2xl border border-slate-200 overflow-x-auto">
+            <table class="w-full text-sm text-right min-w-[900px]">
+              <thead>
+                <tr class="border-b border-slate-200 text-xs text-slate-900/50 font-black">
+                  <th class="p-3">الحملة / المنصة</th>
+                  <th class="p-3 text-center">الطلبات المسجلة</th>
+                  <th class="p-3 text-center">المسلَّمة ✅</th>
+                  <th class="p-3 text-center">الملغاة ❌</th>
+                  <th class="p-3 text-center">نسبة التسليم</th>
+                  <th class="p-3 text-center">مصاريف الإعلان</th>
+                  <th class="p-3 text-center">CPA الحقيقي</th>
+                  <th class="p-3 text-center">مبيعات المسلَّم</th>
+                  <th class="p-3 text-center">خسائر الإرجاع</th>
+                  <th class="p-3 text-center">صافي الربح</th>
+                  <th class="p-3 text-center">Real ROAS</th>
+                </tr>
+              </thead>
+              <tbody id="campaignsTbody">
+                <tr><td colspan="11" class="p-8 text-center text-slate-900/40 font-bold">جارٍ تحميل البيانات...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- آخر سجلات مصاريف الإعلانات -->
+        <div>
+          <h3 class=" text-lg font-black mb-2">سجل المصاريف الإعلانية المُدخلة</h3>
+          <div class="bg-white rounded-2xl border border-slate-200 overflow-x-auto">
+            <table class="w-full text-sm text-right min-w-[600px]">
+              <thead>
+                <tr class="border-b border-slate-200 text-xs text-slate-900/50 font-black">
+                  <th class="p-3">الحملة</th>
+                  <th class="p-3">المنصة</th>
+                  <th class="p-3">المبلغ (دج)</th>
+                  <th class="p-3">التاريخ</th>
+                  <th class="p-3">ملاحظات</th>
+                  <th class="p-3"></th>
+                </tr>
+              </thead>
+              <tbody id="spendHistoryTbody">
+                <tr><td colspan="6" class="p-6 text-center text-slate-900/40 font-bold">لا توجد سجلات مصاريف بعد</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- كيف أستخدم تتبع الإعلانات (دليل سريع) -->
+        <div class="bg-slate-50-deep/30 border border-slate-200/20 rounded-2xl p-5 space-y-3 text-sm leading-7">
+          <h3 class=" text-lg font-black">🔗 كيف تربط إعلاناتك بهذه اللوحة؟</h3>
+          <p>عند إنشاء أي إعلان على فيسبوك / تيك توك / انستغرام، ضع رابط المتجر بهذا الشكل:</p>
+          <code class="block bg-white border border-slate-200/20 rounded-xl p-3 text-xs dir-ltr break-all" id="utmExampleUrl"></code>
+          <ul class="list-disc list-inside space-y-1 text-slate-900/70">
+            <li><b>utm_source</b>: المنصة (مثال: facebook، tiktok، instagram)</li>
+            <li><b>utm_campaign</b>: اسم الحملة — <b>يجب أن يطابق ما تكتبه في خانة "اسم الحملة" عند تسجيل المصاريف</b></li>
+            <li><b>utm_content</b>: اسم الإعلان أو رقمه (اختياري للتفصيل أكثر)</li>
+          </ul>
+          <p class="text-slate-900/60 text-xs">عندما يدخل أي زبون من الرابط المُعلَّم ويُتمّ طلبه، يُسجَّل الطلب آلياً مرتبطاً بتلك الحملة ويظهر في الجدول أعلاه.</p>
+        </div>
+
+      </section>
+
+      <!-- تبويب حاسبة التسعير والإعلانات -->
+      <section id="tab-calculator" class="tab-content hidden space-y-5">
+        <div>
+          <h2 class=" text-xl">حاسبة التسعير والإعلانات</h2>
+          <p class="text-sm text-slate-900/60 mt-1">تحسب هامش ربحك الحقيقي لكل عملية بيع، وأقصى مبلغ يمكنك دفعه كإعلان دون خسارة، وكم قطعة يجب أن تبيع هذا الشهر لتغطية مصاريفك الثابتة.</p>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-6">
+          <!-- عمود الإدخال -->
+          <div class="space-y-4">
+            <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-3">
+              <label class="text-sm font-bold block">اختر منتجًا من متجرك لتعبئة السعر تلقائيًا (اختياري)</label>
+              <select id="calcProductSelect" class="field w-full px-3 py-2 text-sm">
+                <option value="">— إدخال يدوي —</option>
+              </select>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-3">
+              <p class="font-bold text-sm flex items-center justify-between">
+                <span>تكاليف الطلب الواحد</span>
+                <span class="text-xs text-blue-600 font-bold">💡 حساب آلي</span>
+              </p>
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="text-xs text-slate-900/50 block mb-1">سعر شراء المنتج</label>
+                  <input id="calcCost" type="number" min="0" step="0.01" value="0" class="field w-full px-3 py-2 text-sm" />
+                </div>
+                <div>
+                  <label class="text-xs text-slate-900/50 block mb-1">سعر البيع للزبون</label>
+                  <input id="calcPrice" type="number" min="0" step="0.01" value="0" class="field w-full px-3 py-2 text-sm" />
+                </div>
+                <div>
+                  <label class="text-xs text-slate-900/50 block mb-1">الشحن (تدفعه أنت لشركة التوصيل)</label>
+                  <input id="calcShipping" type="number" min="0" step="0.01" value="0" class="field w-full px-3 py-2 text-sm" />
+                </div>
+                <div>
+                  <label class="text-xs text-slate-900/50 block mb-1">التغليف</label>
+                  <input id="calcPackaging" type="number" min="0" step="0.01" value="0" class="field w-full px-3 py-2 text-sm" />
+                </div>
+                <div class="col-span-2">
+                  <label class="text-xs text-slate-900/50 block mb-1">تكلفة إضافية لكل طلب (مكالمات تأكيد، احتمال إرجاع...)</label>
+                  <input id="calcMisc" type="number" min="0" step="0.01" value="0" class="field w-full px-3 py-2 text-sm" />
+                </div>
+              </div>
+
+              <!-- قسم التوزيع الآلي والتزامني لتكلفة الإعلان -->
+              <div class="bg-gradient-to-b from-sand to-sand-deep/40 border border-blue-600/30 rounded-2xl p-3.5 space-y-2.5 mt-2">
+                <div class="flex items-center justify-between flex-wrap gap-1">
+                  <p class="font-extrabold text-xs text-blue-600-dark flex items-center gap-1">
+                    <span>📢</span>
+                    <span>حساب وربط تكلفة الإعلان للطلب (CPA)</span>
+                  </p>
+                  <button type="button" id="syncRealAdDataToCalcBtn" class="bg-blue-600 hover:bg-blue-600-dark text-white text-[11px] font-black px-2.5 py-1 rounded-lg border border-slate-200/20 shadow-2xs transition-all duration-300 cursor-pointer">
+                    ⚡ جلب أرقام CPA الحقيقية من إعلاناتي
+                  </button>
+                </div>
+                <p id="calcSyncStatus" class="text-[11px] text-slate-900/70 font-bold hidden"></p>
+
+                <div class="grid grid-cols-2 gap-2">
+                  <div>
+                    <label class="text-[11px] text-slate-900/70 font-bold block mb-1">إجمالي ميزانية الإعلان (دج)</label>
+                    <input id="calcTotalAdBudget" type="number" min="0" placeholder="مثال: 50000" class="field w-full px-2.5 py-1.5 text-xs bg-white font-bold" />
+                  </div>
+                  <div>
+                    <label class="text-[11px] text-slate-900/70 font-bold block mb-1">عدد المشترين / المبيعات</label>
+                    <input id="calcTotalBuyers" type="number" min="1" placeholder="مثال: 25" class="field w-full px-2.5 py-1.5 text-xs bg-white font-bold" />
+                  </div>
+                </div>
+                <div>
+                  <label class="text-[11px] text-slate-900/70 font-bold block mb-1">تكلفة الإعلان للقطعة (CPA) — يُحسب آلياً أو أدخله يدوياً:</label>
+                  <input id="calcAdCost" type="number" min="0" step="0.01" value="0" placeholder="مثال: 2000" class="field w-full px-2.5 py-1.5 text-xs bg-white font-black text-blue-600-dark" />
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-3">
+              <div class="flex items-center justify-between">
+                <p class="font-bold text-sm">مصاريف ثابتة شهرية (إيجار، أدوات، رواتب...)</p>
+                <button type="button" id="calcAddFixedRow" class="text-blue-600 font-extrabold text-xs">+ إضافة بند</button>
+              </div>
+              <div id="calcFixedRows" class="space-y-2"></div>
+            </div>
+          </div>
+
+          <!-- عمود النتائج -->
+          <div class="space-y-3">
+            <div id="calcStatusBanner" class="rounded-2xl border p-4 font-extrabold text-center"></div>
+
+            <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-2 text-sm">
+              <div class="flex justify-between"><span class="text-slate-900/60">تكلفة الوحدة الكاملة (بدون إعلان)</span><span id="calcUnitCost" class="font-extrabold">0 دج</span></div>
+              <div class="flex justify-between"><span class="text-slate-900/60">هامش المساهمة للوحدة (قبل الإعلان)</span><span id="calcMargin" class="font-extrabold">0 دج</span></div>
+              <div class="flex justify-between"><span class="text-slate-900/60">نسبة هامش الربح</span><span id="calcMarginPct" class="font-extrabold">0%</span></div>
+              <div class="flex justify-between border-t border-slate-200/10 pt-2"><span class="text-slate-900/60">أقصى تكلفة إعلان مسموحة لكل طلب</span><span id="calcMaxAd" class="font-extrabold text-yellow-600">0 دج</span></div>
+              <div class="flex justify-between"><span class="text-slate-900/60">صافي الربح للوحدة (بعد الإعلان المُدخل)</span><span id="calcNetUnit" class="font-extrabold">0 دج</span></div>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-2 text-sm">
+              <p class="font-bold mb-1">نقطة التعادل الشهرية</p>
+              <div class="flex justify-between"><span class="text-slate-900/60">مجموع المصاريف الثابتة</span><span id="calcTotalFixed" class="font-extrabold">0 دج</span></div>
+              <div class="flex justify-between"><span class="text-slate-900/60">عدد القطع اللازمة شهريًا للتعادل</span><span id="calcBreakevenUnits" class="font-extrabold">0 قطعة</span></div>
+              <div class="flex justify-between"><span class="text-slate-900/60">≈ عدد القطع يوميًا (شهر 30 يوم)</span><span id="calcBreakevenDaily" class="font-extrabold">0 قطعة</span></div>
+            </div>
+
+            <!-- حفظ التسعيرة الحالية لحساب منتج جديد -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-3">
+              <h3 class=" text-base font-black">💾 حفظ هذه الحسبة والبدء بمنتج جديد</h3>
+              <p class="text-xs text-slate-900/60">احفظ دراسة جدوى هذا المنتج لمقارنتها لاحقاً، والبدء بتسعير منتج آخر نظيف.</p>
+              <div class="flex gap-2">
+                <input id="calcSaveTitle" type="text" placeholder="اسم دراسة الجدوى (مثال: حذاء نسائي صيفي)" class="field flex-1 px-3 py-2 text-xs font-bold" />
+                <button type="button" id="saveCalcBtn" class="btn-primary px-4 py-2 rounded-xl text-xs font-black">+ حفظ الحسبة</button>
+              </div>
+            </div>
+
+            <!-- قائمة الحسبات والمنتجات المحفوظة -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-3">
+              <h3 class=" text-base font-black">📁 دراسات الجدوى والتسعيرات المحفوظة</h3>
+              <div class="overflow-x-auto">
+                <table class="w-full text-xs text-right">
+                  <thead>
+                    <tr class="border-b border-slate-200/20 text-slate-900/60 font-black">
+                      <th class="p-2">الاسم</th>
+                      <th class="p-2 text-center">سعر البيع</th>
+                      <th class="p-2 text-center">الإعلان / قطعة</th>
+                      <th class="p-2 text-center">صافي الربح</th>
+                      <th class="p-2 text-center">إجراء</th>
+                    </tr>
+                  </thead>
+                  <tbody id="savedCalcsTbody">
+                    <tr><td colspan="5" class="p-4 text-center text-slate-900/40 font-bold">لا توجد حسبات محفوظة بعد</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- تبويب إعدادات الشحن و API -->
+      <section id="tab-shipping-settings" class="tab-content hidden space-y-6">
+        <div class="border-b border-slate-200/10 pb-4">
+          <h2 class=" text-2xl font-black text-slate-900 flex items-center gap-2">
+            <span>🚚</span>
+            <span>إعدادات الشحن والربط بشركات التوصيل (خاص بمتجرك)</span>
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-900/70 mt-1">اربط حسابك المهني مع شركات التوصيل الجزائرية (Yalidine, ZR Express...)، حدد مركز انطلاق سلعك، واختر طريقة تسعير التوصيل لزبائنك.</p>
+        </div>
+
+        <form id="vendorShippingForm" class="space-y-6 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+          <!-- 1. اختيار شركة الشحن ومفاتيح API -->
+          <div class="space-y-3">
+            <h3 class=" text-base font-black text-slate-900 flex items-center gap-2">
+              <span>🔑</span>
+              <span>1. اختيار شركة التوصيل وبيانات الـ API</span>
+            </h3>
+            <div class="grid md:grid-cols-3 gap-4">
+              <div>
+                <label class="text-xs font-bold text-slate-900/70 block mb-1">شركة التوصيل الشريكة</label>
+                <select name="provider" id="shipProviderSelect" class="field w-full p-2.5 text-xs sm:text-sm font-black">
+                  <option value="manual">توصيل يدوي / خاص (بدون API)</option>
+                  <option value="yalidine">Yalidine Express</option>
+                  <option value="zr_express">ZR Express</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-xs font-bold text-slate-900/70 block mb-1">API Key / User ID (أو Key)</label>
+                <input type="text" name="api_key" placeholder="المفتاح المعطى من الشركة" class="field w-full p-2.5 text-xs sm:text-sm font-mono font-bold" />
+              </div>
+              <div>
+                <label class="text-xs font-bold text-slate-900/70 block mb-1">API Token / Secret (أو Token)</label>
+                <input type="password" name="api_token" placeholder="الرمز السري الخاص بك" class="field w-full p-2.5 text-xs sm:text-sm font-mono font-bold" />
+              </div>
+            </div>
+              <div class="mt-4">
+                <label class="text-xs font-bold text-slate-900/70 block mb-1">اسم شركة التوصيل الافتراضية (يظهر في ملصق الشحن Bon بغض النظر عن استخدام API أم لا)</label>
+                <input type="text" name="manual_provider_name" placeholder="مثال: Yalidine Express, ZR Express, Mayestro..." class="field w-full p-2.5 text-xs sm:text-sm font-bold" />
+              </div>
+            <p class="text-[11px] text-slate-900/50 bg-slate-50 p-2.5 rounded-xl border border-slate-200/10">
+              💡 <b>ملاحظة:</b> ستقوم المنصة باستخدام هذه المفاتيح لتسجيل الطرود وتوليد بوليصات الشحن (Bordereaux) مباشرة تحت حسابك أنت لدى شركة الشحن دون أي تدخل يدوي.
+            </p>
+          </div>
+
+          <!-- 2. مركز انطلاق الشحن (Origin) -->
+          <div class="space-y-3 bg-slate-50-deep/30 p-4 sm:p-5 rounded-2xl border border-slate-200/15">
+            <h3 class=" text-base font-black text-slate-900 flex items-center gap-2">
+              <span>📍</span>
+              <span>2. مركز انطلاق سلعك وموقع المستودع (Origin Location)</span>
+            </h3>
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <label class="text-xs font-bold text-slate-900/70 block mb-1">ولاية انطلاق السلع والمرتجعات</label>
+                <select name="from_wilaya_id" id="fromWilayaSelect" class="field w-full p-2.5 text-xs sm:text-sm font-black">
+                  <!-- سيتم ملؤها تلقائياً -->
+                </select>
+              </div>
+              <div>
+                <label class="text-xs font-bold text-slate-900/70 block mb-1">بلدية الانطلاق / عنوان المستودع</label>
+                <input type="text" name="from_commune" placeholder="مثال: سيدي امحمد، سطيف، بئر خادم..." class="field w-full p-2.5 text-xs sm:text-sm font-black" />
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. سياسة التسعير للزبون -->
+          <div class="space-y-3">
+            <h3 class=" text-base font-black text-slate-900 flex items-center gap-2">
+              <span>💰</span>
+              <span>3. خيارات تسعير الشحن للزبون عند إتمام الطلب</span>
+            </h3>
+            <div class="grid sm:grid-cols-3 gap-3">
+              <label class="p-3.5 border rounded-2xl flex items-start gap-3 cursor-pointer hover:border-slate-200 transition-all duration-300 has-[:checked]:border-blue-600 has-[:checked]:bg-blue-600/5">
+                <input type="radio" name="pricing_mode" value="flat" checked class="accent-forest mt-1" />
+                <div>
+                  <p class="text-xs font-black text-slate-900">سعر موحد ثابت (Flat Rate)</p>
+                  <p class="text-[10px] text-slate-900/60 mt-0.5">تحديد سعر شحن ثابت لجميع الولايات للتبسيط على المشتري</p>
+                </div>
+              </label>
+              <label class="p-3.5 border rounded-2xl flex items-start gap-3 cursor-pointer hover:border-slate-200 transition-all duration-300 has-[:checked]:border-blue-600 has-[:checked]:bg-blue-600/5">
+                <input type="radio" name="pricing_mode" value="auto" class="accent-forest mt-1" />
+                <div>
+                  <p class="text-xs font-black text-slate-900">تسعير تلقائي عبر API</p>
+                  <p class="text-[10px] text-slate-900/60 mt-0.5">جلب تسعيرة شركة التوصيل الرسمية لحظياً حسب ولاية الزبون</p>
+                </div>
+              </label>
+              <label class="p-3.5 border rounded-2xl flex items-start gap-3 cursor-pointer hover:border-slate-200 transition-all duration-300 has-[:checked]:border-blue-600 has-[:checked]:bg-blue-600/5">
+                <input type="radio" name="pricing_mode" value="custom" class="accent-forest mt-1" />
+                <div>
+                  <p class="text-xs font-black text-slate-900">أسعار الولايات المخصصة</p>
+                  <p class="text-[10px] text-slate-900/60 mt-0.5">استخدام جدول أسعار الولايات المخصص لمتجرك</p>
+                </div>
+              </label>
+            </div>
+
+            <!-- حقول الشحن الثابت -->
+            <div id="flatPricingSection" class="grid sm:grid-cols-2 gap-4 bg-slate-50/40 p-4 rounded-2xl border border-slate-200/10">
+              <div>
+                <label class="text-xs font-bold text-slate-900/70 block mb-1">سعر التوصيل للمنزل الموحد (دج)</label>
+                <input type="number" name="flat_home_price" value="600" min="0" step="50" class="field w-full p-2.5 text-sm font-black" />
+              </div>
+              <div>
+                <label class="text-xs font-bold text-slate-900/70 block mb-1">سعر التوصيل للمكتب / Stop Desk (دج)</label>
+                <input type="number" name="flat_desk_price" value="350" min="0" step="50" class="field w-full p-2.5 text-sm font-black" />
+              </div>
+            </div>
+            <div id="customPricingSection" class="hidden bg-slate-50/40 p-4 rounded-2xl border border-slate-200/10 space-y-3">
+              <p class="text-xs text-slate-900/70 font-bold">حدد أسعار كل ولاية لمتجرك. اترك التوصيل غير محددًا للولايات التي لا تخدمها.</p>
+              <input id="customRatesSearch" class="field w-full max-w-xs px-3 py-2 text-sm" placeholder="بحث عن ولاية..." />
+              <div id="customRatesTable" class="bg-white rounded-xl border border-slate-200/10 overflow-x-auto"></div>
+              <button id="saveCustomRatesBtn" type="button" class="btn-primary px-5 py-2 rounded-xl text-sm font-black">حفظ أسعار الولايات الخاصة</button>
+            </div>
+          </div>
+
+          <!-- 4. خيار الشحن المجاني المشروط -->
+          <div class="bg-blue-600/5 border border-blue-600/20 rounded-2xl p-4 sm:p-5 space-y-3">
+            <label class="flex items-center gap-2.5 cursor-pointer">
+              <input type="checkbox" name="free_shipping_enabled" id="freeShippingCheckbox" class="accent-forest w-4 h-4 rounded" />
+              <span class="text-xs sm:text-sm font-black text-blue-600-dark">تفعيل عرض "شحن مجاني" عند تجاوز سلة الشراء مبلغاً معيناً</span>
+            </label>
+            <div id="freeShippingThresholdWrap" class="grid sm:grid-cols-2 gap-4 pt-1">
+              <div>
+                <label class="text-xs font-bold text-slate-900/70 block mb-1">الحد الأدنى لقيمة السلة للشحن المجاني (دج)</label>
+                <input type="number" name="free_shipping_threshold" value="15000" min="0" step="500" class="field w-full p-2.5 text-sm font-black" />
+              </div>
+            </div>
+          </div>
+
+          <!-- زر الحفظ -->
+          <div class="flex justify-end pt-2">
+            <button type="submit" class="btn-primary px-8 py-3 rounded-2xl text-sm font-black shadow-md flex items-center gap-2 transition-all duration-300 active:scale-[0.98]">
+              <span>💾</span>
+              <span>حفظ إعدادات الشحن</span>
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- تبويب أسعار التوصيل -->
+      <section id="tab-delivery" class="tab-content hidden space-y-4">
+        <div class="flex justify-between items-center flex-wrap gap-2">
+          <h2 class=" text-xl">أسعار التوصيل حسب الولاية</h2>
+          <button id="saveDeliveryBtn" class="btn-primary px-4 py-2 rounded-lg text-sm font-extrabold">حفظ كل الأسعار</button>
+        </div>
+        <p class="text-sm text-slate-900/60">حدد سعر التوصيل لكل ولاية من ولايات الوطن الـ 69، للتوصيل إلى المنزل وللتوصيل إلى مكتب البريد. اترك 0 إذا كانت الولاية غير مغطاة حاليًا.</p>
+        <input id="deliverySearch" type="text" placeholder="ابحث عن ولاية..." class="field w-full max-w-xs px-3 py-2 text-sm" />
+        <div id="deliveryTable" class="bg-white rounded-2xl border border-slate-200 overflow-x-auto"></div>
+      </section>
+
+      <!-- تبويب الربط مع السوشيال ميديا -->
+      <section id="tab-social" class="tab-content hidden space-y-4">
+        <h2 class=" text-xl">روابط التواصل الاجتماعي</h2>
+        <p class="text-sm text-slate-900/60">هذه الروابط تظهر كأيقونات في أعلى وأسفل المتجر وفي زر "تواصل معنا" بصفحة كل منتج. اترك أي حقل فارغًا لإخفاء أيقونته تلقائيًا.</p>
+        <form id="socialForm" class="bg-white rounded-2xl border border-slate-200 p-5 space-y-3">
+          <div>
+            <label class="text-sm font-bold block mb-1">📱 واتساب (رقم دولي بدون + أو رابط wa.me كامل)</label>
+            <input name="social_whatsapp" placeholder="مثال: 213555000000 أو https://wa.me/213555000000" class="field w-full px-3 py-2 text-sm" dir="ltr" />
+          </div>
+          <div>
+            <label class="text-sm font-bold block mb-1">📸 انستغرام (رابط كامل)</label>
+            <input name="social_instagram" placeholder="https://instagram.com/yourstore" class="field w-full px-3 py-2 text-sm" dir="ltr" />
+          </div>
+          <div>
+            <label class="text-sm font-bold block mb-1">📘 فيسبوك (رابط كامل)</label>
+            <input name="social_facebook" placeholder="https://facebook.com/yourstore" class="field w-full px-3 py-2 text-sm" dir="ltr" />
+          </div>
+          <div>
+            <label class="text-sm font-bold block mb-1">🎵 تيك توك (رابط كامل)</label>
+            <input name="social_tiktok" placeholder="https://tiktok.com/@yourstore" class="field w-full px-3 py-2 text-sm" dir="ltr" />
+          </div>
+          <div>
+            <label class="text-sm font-bold block mb-1">✈️ تلغرام (رابط كامل)</label>
+            <input name="social_telegram" placeholder="https://t.me/yourstore" class="field w-full px-3 py-2 text-sm" dir="ltr" />
+          </div>
+          <p id="socialFormError" class="text-blue-500 text-sm font-bold hidden"></p>
+          <button type="submit" class="btn-primary px-5 py-2 rounded-lg text-sm font-extrabold">حفظ روابط التواصل</button>
+        </form>
+
+        <h2 class=" text-xl pt-2">ربط المتجر بفيسبوك / انستغرام / تيك توك (كتالوج المنتجات)</h2>
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 space-y-4 text-sm leading-7">
+          <p>
+            الطريقة الرسمية والآمنة لعرض منتجاتك في متاجر فيسبوك وانستغرام وتيك توك هي عبر
+            <b>ملف كتالوج (Product Feed)</b> يقرأه نظامهم تلقائيًا ويحدّثه بشكل دوري. لا يمكن لأي موقع "ينشر تلقائيًا"
+            في حسابك دون ربط حساب تجاري (Business Account) تملكه أنت والموافقة عليه من عندهم، وهذا خارج عن تحكم أي كود برمجي.
+          </p>
+          <div class="border border-slate-200/20 rounded-xl p-4 bg-slate-50">
+            <p class="font-extrabold mb-2">1) فيسبوك وانستغرام (Meta Commerce Manager):</p>
+            <p>افتح Commerce Manager ← Catalog ← Add items ← Data feed، والصق رابط الكتالوج التالي واضبط التحديث التلقائي (يوميًا):</p>
+            <code id="fbFeedUrl" class="block bg-white border border-slate-200/20 rounded-lg p-2 mt-2 text-xs break-all"></code>
+          </div>
+          <div class="border border-slate-200/20 rounded-xl p-4 bg-slate-50">
+            <p class="font-extrabold mb-2">2) تيك توك شوب (TikTok Shop Seller Center):</p>
+            <p>من Seller Center ← Products ← Bulk Upload / Scheduled Feed، استخدم رابط ملف الـ CSV التالي:</p>
+            <code id="ttFeedUrl" class="block bg-white border border-slate-200/20 rounded-lg p-2 mt-2 text-xs break-all"></code>
+          </div>
+          <p class="text-slate-900/50">
+            ملاحظة: يجب أن يكون الموقع منشورًا على نطاق (domain) حقيقي يدعم HTTPS حتى تستطيع فيسبوك وتيك توك الوصول لهذه الروابط وجلب الصور.
+          </p>
+        </div>
+      </section>
+
+      <!-- تبويب إدارة الاشتراك والخطط -->
+      
+
+      <!-- تبويب إدارة المشتركين والحسابات (خاص بالمدير Super Admin) -->
+      
+
+      <!-- تبويب إعادة التعيين والتحكم -->
+      <section id="tab-reset" class="tab-content hidden space-y-6">
+        <div>
+          <h2 class=" text-2xl font-black text-rose-700">⚙️ منطقة إعادة التعيين والتحكم</h2>
+          <p class="text-sm text-slate-900/70 mt-1">
+            من هنا يمكنك تصفير العمليات الحسابية لبدء الحسابات وتجربة المتجر من جديد، أو إعادة ضبط المصنع الكامل للمتجر كأنه أول مرة.
+            <b class="text-rose-700">يتطلب تنفيذ أي عملية إدخال كلمة مرور الأدمن للتأكيد الأمني.</b>
+          </p>
+          <button id="downloadBackupBtn" type="button" class="hidden btn-outline mt-3 px-4 py-2 rounded-xl text-sm font-black text-blue-600 border-blue-600 hover:bg-blue-600/10">⬇️ تنزيل نسخة احتياطية</button>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+          <!-- بطاقة 1: تصفير العمليات الحسابية والطلبات -->
+          <div class="bg-white border border-slate-200/30 rounded-2xl p-5 space-y-4 shadow-sm">
+            <div class="flex items-center gap-3">
+              <span class="text-3xl">🔄</span>
+              <div>
+                <h3 class=" text-lg font-black text-slate-900">تصفير الحسابات والطلبات (إلى 0)</h3>
+                <p class="text-xs text-slate-900/60 font-bold">لإعادة الحسابات المالية وتجربة المتجر</p>
+              </div>
+            </div>
+            <ul class="text-xs text-slate-900/80 space-y-1.5 list-disc list-inside bg-slate-50-deep/40 p-3.5 rounded-xl border border-slate-200/10">
+              <li>حذف جميع الطلبات الحالية والمسجلة.</li>
+              <li>تصفير الأرشيف المالي (المبيعات وتكلفة الشحن تعود لـ 0 دج).</li>
+              <li>تصفير إحصائيات الأرباح لتبدأ حساباتك من الصفر.</li>
+              <li class="text-blue-600 font-black">يبقى المخزون والمنتجات والتصنيفات كما هي دون حذف.</li>
+            </ul>
+            <button id="openResetStatsModalBtn" type="button" class="btn-outline w-full py-2.5 rounded-xl text-sm font-black text-blue-500 border-blue-500 hover:bg-blue-500/10">
+              🔄 تصفير الحسابات والطلبات فقط (0)
+            </button>
+          </div>
+
+          <!-- بطاقة 2: إعادة ضبط المصنع الكامل للمتجر -->
+          <div class="bg-white border border-rose-600 rounded-2xl p-5 space-y-4 shadow-sm">
+            <div class="flex items-center gap-3">
+              <span class="text-3xl">⚠️</span>
+              <div>
+                <h3 class=" text-lg font-black text-rose-700">إعادة ضبط المصنع الكامل (المتجر كأول مرة)</h3>
+                <p class="text-xs text-rose-600 font-bold">مسح شامل وإعادة المتجر جديداً تماماً</p>
+              </div>
+            </div>
+            <ul class="text-xs text-slate-900/80 space-y-1.5 list-disc list-inside bg-rose-50 p-3.5 rounded-xl border border-rose-200 text-rose-900">
+              <li>حذف جميع المنتجات وصورها ومتغيراتها والمخزون.</li>
+              <li>حذف جميع التصنيفات والتصنيفات الفرعية.</li>
+              <li>حذف جميع الطلبات وتصفير كافة الإحصائيات والأرباح ومصاريف الإعلانات.</li>
+              <li class="font-black text-blue-600"><b>تبقى أسعار الشحن والتوصيل للولايات الـ 69 محفوظة كما هي دون مسح.</b></li>
+            </ul>
+            <button id="openResetStoreModalBtn" type="button" class="btn-primary w-full py-2.5 rounded-xl text-sm font-black bg-rose-700 hover:bg-rose-800 text-white border-rose-900">
+              ⚠️ إعادة ضبط المتجر بالكامل كأول مرة
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- نافذة إضافة/تعديل منتج -->
+  <div id="productModal" class="fixed inset-0 bg-slate-900/40 hidden z-50 flex items-center justify-center p-4 overflow-y-auto">
+    <form id="productForm" class="bg-slate-50 border border-slate-200 rounded-2xl w-full max-w-2xl p-6 space-y-4 my-8 max-h-[90vh] overflow-y-auto" enctype="multipart/form-data">
+      <div class="flex items-center justify-between border-b border-slate-200/10 pb-3">
+        <h3 id="productModalTitle" class=" text-2xl text-slate-900">منتج جديد</h3>
+        <button type="button" id="closeProductModalTop" class="text-2xl leading-none text-slate-900/60 hover:text-slate-900">&times;</button>
+      </div>
+      <input type="hidden" name="id" />
+      
+      <div class="space-y-3">
+        <div>
+          <label class="text-xs font-bold text-slate-900/70 block mb-1">اسم المنتج</label>
+          <input required name="name" placeholder="مثال: قميص قطني كلاسيكي فاخر" class="field w-full px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label class="text-xs font-bold text-slate-900/70 block mb-1">وصف المنتج</label>
+          <textarea name="description" placeholder="اكتب تفاصيل القميص، خامة القماش، إرشادات الغسيل..." rows="3" class="field w-full px-3 py-2 text-sm"></textarea>
+        </div>
+        <div class="grid grid-cols-3 gap-3">
+          <div>
+            <label class="text-xs font-bold text-slate-900/70 block mb-1">سعر البيع (عبوة / حبة)</label>
+            <input required name="price" type="number" step="0.01" min="0" placeholder="مثال: 12000" class="field w-full px-3 py-2 text-sm font-bold" />
+          </div>
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="text-xs font-bold text-slate-900/70" id="packQtyLabel">عدد القطع بالعبوة</label>
+              <button type="button" id="setSinglePieceBtn"
+                class="text-[11px] font-black px-2 py-0.5 rounded transition-all duration-300 cursor-pointer border"
+                title="تبديل بين البيع بالجملة والبيع بالحبة">
+                📦 البيع بالجملة
+              </button>
+            </div>
+            <div id="packQuantityWrap">
+              <input required name="pack_quantity" id="packQuantityInput" type="number" min="1" value="1" placeholder="مثال: 12" class="field w-full px-3 py-2 text-sm bg-slate-50/60 font-black" />
+            </div>
+            <!-- hidden input used when retail mode active -->
+            <input type="hidden" id="packQuantityHidden" name="pack_quantity_retail" value="1" disabled />
+          </div>
+          <div>
+            <label class="text-xs font-bold text-slate-900/70 block mb-1">السعر قبل الخصم (اختياري)</label>
+            <input name="compare_price" type="number" step="0.01" min="0" placeholder="مثال: 15000" class="field w-full px-3 py-2 text-sm" />
+          </div>
+        </div>
+      </div>
+
+      <!-- نوع المنتج وخيارات المتغيرات (جديد) -->
+      <div class="bg-white/80 border border-slate-200/20 rounded-xl p-4 space-y-3" id="variantTypeSelectorWrap">
+        <label class="text-xs font-extrabold text-slate-900 uppercase tracking-wider block">نوع وخصائص المنتج:</label>
+        <div class="grid sm:grid-cols-3 gap-2">
+          <label class="flex items-center gap-2 p-2.5 rounded-lg border border-slate-200/10 cursor-pointer hover:border-slate-200 transition-all duration-300 has-[:checked]:border-blue-600 has-[:checked]:bg-blue-600/5">
+            <input type="radio" name="product_type_mode" value="simple" checked class="accent-forest" />
+            <div>
+              <div class="text-xs font-bold">منتج بسيط</div>
+              <div class="text-[10px] text-slate-900/50">كمية موحدة بدون مقاسات</div>
+            </div>
+          </label>
+          <label class="flex items-center gap-2 p-2.5 rounded-lg border border-slate-200/10 cursor-pointer hover:border-slate-200 transition-all duration-300 has-[:checked]:border-blue-600 has-[:checked]:bg-blue-600/5">
+            <input type="radio" name="product_type_mode" value="clothing" class="accent-forest" />
+            <div>
+              <div class="text-xs font-bold text-blue-600">👗 أزياء وملابس</div>
+              <div class="text-[10px] text-slate-900/50">ألوان + صور لكل لون + مقاسات</div>
+            </div>
+          </label>
+          <label class="flex items-center gap-2 p-2.5 rounded-lg border border-slate-200/10 cursor-pointer hover:border-slate-200 transition-all duration-300 has-[:checked]:border-blue-600 has-[:checked]:bg-blue-600/5">
+            <input type="radio" name="product_type_mode" value="sizes_only" class="accent-forest" />
+            <div>
+              <div class="text-xs font-bold">مقاسات فقط</div>
+              <div class="text-[10px] text-slate-900/50">مقاسات/أحجام بدون ألوان</div>
+            </div>
+          </label>
+        </div>
+
+        <!-- 1. حقول المنتج البسيط -->
+        <div id="stockFieldsNew" class="grid grid-cols-2 gap-3 pt-2">
+          <div>
+            <label class="text-xs text-slate-900/60 block mb-1">الكمية الابتدائية بالمخزون</label>
+            <input name="stock" type="number" min="0" placeholder="0" class="field w-full px-3 py-2 text-sm" />
+          </div>
+          <div>
+            <label class="text-xs text-slate-900/60 block mb-1">سعر الشراء للقطعة (التكلفة)</label>
+            <input name="cost_price" type="number" step="0.01" min="0" placeholder="0" class="field w-full px-3 py-2 text-sm" />
+          </div>
+        </div>
+
+        <!-- 2. بناء الألوان والمقاسات والصور (الملابس والأزياء) -->
+        <div id="clothingVariantsBuilder" class="hidden space-y-4 pt-2">
+          <div class="bg-blue-600/10 border border-blue-600/30 rounded-xl p-3 text-xs text-blue-600-dark font-bold leading-relaxed">
+            💡 <b>نظام الألوان الذكي</b>: أضف كل لون مع رمزه وصورته ومقاساته المتوفرة. في المتجر، ستتغير الصورة فورًا لتطابق اللون الذي يختاره الزبون!
+          </div>
+          
+          <div id="colorBlocksContainer" class="space-y-4"></div>
+          
+          <button type="button" id="addColorBlockBtn" class="btn-outline w-full py-2.5 rounded-xl text-xs font-extrabold flex items-center justify-center gap-1.5 border-dashed hover:bg-white">
+            <span class="text-base leading-none">+</span> إضافة لون جديد (مثال: أصفر، أسود، كحلي)
+          </button>
+        </div>
+
+        <!-- 3. بناء المقاسات البسيطة فقط -->
+        <div id="simpleSizesBuilder" class="hidden space-y-3 pt-2">
+          <p class="text-xs text-slate-900/50">أضف المقاسات/الأحجام المتاحة لهذا المنتج مع كميتها وسعر تكلفتها:</p>
+          <div id="variantRows" class="space-y-2"></div>
+          <button type="button" id="addVariantRowBtn" class="text-blue-600 font-extrabold text-xs">+ إضافة مقاس</button>
+        </div>
+      </div>
+
+      <!-- ملخص المخزون في حالة تعديل منتج بسيط موجود -->
+      <div id="stockSummaryEdit" class="hidden bg-white/80 border border-slate-200/10 rounded-xl px-4 py-3 flex items-center justify-between text-sm">
+        <span class="font-bold">المخزون الحالي: <span id="stockSummaryValue" class="text-blue-600 font-black">-</span> قطعة</span>
+        <button type="button" id="openRestockBtn" class="btn-primary px-3 py-1.5 rounded-lg text-xs font-black">+ تزويد المخزون</button>
+      </div>
+
+      <!-- إدارة المتغيرات في حالة تعديل منتج له متغيرات مسبقًا -->
+      <div id="variantsEditPanel" class="hidden space-y-3 bg-white/80 border border-slate-200/10 rounded-xl p-4">
+        <div class="flex items-center justify-between">
+          <p class="text-sm font-extrabold text-slate-900">الألوان والمقاسات المسجلة حاليًا</p>
+          <span class="text-xs text-slate-900/50">كل متغيّر مستقل بالمخزون والتكلفة</span>
+        </div>
+        <div id="variantsEditList" class="space-y-2 max-h-60 overflow-y-auto pr-1"></div>
+        
+        <div class="border-t border-slate-200/10 pt-3 space-y-3">
+          <p class="text-xs font-extrabold text-blue-600">+ إضافة لون أو مقاس جديد لهذا المنتج:</p>
+          <div class="grid sm:grid-cols-3 gap-2">
+            <input id="newVariantColor" placeholder="اسم اللون (مثال: أصفر)" class="field px-2.5 py-1.5 text-xs" />
+            <div class="flex gap-1.5 items-center">
+              <input id="newVariantColorCode" type="color" value="#000000" class="w-8 h-8 rounded border border-slate-200/20 cursor-pointer p-0.5" title="اختر رمز اللون" />
+              <input id="newVariantSize" placeholder="المقاس (مثال: M أو 42)" class="field px-2.5 py-1.5 text-xs flex-1" />
+            </div>
+            <input id="newVariantLabel" placeholder="الاسم الظاهر (اختياري)" class="field px-2.5 py-1.5 text-xs" />
+          </div>
+          <div class="grid sm:grid-cols-3 gap-2 items-center">
+            <div>
+              <label class="text-[10px] text-slate-900/50 block">صورة هذا المتغير (اختياري):</label>
+              <input id="newVariantImageFile" type="file" accept="image/*" class="text-xs w-full" />
+            </div>
+            <input id="newVariantQty" type="number" min="0" placeholder="الكمية" class="field px-2.5 py-1.5 text-xs" />
+            <input id="newVariantCost" type="number" step="0.01" min="0" placeholder="سعر الشراء" class="field px-2.5 py-1.5 text-xs" />
+          </div>
+          <button type="button" id="addNewVariantBtn" class="btn-primary w-full py-2 rounded-lg text-xs font-extrabold">+ حفظ المتغير الجديد</button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="text-xs font-bold text-slate-900/70 block mb-1">التصنيف</label>
+          <select name="category_id" id="productCategorySelect" class="field w-full px-3 py-2 text-sm">
+            <option value="">بدون تصنيف</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-xs font-bold text-slate-900/70 block mb-1">رمز المنتج SKU (اختياري)</label>
+          <input name="sku" placeholder="مثال: SHIRT-001" class="field w-full px-3 py-2 text-sm" />
+        </div>
+      </div>
+
+      <div>
+        <label class="text-xs font-bold text-slate-900/70 block mb-1">صور إضافية للمنتج / المعرض العام</label>
+        <input name="images" type="file" accept="image/*" multiple class="w-full text-xs" />
+      </div>
+
+      <label class="flex items-center gap-2 text-sm font-bold pt-1">
+        <input type="checkbox" name="is_active" checked class="accent-forest w-4 h-4" /> منتج مفعّل وظاهر بالمتجر للزبائن
+      </label>
+
+      <p id="productFormError" class="text-blue-500 text-xs font-extrabold hidden"></p>
+
+      <div class="flex gap-2 pt-3 border-t border-slate-200/10">
+        <button type="button" id="closeProductModal" class="btn-outline flex-1 py-2.5 rounded-xl text-sm font-extrabold">إلغاء</button>
+        <button type="submit" id="saveProductSubmitBtn" class="btn-primary flex-1 py-2.5 rounded-xl text-sm font-extrabold">حفظ المنتج</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- نافذة تزويد المخزون: الطريقة الوحيدة لزيادة الكمية، وتطلب دومًا سعر الشراء -->
+  <div id="restockModal" class="fixed inset-0 bg-slate-900/40 hidden z-50 flex items-center justify-center p-4">
+    <form id="restockForm" class="bg-slate-50 border border-slate-200 rounded-2xl w-full max-w-sm p-6 space-y-3">
+      <h3 class=" text-xl mb-2">تزويد المخزون</h3>
+      <p class="text-xs text-slate-900/50 font-bold" id="restockProductName"></p>
+      <div>
+        <label class="text-sm text-slate-900/60 block mb-1">الكمية المضافة</label>
+        <input required name="qty" type="number" min="1" placeholder="مثال: 10" class="field w-full px-3 py-2 text-sm" />
+      </div>
+      <div>
+        <label class="text-sm text-slate-900/60 block mb-1">كم اشتريت القطعة الواحدة؟ (سعر الشراء)</label>
+        <input required name="cost_price" type="number" step="0.01" min="0" placeholder="سعر الشراء للقطعة الواحدة" class="field w-full px-3 py-2 text-sm" />
+      </div>
+      <p class="text-xs text-slate-900/40">سيُحسب متوسط سعر الشراء تلقائيًا مع الكمية القديمة، فلا يضيع سعر الدفعة السابقة.</p>
+      <p id="restockFormError" class="text-blue-500 text-sm font-bold hidden"></p>
+      <div class="flex gap-2 pt-2">
+        <button type="button" id="closeRestockModal" class="btn-outline flex-1 py-2 rounded-lg text-sm font-extrabold">إلغاء</button>
+        <button type="submit" class="btn-primary flex-1 py-2 rounded-lg text-sm font-extrabold">تأكيد التزويد</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- نافذة إضافة تصنيف (زر +) -->
+  <div id="categoryModal" class="fixed inset-0 bg-slate-900/40 hidden z-50 flex items-center justify-center p-4">
+    <form id="categoryForm" class="bg-slate-50 border border-slate-200 rounded-2xl w-full max-w-sm p-6 space-y-3">
+      <h3 class=" text-xl mb-1" id="categoryModalTitle">إضافة تصنيف</h3>
+      <input type="hidden" name="parent_id" />
+      <input required name="name" placeholder="اسم التصنيف" class="field w-full px-3 py-2 text-sm" />
+      <p id="categoryFormError" class="text-blue-500 text-sm font-bold hidden"></p>
+      <div class="flex gap-2 pt-2">
+        <button type="button" id="closeCategoryModal" class="btn-outline flex-1 py-2 rounded-lg text-sm font-extrabold">إلغاء</button>
+        <button type="submit" class="btn-primary flex-1 py-2 rounded-lg text-sm font-extrabold">إضافة</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- نافذة تأكيد التصفير / إعادة ضبط المصنع مع إدخال كلمة المرور -->
+  <div id="resetConfirmModal" class="fixed inset-0 bg-slate-900/50 hidden z-50 flex items-center justify-center p-4">
+    <form id="resetConfirmForm" class="bg-slate-50 border border-rose-700 rounded-2xl w-full max-w-md p-6 space-y-4 shadow-2xl">
+      <div class="flex items-center gap-3 border-b border-slate-200/10 pb-3">
+        <span id="resetModalIcon" class="text-3xl">⚠️</span>
+        <div>
+          <h3 id="resetModalTitle" class=" text-xl font-black text-rose-700">تأكيد العملية</h3>
+          <p id="resetModalSubtitle" class="text-xs text-slate-900/60 font-bold">هذا الإجراء يتطلب التحقق من هويتك</p>
+        </div>
+      </div>
+
+      <p id="resetModalWarning" class="text-xs text-slate-900/80 bg-rose-50 p-3 rounded-xl border border-rose-200 leading-relaxed font-bold"></p>
+
+      <div class="space-y-1.5">
+        <label class="text-xs font-black text-slate-900 block">🔐 أدخل كلمة مرور لوحة التحكم للمتابعة:</label>
+        <input required id="resetAdminPassword" type="password" placeholder="كلمة المرور الخاصة بحسابك" class="field w-full px-3 py-2 text-sm font-bold" autocomplete="current-password" />
+      </div>
+
+      <p id="resetModalError" class="text-rose-700 text-xs font-black hidden bg-rose-100 p-2 rounded-lg"></p>
+
+      <div class="flex gap-2 pt-2">
+        <button type="button" id="closeResetConfirmModal" class="btn-outline flex-1 py-2.5 rounded-xl text-sm font-black">إلغاء</button>
+        <button type="submit" id="executeResetBtn" class="btn-primary flex-1 py-2.5 rounded-xl text-sm font-black bg-rose-700 text-white border-rose-900">تأكيد التصفير ⚠️</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- نافذة قفل الاشتراك عند انتهاء الفترة التجريبية أو الاشتراك (Paywall Modal) -->
+  <div id="paywallModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm hidden z-[100] flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-2xl w-full max-w-xl p-6 sm:p-8 space-y-6 shadow-2xl text-center">
+      <div class="w-16 h-16 bg-rose-100 border border-rose-400 text-rose-700 rounded-full flex items-center justify-center text-3xl mx-auto">
+        ⏳
+      </div>
+      
+      <div class="space-y-2">
+        <h3 class=" text-2xl font-black text-slate-900">انتهت الفترة التجريبية المجانية (7 أيام)</h3>
+        <p class="text-xs sm:text-sm text-slate-900/70 font-bold leading-relaxed">
+          نأمل أن تكون قد استمتعت بتجربة متجر الجملة وأدوات الإعلانات وحساب الأرباح! لمواصلة استخدام لوحة التحكم وإدارة متجرك، يرجى اختيار إحدى باقات الاشتراك:
+        </p>
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-4 text-right">
+        <div class="border border-slate-200/20 p-4 rounded-2xl hover:border-blue-600 transition-all duration-300 space-y-2 bg-slate-50/30">
+          <p class="text-xs font-black text-slate-900">📦 الاشتراك الشهري (جملة)</p>
+          <p class="text-xl font-black text-blue-600">1,600 دج <span class="text-xs text-slate-900/60 font-bold">/ شهر</span></p>
+          <button type="button" id="paywallMonthlyBtn" onclick="subscribeToPlan('monthly')" class="btn-primary w-full py-2.5 rounded-xl text-xs font-black cursor-pointer">اختيار الشهري ⚡</button>
+        </div>
+        <div class="border border-amber-400 p-4 rounded-2xl bg-amber-50 space-y-2 relative">
+          <span class="absolute -top-2.5 left-3 bg-amber-500 text-white text-[10px] px-2 py-0.5 rounded-full font-black">وفر أكثر من 21%</span>
+          <p class="text-xs font-black text-slate-900">👑 الاشتراك السنوي (جملة)</p>
+          <p class="text-xl font-black text-amber-700">16,000 دج <span class="text-xs text-slate-900/60 font-bold">/ سنة</span></p>
+          <button type="button" id="paywallAnnualBtn" onclick="subscribeToPlan('annual')" class="btn-primary w-full py-2.5 rounded-xl text-xs font-black bg-amber-600 text-white border border-slate-200 cursor-pointer">اختيار السنوي 👑</button>
+        </div>
+      </div>
+
+      <div class="bg-emerald-50 border border-emerald-300 rounded-2xl p-4 space-y-2">
+        <p class="text-xs font-black text-emerald-900">📲 تواصل مباشرة مع فريق العمل للدفع والتفعيل السريع:</p>
+        <a href="https://wa.me/213665236042?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D9%8B%D8%8C%20%D8%A3%D9%88%D8%AF%20%D8%AA%D9%81%D8%B9%D9%8A%D9%84%20%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83%D9%8A%20%D9%81%D9%8A%20%D9%85%D8%AA%D8%AC%D8%B1%20%D8%A7%D9%84%D8%AC%D9%85%D9%84%D8%A9" target="_blank" class="inline-flex items-center justify-center gap-2 w-full py-3 bg-[#25D366] hover:bg-[#1EBE5D] text-white rounded-xl font-black text-sm shadow-md transition-all duration-300">
+          <span>💬</span>
+          <span>تواصل عبر واتساب (+213 665 23 60 42)</span>
+        </a>
+      </div>
+
+      <div class="pt-2 border-t border-slate-200/10 flex items-center justify-between">
+        <button type="button" id="paywallLogoutBtn" class="text-xs text-rose-700 hover:underline font-black">تسجيل الخروج ↩</button>
+        <button type="button" onclick="document.getElementById('paywallModal').classList.add('hidden')" class="text-xs text-blue-600 hover:underline font-black">المتابعة في وضع المشاهدة 👁️</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- نافذة تنبيه وضع المشاهدة فقط مع زر واتساب -->
+  <div id="readOnlyAlertModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm hidden z-[110] flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-2xl w-full max-w-md p-6 sm:p-8 space-y-5 shadow-2xl text-center">
+      <div class="w-16 h-16 bg-amber-100 border border-amber-400 text-amber-800 rounded-full flex items-center justify-center text-3xl mx-auto shadow-inner">
+        👁️
+      </div>
+      <div class="space-y-2">
+        <h3 class=" text-xl font-black text-slate-900">حسابك في وضع المشاهدة فقط</h3>
+        <p class="text-xs text-slate-900/70 font-bold leading-relaxed">
+          لقد انتهت فترتك التجريبية المجانية (7 أيام). يمكنك تصفح الإحصائيات والبيانات، ولإجراء أي تعديل أو إضافة منتجات يرجى تفعيل حسابك.
+        </p>
+      </div>
+
+      <div class="bg-emerald-50 border border-emerald-300 rounded-2xl p-4 space-y-2">
+        <p class="text-xs font-black text-emerald-900">📲 تواصل مباشرة مع الإدارة للتفعيل السريع:</p>
+        <a href="https://wa.me/213665236042?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D9%8B%D8%8C%20%D8%A3%D9%88%D8%AF%20%D8%AA%D9%81%D8%B9%D9%8A%D9%84%20%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83%D9%8A%20%D9%81%D9%8A%20%D9%85%D8%AA%D8%AC%D8%B1%20%D8%A7%D9%84%D8%AC%D9%85%D9%84%D8%A9" target="_blank" class="inline-flex items-center justify-center gap-2 w-full py-3 bg-[#25D366] hover:bg-[#1EBE5D] text-white rounded-xl font-black text-sm shadow-md transition-all duration-300">
+          <span>💬</span>
+          <span>تواصل عبر واتساب (+213 665 23 60 42)</span>
+        </a>
+      </div>
+
+      <button type="button" onclick="document.getElementById('readOnlyAlertModal').classList.add('hidden')" class="btn-outline w-full py-2 rounded-xl text-xs font-black">
+        متابعة التصفح في وضع المشاهدة 👁️
+      </button>
+    </div>
+  </div>
+
+  <!-- نافذة توجيه صاحب الاشتراك إلى فريق العمل -->
+  <div id="subscriptionContactModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm hidden z-[120] flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-2xl w-full max-w-lg p-8 sm:p-10 space-y-7 shadow-2xl text-center">
+      <div class="w-20 h-20 bg-emerald-100 border border-emerald-400 text-emerald-700 rounded-full flex items-center justify-center text-4xl mx-auto shadow-inner">
+        💬
+      </div>
+      <div class="space-y-3">
+        <h3 class=" text-3xl sm:text-4xl font-black text-slate-900 leading-tight">يجب التواصل معنا عبر فريق العمل</h3>
+        <p id="subscriptionContactMessage" class="text-base sm:text-lg text-slate-900/70 font-bold leading-relaxed">تم إرسال طلب الاشتراك بنجاح. اضغط «حسناً» للتواصل مباشرة مع فريق العمل.</p>
+      </div>
+      <button type="button" id="subscriptionContactOkBtn" class="w-full py-4 rounded-2xl font-black text-lg bg-[#25D366] hover:bg-[#1EBE5D] text-white border border-slate-200 shadow-md transition-all duration-300">
+        حسناً، التواصل مع فريق العمل
+      </button>
+    </div>
+  </div>
+
+  <div id="toast" class="hidden fixed bottom-6 right-6 px-5 py-3 rounded-xl shadow-lg z-[60] font-bold border text-white"></div>
+
+  <script src="/js/admin.js?v=1790065126994"></script>
+</body>
+</html>

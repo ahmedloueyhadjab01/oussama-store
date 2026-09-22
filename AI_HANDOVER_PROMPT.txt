@@ -1,0 +1,48 @@
+﻿# AI Handover Prompt - Kalkoul Store (E-Commerce Platform)
+
+Hello AI! You are acting as an Expert Full-Stack Web Developer and System Auditor. 
+I am providing you with the source code of my SaaS-style E-Commerce Platform. Your task is to review, audit, and improve the codebase.
+
+## 📌 Project Overview
+- **Name:** Kalkoul Store (E-Commerce & POS System)
+- **Type:** Multi-tenant capable E-commerce store with an Admin Dashboard and POS interface.
+- **Backend:** Node.js, Express.js
+- **Database:** PostgreSQL (using the `pg` library)
+- **Frontend:** HTML5, Vanilla JavaScript, TailwindCSS (via CDN), Font Awesome.
+- **Order Mechanism:** Checkout via WhatsApp (redirects the user to WhatsApp with a pre-filled order message) + Database Order saving.
+
+## 📂 Architecture & Folder Structure
+- `/public/`: Contains all frontend assets.
+  - `index.html`: The main storefront homepage (displays categories sliders and products).
+  - `product.html`: Single product detail page with variants, gallery, and related products.
+  - `checkout.html`: Checkout page handling customer details, Wilaya/Commune selection, and shipping costs.
+  - `admin.html`: The Admin Dashboard (Products, Categories, Orders, Settings, and Shipping Label generation).
+  - `pos.html`: Point of Sale interface for physical store management.
+  - `/js/`: Frontend logic (`store.js`, `cart.js`, `admin.js`, `checkout.js`, `product.js`).
+- `/routes/`: Express API routes (`products.js`, `categories.js`, `orders.js`, `auth.js`, `admin.js`, `upload.js`).
+- `/server.js`: The main Express server setup, middleware, and route mounting.
+- `/db.js`: PostgreSQL connection pool setup.
+
+## 💾 Database Schema (PostgreSQL)
+1. **users:** `id`, `username`, `password`, `role`, `store_name`, `store_slug`, `phone`, `whatsapp`, etc.
+2. **categories:** `id`, `user_id`, `name`, `slug`, `image`, `parent_id`.
+3. **products:** `id`, `user_id`, `name`, `slug`, `description`, `price`, `compare_price`, `image` (Cover Image), `images` (JSON Array), `stock`, `has_variants`, `category_id`, `pack_quantity`, `is_active`.
+4. **product_variants:** `id`, `product_id`, `sku`, `color`, `color_code`, `size`, `stock`, `price`, `image`.
+5. **orders:** `id`, `store_id`, `customer_name`, `phone`, `wilaya`, `commune`, `address`, `delivery_type`, `shipping_cost`, `subtotal`, `total`, `status` (pending, confirmed, shipped, delivered, cancelled, returned).
+6. **order_items:** `id`, `order_id`, `product_id`, `variant_id`, `quantity`, `price`.
+
+## 🛠️ Recent Major Updates
+- Transformed the store into a dedicated Clothing/Fashion brand (Kalkoul Store).
+- Updated product seeders to include High-Quality realistic e-commerce images (white backgrounds).
+- Replaced the homepage vertical grid with horizontal scrolling sliders grouped by category.
+- Fixed image escaping bugs (handling single quotes in image URLs inside JavaScript inline event listeners).
+- Added Custom Shipping Company configuration (e.g., Yalidine) and printable Shipping Labels directly from the Admin Orders dashboard.
+
+## 🎯 Your Task as an AI
+Please review the codebase and help me with the following:
+1. **Bug Hunting:** Look for any edge cases, uncaught exceptions, or frontend UI glitches.
+2. **Security Audit:** Check for SQL Injection risks, XSS vulnerabilities in the frontend DOM rendering, and API endpoint security (authentication checks).
+3. **Performance:** Suggest optimizations for PostgreSQL queries or Node.js event loop blocking.
+4. **Code Quality:** Suggest refactoring for cleaner, more maintainable Vanilla JS and Express routes.
+
+When I provide you with snippets or files, please use this context to understand how everything connects!
