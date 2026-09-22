@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>ovaro_28 | Ø§Ù„Ø±Ø¦ÙŠØ³ÙŠØ©</title>
+  <title>ovaro_28 | الرئيسية</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -32,112 +32,112 @@
 </head>
 <body class="pb-20 md:pb-0">
 
-  <!-- Ø´Ø±ÙŠØ· Ø§Ù„ØªÙˆØ§ØµÙ„ Ø§Ù„Ø¹Ù„ÙˆÙŠ -->
+  <!-- شريط التواصل العلوي -->
   <div id="socialIconsTopBar" class="flex justify-center gap-4 py-2 bg-slate-900 text-white"></div>
 
-  <!-- Ø§Ù„ØªØ±ÙˆÙŠØ³Ø© -->
+  <!-- الترويسة -->
   <header class="sticky top-0 z-40 glass-nav shadow-sm">
     <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
       <a href="/" class="text-3xl font-bold tracking-tight text-blue-600">ovaro_28</a>
       <form id="searchFormDesktop" class="hidden md:flex flex-1 max-w-xl relative items-center">
-        <input id="searchInput" type="search" placeholder="Ø§Ø¨Ø­Ø« Ø¹Ù† Ù…Ù†ØªØ¬..." autocomplete="off" class="w-full pr-4 pl-24 py-2.5 text-sm font-semibold text-slate-900 placeholder:text-slate-400 rounded-full border border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all" />
+        <input id="searchInput" type="search" placeholder="ابحث عن منتج..." autocomplete="off" class="w-full pr-4 pl-24 py-2.5 text-sm font-semibold text-slate-900 placeholder:text-slate-400 rounded-full border border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all" />
         <button id="clearSearchBtn" type="button" class="hidden absolute left-14 top-1/2 -translate-y-1/2 text-slate-400 hover:text-red-500 p-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
-        <button id="searchBtn" type="button" class="absolute left-1.5 top-1/2 -translate-y-1/2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-full text-xs font-bold transition-all shadow-sm">Ø¨Ø­Ø«</button>
+        <button id="searchBtn" type="button" class="absolute left-1.5 top-1/2 -translate-y-1/2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-full text-xs font-bold transition-all shadow-sm">بحث</button>
       </form>
       <button id="cartBtn" class="relative items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-sm hidden md:flex">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-        Ø§Ù„Ø³Ù„Ø©
+        السلة
         <span id="cartCount" class="absolute -top-1 -left-1 bg-red-500 text-white text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-white shadow-sm">0</span>
       </button>
     </div>
   </header>
 
-  <!-- Ø§Ù„ØªØµÙ†ÙŠÙØ§Øª -->
+  <!-- التصنيفات -->
   <nav class="border-b border-slate-200 bg-white">
     <div class="max-w-7xl mx-auto px-4 py-3 flex overflow-x-auto gap-2 no-scrollbar" id="categoryNav">
-      <button class="cat-btn px-4 py-1.5 rounded-full text-sm font-bold transition-colors whitespace-nowrap bg-slate-800 text-white shadow-sm" data-cat="">Ø§Ù„ÙƒÙ„</button>
+      <button class="cat-btn px-4 py-1.5 rounded-full text-sm font-bold transition-colors whitespace-nowrap bg-slate-800 text-white shadow-sm" data-cat="">الكل</button>
     </div>
   </nav>
 
-  <!-- Ø´Ø¨ÙƒØ© Ø§Ù„Ù…Ù†ØªØ¬Ø§Øª -->
+  <!-- شبكة المنتجات -->
   <main class="max-w-7xl mx-auto px-4 py-8 min-h-[50vh]">
     <div id="subCategoryNav" class="flex overflow-x-auto gap-2 pb-2 mb-4 scrollbar-hide hidden"></div>
       <div id="productsGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6"></div>
-    <p id="emptyState" class="hidden text-center text-slate-400 font-bold py-20 text-base">Ù„Ø§ ØªÙˆØ¬Ø¯ Ù…Ù†ØªØ¬Ø§Øª Ù…Ø·Ø§Ø¨Ù‚Ø©.</p>
+    <p id="emptyState" class="hidden text-center text-slate-400 font-bold py-20 text-base">لا توجد منتجات مطابقة.</p>
   </main>
 
-  <!-- Ø§Ù„ØªØ°ÙŠÙŠÙ„ -->
+  <!-- التذييل -->
   <footer class="border-t border-slate-200 mt-10 py-10 bg-white text-center text-sm">
     <p class="text-2xl font-bold text-blue-600 mb-3">ovaro_28</p>
     <div id="socialIconsFooter" class="flex justify-center gap-3 mb-4"></div>
-    <p class="text-slate-400 font-medium">&copy; <span id="currentYear"></span> Ø¬Ù…ÙŠØ¹ Ø§Ù„Ø­Ù‚ÙˆÙ‚ Ù…Ø­ÙÙˆØ¸Ø©.</p>
+    <p class="text-slate-400 font-medium">&copy; <span id="currentYear"></span> جميع الحقوق محفوظة.</p>
   </footer>
 
-  <!-- Ø§Ù„Ø³Ù„Ø© (Drawer) -->
+  <!-- السلة (Drawer) -->
   <div id="cartDrawer" class="fixed inset-0 bg-slate-900/40 hidden z-50 flex justify-end backdrop-blur-sm transition-opacity">
     <div class="bg-white w-full max-w-sm h-full shadow-2xl flex flex-col translate-x-full transition-transform duration-300" id="cartDrawerContent">
       <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-white">
         <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
           <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-          Ø³Ù„Ø© Ø§Ù„ØªØ³ÙˆÙ‚
+          سلة التسوق
         </h2>
         <button id="closeCart" class="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-full transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
       </div>
       <div id="cartItemsList" class="flex-1 overflow-y-auto p-5 space-y-4 bg-slate-50"></div>
       <div class="p-5 border-t border-slate-100 bg-white">
         <div class="flex justify-between items-center mb-4">
-          <span class="text-slate-500 font-semibold">Ø§Ù„Ù…Ø¬Ù…ÙˆØ¹</span>
-          <span id="cartTotal" class="text-2xl font-bold text-slate-900">0 Ø¯.Ø¬</span>
+          <span class="text-slate-500 font-semibold">المجموع</span>
+          <span id="cartTotal" class="text-2xl font-bold text-slate-900">0 د.ج</span>
         </div>
-        <button id="checkoutBtn" class="w-full bg-blue-600 text-white font-bold py-3.5 rounded-xl hover:bg-blue-700 transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">Ø¥ØªÙ…Ø§Ù… Ø§Ù„Ø·Ù„Ø¨</button>
+        <button id="checkoutBtn" class="w-full bg-blue-600 text-white font-bold py-3.5 rounded-xl hover:bg-blue-700 transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">إتمام الطلب</button>
       </div>
     </div>
   </div>
 
-  <!-- Ù†Ù…ÙˆØ°Ø¬ Ø¥ØªÙ…Ø§Ù… Ø§Ù„Ø·Ù„Ø¨ (Checkout Sheet on Mobile) -->
+  <!-- نموذج إتمام الطلب (Checkout Sheet on Mobile) -->
   <div id="checkoutOverlay" class="fixed inset-0 bg-slate-900/60 hidden z-50 flex items-end sm:items-center justify-center backdrop-blur-sm p-0 sm:p-4 overflow-hidden">
     <div class="checkout-modal rounded-t-3xl sm:rounded-2xl w-full max-w-lg p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto transform translate-y-full transition-transform duration-300" id="checkoutModalContent">
       <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
-        <h2 class="text-2xl font-bold text-slate-900">Ù…Ø¹Ù„ÙˆÙ…Ø§Øª Ø§Ù„ØªÙˆØµÙŠÙ„</h2>
+        <h2 class="text-2xl font-bold text-slate-900">معلومات التوصيل</h2>
         <button id="cancelCheckoutHeader" class="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
       </div>
       <form id="checkoutForm" class="space-y-4">
         <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-1.5">Ø§Ù„Ø§Ø³Ù… Ø§Ù„ÙƒØ§Ù…Ù„ <span class="text-red-500">*</span></label>
-          <input type="text" id="custName" required class="input-field" placeholder="Ù…Ø«Ø§Ù„: Ù…Ø­Ù…Ø¯ Ø§Ù„Ø£Ù…ÙŠÙ†" />
+          <label class="block text-sm font-semibold text-slate-700 mb-1.5">الاسم الكامل <span class="text-red-500">*</span></label>
+          <input type="text" id="custName" required class="input-field" placeholder="مثال: محمد الأمين" />
         </div>
         <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-1.5">Ø±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙ <span class="text-red-500">*</span></label>
+          <label class="block text-sm font-semibold text-slate-700 mb-1.5">رقم الهاتف <span class="text-red-500">*</span></label>
           <input type="tel" id="custPhone" required class="input-field text-left" dir="ltr" placeholder="0555 55 55 55" />
         </div>
         <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-1.5">Ø§Ù„ÙˆÙ„Ø§ÙŠØ© <span class="text-red-500">*</span></label>
+          <label class="block text-sm font-semibold text-slate-700 mb-1.5">الولاية <span class="text-red-500">*</span></label>
           <select id="custWilaya" required class="input-field bg-white">
-            <option value="">-- Ø§Ø®ØªØ± Ø§Ù„ÙˆÙ„Ø§ÙŠØ© --</option>
+            <option value="">-- اختر الولاية --</option>
           </select>
         </div>
         <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-1.5">Ø§Ù„Ø¨Ù„Ø¯ÙŠØ© / Ø§Ù„Ø¹Ù†ÙˆØ§Ù† <span class="text-red-500">*</span></label>
+          <label class="block text-sm font-semibold text-slate-700 mb-1.5">البلدية / العنوان <span class="text-red-500">*</span></label>
           <select id="custCommune" required class="input-field bg-white mb-3">
-            <option value="">-- Ø§Ø®ØªØ± Ø§Ù„Ø¨Ù„Ø¯ÙŠØ© --</option>
+            <option value="">-- اختر البلدية --</option>
           </select>
-          <input type="text" id="custAddress" required class="input-field" placeholder="Ø§Ù„Ø­ÙŠØŒ Ø§Ù„Ø´Ø§Ø±Ø¹..." />
+          <input type="text" id="custAddress" required class="input-field" placeholder="الحي، الشارع..." />
         </div>
         
         <div id="shippingOptionsBox" class="hidden mt-4 pt-4 border-t border-slate-100">
-          <p class="block text-sm font-semibold text-slate-700 mb-3">Ø·Ø±ÙŠÙ‚Ø© Ø§Ù„ØªÙˆØµÙŠÙ„ <span class="text-red-500">*</span></p>
+          <p class="block text-sm font-semibold text-slate-700 mb-3">طريقة التوصيل <span class="text-red-500">*</span></p>
           <div class="space-y-2">
             <label id="labelShipHome" class="delivery-option flex items-center gap-3 p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-colors" data-type="home">
               <input type="radio" name="shipType" value="home" id="shipHome" class="w-4 h-4 text-blue-600 focus:ring-blue-500" />
               <div class="flex-1 flex justify-between items-center">
-                <span class="text-sm font-semibold text-slate-800">ØªÙˆØµÙŠÙ„ Ù„Ù„Ù…Ù†Ø²Ù„</span>
+                <span class="text-sm font-semibold text-slate-800">توصيل للمنزل</span>
                 <span id="priceHome" class="delivery-price text-sm font-bold text-blue-600">--</span>
               </div>
             </label>
             <label id="labelShipDesk" class="delivery-option flex items-center gap-3 p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-colors" data-type="desk">
               <input type="radio" name="shipType" value="desk" id="shipDesk" class="w-4 h-4 text-blue-600 focus:ring-blue-500" />
               <div class="flex-1 flex justify-between items-center">
-                <span class="text-sm font-semibold text-slate-800">ØªÙˆØµÙŠÙ„ Ù„Ù„Ù…ÙƒØªØ¨ (StopDesk)</span>
+                <span class="text-sm font-semibold text-slate-800">توصيل للمكتب (StopDesk)</span>
                 <span id="priceDesk" class="delivery-price text-sm font-bold text-blue-600">--</span>
               </div>
             </label>
@@ -145,8 +145,8 @@
         </div>
 
         <div class="flex gap-3 pt-6">
-          <button type="submit" id="confirmOrderBtn" class="flex-1 bg-blue-600 text-white font-bold py-3.5 rounded-xl hover:bg-blue-700 transition-all shadow-md">ØªØ£ÙƒÙŠØ¯ Ø§Ù„Ø·Ù„Ø¨ Ø§Ù„Ø¢Ù†</button>
-          <button type="button" id="cancelCheckout" class="px-6 py-3.5 bg-slate-100 text-slate-600 font-bold rounded-xl hover:bg-slate-200 hover:text-slate-900 transition-colors">Ø¥Ù„ØºØ§Ø¡</button>
+          <button type="submit" id="confirmOrderBtn" class="flex-1 bg-blue-600 text-white font-bold py-3.5 rounded-xl hover:bg-blue-700 transition-all shadow-md">تأكيد الطلب الآن</button>
+          <button type="button" id="cancelCheckout" class="px-6 py-3.5 bg-slate-100 text-slate-600 font-bold rounded-xl hover:bg-slate-200 hover:text-slate-900 transition-colors">إلغاء</button>
         </div>
       </form>
     </div>
@@ -157,19 +157,19 @@
     <span id="successToastMsg"></span>
   </div>
 
-  <!-- Ø´Ø±ÙŠØ· Ø§Ù„ØªÙ†Ù‚Ù„ Ø§Ù„Ø³ÙÙ„ÙŠ Ù„Ù„Ù‡Ø§ØªÙ -->
+  <!-- شريط التنقل السفلي للهاتف -->
   <nav class="md:hidden bottom-nav fixed bottom-0 left-0 w-full z-40 flex justify-around items-center h-16 shadow-[0_-4px_10px_-1px_rgba(0,0,0,0.05)]">
     <a href="/" class="nav-item active">
       <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-      <span class="nav-label">Ø§Ù„Ø±Ø¦ÙŠØ³ÙŠØ©</span>
+      <span class="nav-label">الرئيسية</span>
     </a>
     <button id="mobileNavSearch" class="nav-item">
       <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-      <span class="nav-label">Ø¨Ø­Ø«</span>
+      <span class="nav-label">بحث</span>
     </button>
     <button id="mobileNavCart" class="nav-item">
       <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-      <span class="nav-label">Ø§Ù„Ø³Ù„Ø©</span>
+      <span class="nav-label">السلة</span>
       <span id="bottomCartCount" class="absolute top-2 right-4 bg-red-500 text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center border-2 border-white shadow-sm">0</span>
     </button>
   </nav>
