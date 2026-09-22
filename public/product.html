@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>المنتج</title>
+<title>Ø§Ù„Ù…Ù†ØªØ¬</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Almarai:wght@400;700;800&display=swap" rel="stylesheet">
@@ -19,9 +19,9 @@
 <body class="font-sans bg-slate-50 text-gray-900 pb-20 md:pb-0">
   <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm">
     <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
-      <a href="/" class="text-2xl brand-logo font-black">Kalkoul Store</a>
+      <a href="/" class="text-2xl brand-logo font-black">ovaro_28</a>
       <button id="cartBtn" class="relative flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-sm hidden md:flex">
-        🛒 السلة <span id="cartCount" class="absolute -top-2 -left-2 bg-blue-600 text-slate-900 text-xs font-black w-5 h-5 rounded-full flex items-center justify-center border border-slate-200">0</span>
+        ðŸ›’ Ø§Ù„Ø³Ù„Ø© <span id="cartCount" class="absolute -top-2 -left-2 bg-blue-600 text-slate-900 text-xs font-black w-5 h-5 rounded-full flex items-center justify-center border border-slate-200">0</span>
       </button>
     </div>
   </header>
@@ -29,78 +29,78 @@
   <main id="productDetail" class="max-w-4xl mx-auto px-4 py-8"></main>
 
   <footer class="border-t-2 border-slate-200 mt-10 py-8 text-center text-sm">
-    <p class="font-display text-2xl text-blue-600 mb-3 font-black">تابعنا على وسائل التواصل</p>
+    <p class="font-display text-2xl text-blue-600 mb-3 font-black">ØªØ§Ø¨Ø¹Ù†Ø§ Ø¹Ù„Ù‰ ÙˆØ³Ø§Ø¦Ù„ Ø§Ù„ØªÙˆØ§ØµÙ„</p>
     <div id="socialIconsProductFooter" class="flex items-center justify-center gap-3 mb-4"></div>
-    <p class="text-slate-900 font-bold">© 2026 Kalkoul Store - جميع الحقوق محفوظة</p>
+    <p class="text-slate-900 font-bold">Â© 2026 ovaro_28 - Ø¬Ù…ÙŠØ¹ Ø§Ù„Ø­Ù‚ÙˆÙ‚ Ù…Ø­ÙÙˆØ¸Ø©</p>
   </footer>
 
-  <!-- سلة التسوق (Drawer) -->
+  <!-- Ø³Ù„Ø© Ø§Ù„ØªØ³ÙˆÙ‚ (Drawer) -->
   <div id="cartOverlay" class="fixed inset-0 bg-ink/40 hidden z-50"></div>
   <aside id="cartDrawer" class="fixed top-0 left-0 h-full w-full max-w-sm bg-slate-50 z-50 translate-x-[-100%] transition-transform duration-300 flex flex-col shadow-2xl">
     <div class="p-4 border-b-2 border-slate-200 flex items-center justify-between">
-      <h2 class="font-display text-2xl font-black text-slate-900">سلة التسوق</h2>
+      <h2 class="font-display text-2xl font-black text-slate-900">Ø³Ù„Ø© Ø§Ù„ØªØ³ÙˆÙ‚</h2>
       <button id="closeCart" class="text-2xl leading-none font-black text-slate-900 hover:text-forest">&times;</button>
     </div>
     <div id="cartItems" class="flex-1 overflow-y-auto p-4 space-y-3"></div>
     <div class="p-4 border-t-2 border-slate-200">
       <div class="flex justify-between items-center font-black text-slate-900 mb-3">
-        <span class="text-base">الإجمالي</span>
-        <span id="cartTotal" class="price-ticket lg">0 دج</span>
+        <span class="text-base">Ø§Ù„Ø¥Ø¬Ù…Ø§Ù„ÙŠ</span>
+        <span id="cartTotal" class="price-ticket lg">0 Ø¯Ø¬</span>
       </div>
-      <button id="checkoutBtn" class="btn-primary w-full py-3 rounded-xl font-black text-base">إتمام الطلب الآن</button>
+      <button id="checkoutBtn" class="btn-primary w-full py-3 rounded-xl font-black text-base">Ø¥ØªÙ…Ø§Ù… Ø§Ù„Ø·Ù„Ø¨ Ø§Ù„Ø¢Ù†</button>
     </div>
   </aside>
 
-  <!-- نموذج إتمام الطلب (Checkout Modal) -->
+  <!-- Ù†Ù…ÙˆØ°Ø¬ Ø¥ØªÙ…Ø§Ù… Ø§Ù„Ø·Ù„Ø¨ (Checkout Modal) -->
   <div id="checkoutOverlay" class="fixed inset-0 bg-ink/40 hidden z-50 flex items-center justify-center p-4 overflow-y-auto">
     <div class="bg-slate-50 border border-slate-200 rounded-2xl w-full max-w-md p-6 my-8 shadow-2xl">
       <div class="flex items-center justify-between mb-4">
-        <h2 class="font-display text-2xl font-black text-slate-900">معلومات التوصيل</h2>
+        <h2 class="font-display text-2xl font-black text-slate-900">Ù…Ø¹Ù„ÙˆÙ…Ø§Øª Ø§Ù„ØªÙˆØµÙŠÙ„</h2>
         <button id="cancelCheckoutHeader" class="text-2xl leading-none font-black text-slate-900 hover:text-red-500">&times;</button>
       </div>
       <form id="checkoutForm" class="space-y-3">
-        <input required name="customer_name" placeholder="الاسم الكامل" class="field w-full px-3 py-2 text-sm font-bold text-slate-900" />
-        <input required name="phone" placeholder="رقم الهاتف" class="field w-full px-3 py-2 text-sm font-bold text-slate-900" />
+        <input required name="customer_name" placeholder="Ø§Ù„Ø§Ø³Ù… Ø§Ù„ÙƒØ§Ù…Ù„" class="field w-full px-3 py-2 text-sm font-bold text-slate-900" />
+        <input required name="phone" placeholder="Ø±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙ" class="field w-full px-3 py-2 text-sm font-bold text-slate-900" />
 
         <div class="grid grid-cols-2 gap-2">
           <select required id="wilayaSelect" name="wilaya_code" class="field w-full px-3 py-2 text-sm font-bold text-slate-900">
-            <option value="">الولاية...</option>
+            <option value="">Ø§Ù„ÙˆÙ„Ø§ÙŠØ©...</option>
           </select>
           <select required id="communeSelect" name="commune" class="field w-full px-3 py-2 text-sm font-bold text-slate-900" disabled>
-            <option value="">البلدية...</option>
+            <option value="">Ø§Ù„Ø¨Ù„Ø¯ÙŠØ©...</option>
           </select>
         </div>
 
-        <textarea required name="address" placeholder="العنوان بالتفصيل (الحي، الشارع، رقم المنزل...)" class="field w-full px-3 py-2 text-sm font-bold text-slate-900" rows="2"></textarea>
+        <textarea required name="address" placeholder="Ø§Ù„Ø¹Ù†ÙˆØ§Ù† Ø¨Ø§Ù„ØªÙØµÙŠÙ„ (Ø§Ù„Ø­ÙŠØŒ Ø§Ù„Ø´Ø§Ø±Ø¹ØŒ Ø±Ù‚Ù… Ø§Ù„Ù…Ù†Ø²Ù„...)" class="field w-full px-3 py-2 text-sm font-bold text-slate-900" rows="2"></textarea>
 
         <div>
-          <p class="text-xs font-black text-slate-900 mb-2">طريقة التوصيل</p>
+          <p class="text-xs font-black text-slate-900 mb-2">Ø·Ø±ÙŠÙ‚Ø© Ø§Ù„ØªÙˆØµÙŠÙ„</p>
           <div class="grid grid-cols-2 gap-2">
             <label class="delivery-option flex flex-col items-center py-3 px-2 text-center selected" data-type="home">
               <input type="radio" name="delivery_type" value="home" class="hidden" checked />
-              <span class="text-lg">🏠</span>
-              <span class="text-xs font-black mt-1 text-slate-900">للمنزل</span>
-              <span class="delivery-price text-xs font-black mt-1">—</span>
+              <span class="text-lg">ðŸ </span>
+              <span class="text-xs font-black mt-1 text-slate-900">Ù„Ù„Ù…Ù†Ø²Ù„</span>
+              <span class="delivery-price text-xs font-black mt-1">â€”</span>
             </label>
             <label class="delivery-option flex flex-col items-center py-3 px-2 text-center" data-type="desk">
               <input type="radio" name="delivery_type" value="desk" class="hidden" />
-              <span class="text-lg">🏤</span>
-              <span class="text-xs font-black mt-1 text-slate-900">مكتب البريد</span>
-              <span class="delivery-price text-xs font-black mt-1">—</span>
+              <span class="text-lg">ðŸ¤</span>
+              <span class="text-xs font-black mt-1 text-slate-900">Ù…ÙƒØªØ¨ Ø§Ù„Ø¨Ø±ÙŠØ¯</span>
+              <span class="delivery-price text-xs font-black mt-1">â€”</span>
             </label>
           </div>
-          <p id="selectWilayaHint" class="text-xs text-slate-900 font-bold mt-1">اختر الولاية أولًا لمعرفة سعر التوصيل</p>
+          <p id="selectWilayaHint" class="text-xs text-slate-900 font-bold mt-1">Ø§Ø®ØªØ± Ø§Ù„ÙˆÙ„Ø§ÙŠØ© Ø£ÙˆÙ„Ù‹Ø§ Ù„Ù…Ø¹Ø±ÙØ© Ø³Ø¹Ø± Ø§Ù„ØªÙˆØµÙŠÙ„</p>
         </div>
 
         <div class="flex justify-between items-center pt-2 border-t-2 border-dashed border-slate-200/30">
-          <span class="text-sm font-black text-slate-900">إجمالي الطلب مع التوصيل</span>
-          <span id="checkoutGrandTotal" class="price-ticket font-black">0 دج</span>
+          <span class="text-sm font-black text-slate-900">Ø¥Ø¬Ù…Ø§Ù„ÙŠ Ø§Ù„Ø·Ù„Ø¨ Ù…Ø¹ Ø§Ù„ØªÙˆØµÙŠÙ„</span>
+          <span id="checkoutGrandTotal" class="price-ticket font-black">0 Ø¯Ø¬</span>
         </div>
 
         <p id="checkoutError" class="text-rose-700 text-sm font-black hidden"></p>
         <div class="flex gap-2 pt-2">
-          <button type="button" id="cancelCheckout" class="btn-outline flex-1 py-2.5 rounded-xl text-sm font-black">إلغاء</button>
-          <button type="submit" id="submitOrderBtn" class="btn-primary flex-1 py-2.5 rounded-xl text-sm font-black">تأكيد الطلب</button>
+          <button type="button" id="cancelCheckout" class="btn-outline flex-1 py-2.5 rounded-xl text-sm font-black">Ø¥Ù„ØºØ§Ø¡</button>
+          <button type="submit" id="submitOrderBtn" class="btn-primary flex-1 py-2.5 rounded-xl text-sm font-black">ØªØ£ÙƒÙŠØ¯ Ø§Ù„Ø·Ù„Ø¨</button>
         </div>
       </form>
     </div>
@@ -108,7 +108,7 @@
 
   <div id="successToast" class="hidden fixed bottom-6 right-6 bg-blue-500 text-white px-5 py-3 rounded-xl shadow-lg z-[60] font-bold border-2 border-forest-dark"></div>
 
-  <!-- المُكبِّر (Lightbox) لصور المنتج -->
+  <!-- Ø§Ù„Ù…ÙÙƒØ¨ÙÙ‘Ø± (Lightbox) Ù„ØµÙˆØ± Ø§Ù„Ù…Ù†ØªØ¬ -->
   <div id="lightbox" class="hidden fixed inset-0 bg-blue-600/90 z-[70] items-center justify-center">
     <button id="lightboxClose" class="absolute top-4 left-4 text-white text-3xl leading-none z-10">&times;</button>
     <button id="lightboxPrev" class="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 text-white text-4xl z-10 px-2 select-none">&#8249;</button>
@@ -124,7 +124,7 @@
     let CURRENT_DELIVERY_TYPE = 'home';
     let PRODUCT_QTY = 1;
 
-    // ---------- التقاط UTM من رابط الزيارة وحفظها في sessionStorage ----------
+    // ---------- Ø§Ù„ØªÙ‚Ø§Ø· UTM Ù…Ù† Ø±Ø§Ø¨Ø· Ø§Ù„Ø²ÙŠØ§Ø±Ø© ÙˆØ­ÙØ¸Ù‡Ø§ ÙÙŠ sessionStorage ----------
     (function captureUtm() {
       const params = new URLSearchParams(window.location.search);
       const utm_fields = ['utm_source', 'utm_campaign', 'utm_medium', 'utm_content'];
@@ -152,21 +152,21 @@
       };
     }
 
-    function money(n) { return `${Number(n).toLocaleString('ar-DZ')} دج`; }
+    function money(n) { return `${Number(n).toLocaleString('ar-DZ')} Ø¯Ø¬`; }
     function escapeHtml(str) { const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
     function showToast(msg) {
       const t = document.getElementById('successToast'); t.textContent = msg; t.classList.remove('hidden');
       setTimeout(() => t.classList.add('hidden'), 2500);
     }
 
-    // ---------- عرض سلة التسوق مع عدادات الكمية والحذف ----------
+    // ---------- Ø¹Ø±Ø¶ Ø³Ù„Ø© Ø§Ù„ØªØ³ÙˆÙ‚ Ù…Ø¹ Ø¹Ø¯Ø§Ø¯Ø§Øª Ø§Ù„ÙƒÙ…ÙŠØ© ÙˆØ§Ù„Ø­Ø°Ù ----------
     function renderCartDrawer() {
       const items = Cart.get();
       const container = document.getElementById('cartItems');
       container.innerHTML = '';
 
       if (!items.length) {
-        container.innerHTML = '<p class="text-center text-slate-900 font-black mt-10 text-base">السلة فارغة</p>';
+        container.innerHTML = '<p class="text-center text-slate-900 font-black mt-10 text-base">Ø§Ù„Ø³Ù„Ø© ÙØ§Ø±ØºØ©</p>';
         document.getElementById('cartTotal').textContent = money(0);
         return;
       }
@@ -179,15 +179,15 @@
           <img src="${item.image || '/img/placeholder.svg'}" class="w-14 h-14 object-cover rounded-lg bg-slate-50-deep border border-slate-200 shadow-2xs" />
           <div class="flex-1">
             <p class="text-sm font-black text-slate-900 line-clamp-1">${escapeHtml(item.name)}${item.variant_label ? ` <span class="text-xs text-blue-600 font-black">(${escapeHtml(item.variant_label)})</span>` : ''}</p>
-            <p class="text-xs text-slate-900 font-bold">${money(item.price)} <span class="text-[10px] text-slate-900/60 font-normal">/ عبوة</span></p>
-            <p class="text-[11px] text-blue-600 font-black">المجموع: ${totalPieces} قطعة (${item.qty} عبوة)</p>
+            <p class="text-xs text-slate-900 font-bold">${money(item.price)} <span class="text-[10px] text-slate-900/60 font-normal">/ Ø¹Ø¨ÙˆØ©</span></p>
+            <p class="text-[11px] text-blue-600 font-black">Ø§Ù„Ù…Ø¬Ù…ÙˆØ¹: ${totalPieces} Ù‚Ø·Ø¹Ø© (${item.qty} Ø¹Ø¨ÙˆØ©)</p>
             <div class="flex items-center gap-2 mt-1">
               <button class="qty-btn dec btn-outline rounded-lg w-6 h-6 text-sm font-black flex items-center justify-center">-</button>
-              <span class="text-sm font-black text-slate-900">${item.qty} عبوة</span>
+              <span class="text-sm font-black text-slate-900">${item.qty} Ø¹Ø¨ÙˆØ©</span>
               <button class="qty-btn inc btn-outline rounded-lg w-6 h-6 text-sm font-black flex items-center justify-center">+</button>
             </div>
           </div>
-          <button class="remove-btn text-red-500 text-xs font-black hover:underline">حذف</button>
+          <button class="remove-btn text-red-500 text-xs font-black hover:underline">Ø­Ø°Ù</button>
         `;
         row.querySelector('.inc').addEventListener('click', () => { Cart.updateQty(item.id, item.variant_id, item.qty + 1); renderCartDrawer(); });
         row.querySelector('.dec').addEventListener('click', () => { Cart.updateQty(item.id, item.variant_id, item.qty - 1); renderCartDrawer(); });
@@ -213,7 +213,7 @@
     document.getElementById('closeCart').addEventListener('click', closeCart);
     document.getElementById('cartOverlay').addEventListener('click', closeCart);
 
-    // ---------- إتمام الطلب (Checkout Modal) داخل صفحة المنتج ----------
+    // ---------- Ø¥ØªÙ…Ø§Ù… Ø§Ù„Ø·Ù„Ø¨ (Checkout Modal) Ø¯Ø§Ø®Ù„ ØµÙØ­Ø© Ø§Ù„Ù…Ù†ØªØ¬ ----------
     const wilayaSelect = document.getElementById('wilayaSelect');
     const communeSelect = document.getElementById('communeSelect');
 
@@ -223,7 +223,7 @@
       const code = wilayaSelect.value;
       if (!code) {
         communeSelect.disabled = true;
-        communeSelect.innerHTML = '<option value="">البلدية...</option>';
+        communeSelect.innerHTML = '<option value="">Ø§Ù„Ø¨Ù„Ø¯ÙŠØ©...</option>';
       } else {
         await Locations.loadCommunes(code, communeSelect);
       }
@@ -274,8 +274,8 @@
         const homeData = await homeRes.json();
         const deskData = await deskRes.json();
         
-        document.querySelector('.delivery-option[data-type="home"] .delivery-price').textContent = homeData.is_unavailable ? 'غير متوفر' : money(homeData.price);
-        document.querySelector('.delivery-option[data-type="desk"] .delivery-price').textContent = deskData.is_unavailable ? 'غير متوفر' : money(deskData.price);
+        document.querySelector('.delivery-option[data-type="home"] .delivery-price').textContent = homeData.is_unavailable ? 'ØºÙŠØ± Ù…ØªÙˆÙØ±' : money(homeData.price);
+        document.querySelector('.delivery-option[data-type="desk"] .delivery-price').textContent = deskData.is_unavailable ? 'ØºÙŠØ± Ù…ØªÙˆÙØ±' : money(deskData.price);
         
         const selectedData = CURRENT_DELIVERY_TYPE === 'desk' ? deskData : homeData;
         if (selectedData.is_unavailable) throw new Error('unavailable');
@@ -283,7 +283,7 @@
       } catch (err) {
         const rate = Locations.getRate(code);
         document.querySelectorAll('.delivery-option').forEach((label) => {
-          if (!rate) { label.querySelector('.delivery-price').textContent = '—'; return; }
+          if (!rate) { label.querySelector('.delivery-price').textContent = 'â€”'; return; }
           const price = label.dataset.type === 'desk' ? rate.desk_price : rate.home_price;
           label.querySelector('.delivery-price').textContent = money(price);
         });
@@ -306,7 +306,7 @@
 
     function openCheckout() {
       if (!Cart.get().length) {
-        showToast('السلة فارغة، يرجى إضافة منتج أولاً ⚠️');
+        showToast('Ø§Ù„Ø³Ù„Ø© ÙØ§Ø±ØºØ©ØŒ ÙŠØ±Ø¬Ù‰ Ø¥Ø¶Ø§ÙØ© Ù…Ù†ØªØ¬ Ø£ÙˆÙ„Ø§Ù‹ âš ï¸');
         return;
       }
       closeCart();
@@ -322,7 +322,7 @@
     document.getElementById('cancelCheckout').addEventListener('click', closeCheckout);
     document.getElementById('cancelCheckoutHeader').addEventListener('click', closeCheckout);
 
-    // معالج إرسال الطلب (Submit Order)
+    // Ù…Ø¹Ø§Ù„Ø¬ Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„Ø·Ù„Ø¨ (Submit Order)
     document.getElementById('checkoutForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const form = e.target;
@@ -332,11 +332,11 @@
       const submitBtn = document.getElementById('submitOrderBtn');
       const origText = submitBtn.textContent;
       submitBtn.disabled = true;
-      submitBtn.textContent = 'جارٍ تسجيل الطلب...';
+      submitBtn.textContent = 'Ø¬Ø§Ø±Ù ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø·Ù„Ø¨...';
 
       const storeId = (PRODUCT_DATA && PRODUCT_DATA.user_id) || (Cart.get()[0] && Cart.get()[0].user_id);
       if (!storeId) {
-        errorEl.textContent = 'تعذر تحديد المتجر لهذا الطلب. أعد فتح صفحة المتجر وحاول مرة أخرى.';
+        errorEl.textContent = 'ØªØ¹Ø°Ø± ØªØ­Ø¯ÙŠØ¯ Ø§Ù„Ù…ØªØ¬Ø± Ù„Ù‡Ø°Ø§ Ø§Ù„Ø·Ù„Ø¨. Ø£Ø¹Ø¯ ÙØªØ­ ØµÙØ­Ø© Ø§Ù„Ù…ØªØ¬Ø± ÙˆØ­Ø§ÙˆÙ„ Ù…Ø±Ø© Ø£Ø®Ø±Ù‰.';
         errorEl.classList.remove('hidden');
         submitBtn.disabled = false;
         submitBtn.textContent = origText;
@@ -355,7 +355,7 @@
       };
 
       if (!payload.wilaya_code || !payload.commune) {
-        errorEl.textContent = 'الرجاء اختيار الولاية والبلدية';
+        errorEl.textContent = 'Ø§Ù„Ø±Ø¬Ø§Ø¡ Ø§Ø®ØªÙŠØ§Ø± Ø§Ù„ÙˆÙ„Ø§ÙŠØ© ÙˆØ§Ù„Ø¨Ù„Ø¯ÙŠØ©';
         errorEl.classList.remove('hidden');
         submitBtn.disabled = false;
         submitBtn.textContent = origText;
@@ -369,14 +369,14 @@
           body: JSON.stringify(payload),
         });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'حدث خطأ أثناء إتمام الطلب');
+        if (!res.ok) throw new Error(data.error || 'Ø­Ø¯Ø« Ø®Ø·Ø£ Ø£Ø«Ù†Ø§Ø¡ Ø¥ØªÙ…Ø§Ù… Ø§Ù„Ø·Ù„Ø¨');
 
         Cart.clear();
         closeCheckout();
         form.reset();
         communeSelect.disabled = true;
-        communeSelect.innerHTML = '<option value="">البلدية...</option>';
-        showToast(`تم تسجيل طلبك بنجاح 🎉 رقم الطلب: ${data.order_id}`);
+        communeSelect.innerHTML = '<option value="">Ø§Ù„Ø¨Ù„Ø¯ÙŠØ©...</option>';
+        showToast(`ØªÙ… ØªØ³Ø¬ÙŠÙ„ Ø·Ù„Ø¨Ùƒ Ø¨Ù†Ø¬Ø§Ø­ ðŸŽ‰ Ø±Ù‚Ù… Ø§Ù„Ø·Ù„Ø¨: ${data.order_id}`);
       } catch (err) {
         errorEl.textContent = err.message;
         errorEl.classList.remove('hidden');
@@ -386,7 +386,7 @@
       }
     });
 
-    // ---------- معرض الصور والمُكبِّر ----------
+    // ---------- Ù…Ø¹Ø±Ø¶ Ø§Ù„ØµÙˆØ± ÙˆØ§Ù„Ù…ÙÙƒØ¨ÙÙ‘Ø± ----------
     let GALLERY_IMAGES = [];
     let GALLERY_INDEX = 0;
     let PRODUCT_DATA = null;
@@ -463,7 +463,7 @@
       const params = new URLSearchParams(location.search);
       const slug = params.get('slug');
       const el = document.getElementById('productDetail');
-      if (!slug) { el.innerHTML = '<p class="text-center text-slate-900/40 py-20 font-bold">منتج غير موجود</p>'; return; }
+      if (!slug) { el.innerHTML = '<p class="text-center text-slate-900/40 py-20 font-bold">Ù…Ù†ØªØ¬ ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯</p>'; return; }
 
       const storeId = params.get('store_id');
       const storeSlug = params.get('store_slug');
@@ -472,7 +472,7 @@
       const all = await res.json();
       const product = all[0];
 
-      if (!product) { el.innerHTML = '<p class="text-center text-slate-900/40 py-20 font-bold">منتج غير موجود</p>'; return; }
+      if (!product) { el.innerHTML = '<p class="text-center text-slate-900/40 py-20 font-bold">Ù…Ù†ØªØ¬ ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯</p>'; return; }
       PRODUCT_DATA = product;
       initSocialIcons('socialIconsProductFooter', { storeId: product.user_id });
 
@@ -502,8 +502,8 @@
           <div>
             <div id="mainImageWrap" class="aspect-square bg-gray-200 animate-pulse rounded-2xl overflow-hidden border border-slate-200 relative cursor-zoom-in group shadow-sm">
               <img id="mainProductImage" src="${GALLERY_IMAGES[0]}" class="w-full h-full object-contain p-2 transition-opacity duration-700 opacity-0 ${product.stock <= 0 ? 'grayscale' : ''}"  />
-              ${product.stock <= 0 ? '<span class="absolute top-3 right-3 bg-ink text-white text-xs font-extrabold px-3 py-1.5 rounded-full shadow">نفد المخزون</span>' : ''}
-              <span class="absolute bottom-2 left-2 bg-ink/75 backdrop-blur-sm text-white text-[11px] font-bold px-2.5 py-1 rounded-full pointer-events-none">🔍 اضغط للتكبير</span>
+              ${product.stock <= 0 ? '<span class="absolute top-3 right-3 bg-ink text-white text-xs font-extrabold px-3 py-1.5 rounded-full shadow">Ù†ÙØ¯ Ø§Ù„Ù…Ø®Ø²ÙˆÙ†</span>' : ''}
+              <span class="absolute bottom-2 left-2 bg-ink/75 backdrop-blur-sm text-white text-[11px] font-bold px-2.5 py-1 rounded-full pointer-events-none">ðŸ” Ø§Ø¶ØºØ· Ù„Ù„ØªÙƒØ¨ÙŠØ±</span>
             </div>
             ${thumbsHtml}
           </div>
@@ -517,23 +517,23 @@
               <div class="flex items-center justify-between">
                 <span id="displayPrice" class="price-ticket lg inline-flex font-black">${money(product.price)}</span>
                 ${isWholesale
-                  ? `<span class="text-xs bg-blue-500 text-white font-black px-3 py-1 rounded-full">عبوة (${packQty} قطعة)</span>`
-                  : `<span class="text-xs bg-amber-500 text-white font-black px-3 py-1 rounded-full">قطعة واحدة</span>`
+                  ? `<span class="text-xs bg-blue-500 text-white font-black px-3 py-1 rounded-full">Ø¹Ø¨ÙˆØ© (${packQty} Ù‚Ø·Ø¹Ø©)</span>`
+                  : `<span class="text-xs bg-amber-500 text-white font-black px-3 py-1 rounded-full">Ù‚Ø·Ø¹Ø© ÙˆØ§Ø­Ø¯Ø©</span>`
                 }
               </div>
               ${isWholesale
-                ? `<p class="text-xs font-bold text-slate-900/70">سعر القطعة داخل العبوة: <span class="text-blue-600 font-black">${money(Math.round(product.price / packQty))}</span></p>`
+                ? `<p class="text-xs font-bold text-slate-900/70">Ø³Ø¹Ø± Ø§Ù„Ù‚Ø·Ø¹Ø© Ø¯Ø§Ø®Ù„ Ø§Ù„Ø¹Ø¨ÙˆØ©: <span class="text-blue-600 font-black">${money(Math.round(product.price / packQty))}</span></p>`
                 : ''
               }
             </div>`;
             })()}
             
-            <p class="text-slate-900 font-semibold leading-relaxed mb-6 whitespace-pre-line text-sm bg-white/75 p-4 rounded-2xl border border-slate-200/20 shadow-2xs">${escapeHtml(product.description || 'لا يوجد وصف لهذا المنتج بعد.')}</p>
+            <p class="text-slate-900 font-semibold leading-relaxed mb-6 whitespace-pre-line text-sm bg-white/75 p-4 rounded-2xl border border-slate-200/20 shadow-2xs">${escapeHtml(product.description || 'Ù„Ø§ ÙŠÙˆØ¬Ø¯ ÙˆØµÙ Ù„Ù‡Ø°Ø§ Ø§Ù„Ù…Ù†ØªØ¬ Ø¨Ø¹Ø¯.')}</p>
             
-            <!-- قسم اختيار الألوان والمقاسات التفاعلي -->
+            <!-- Ù‚Ø³Ù… Ø§Ø®ØªÙŠØ§Ø± Ø§Ù„Ø£Ù„ÙˆØ§Ù† ÙˆØ§Ù„Ù…Ù‚Ø§Ø³Ø§Øª Ø§Ù„ØªÙØ§Ø¹Ù„ÙŠ -->
             <div id="variantsContainer" class="space-y-5 mb-6"></div>
 
-            <!-- عداد الكمية + أزرار الشراء الفوري والإضافة للسلة -->
+            <!-- Ø¹Ø¯Ø§Ø¯ Ø§Ù„ÙƒÙ…ÙŠØ© + Ø£Ø²Ø±Ø§Ø± Ø§Ù„Ø´Ø±Ø§Ø¡ Ø§Ù„ÙÙˆØ±ÙŠ ÙˆØ§Ù„Ø¥Ø¶Ø§ÙØ© Ù„Ù„Ø³Ù„Ø© -->
             <div class="mt-auto pt-4 border-t-2 border-slate-200/20 space-y-3">
               ${(() => {
                 const isWholesale = (product.pack_quantity || 1) > 1;
@@ -541,7 +541,7 @@
                 return `
               <div class="flex items-center justify-between gap-3 bg-white border border-slate-200/20 p-3 rounded-xl">
                 <div class="flex items-center gap-2">
-                  <span class="text-xs font-black text-slate-900">${isWholesale ? 'عدد العبوات:' : 'الكمية:'}</span>
+                  <span class="text-xs font-black text-slate-900">${isWholesale ? 'Ø¹Ø¯Ø¯ Ø§Ù„Ø¹Ø¨ÙˆØ§Øª:' : 'Ø§Ù„ÙƒÙ…ÙŠØ©:'}</span>
                   <div class="flex items-center gap-1.5 bg-slate-50-deep border border-slate-200 rounded-lg px-2 py-0.5 shadow-2xs">
                     <button id="qtyDecBtn" class="w-7 h-7 rounded-md font-black text-base flex items-center justify-center hover:bg-slate-50 transition-colors">-</button>
                     <input id="productQtyInput" type="number" min="1" value="1" class="w-10 text-center font-black text-sm text-slate-900 outline-none bg-transparent" />
@@ -550,25 +550,25 @@
                 </div>
                 ${isWholesale ? `
                 <div class="text-left">
-                  <span class="text-[11px] text-slate-900/60 font-bold block">إجمالي القطع في العبوة</span>
-                  <span id="calculatedTotalPieces" class="text-sm font-black text-blue-600">${packQty} قطعة</span>
+                  <span class="text-[11px] text-slate-900/60 font-bold block">Ø¥Ø¬Ù…Ø§Ù„ÙŠ Ø§Ù„Ù‚Ø·Ø¹ ÙÙŠ Ø§Ù„Ø¹Ø¨ÙˆØ©</span>
+                  <span id="calculatedTotalPieces" class="text-sm font-black text-blue-600">${packQty} Ù‚Ø·Ø¹Ø©</span>
                 </div>` : `<div id="calculatedTotalPieces" class="hidden"></div>`}
               </div>
 
               <div class="flex flex-wrap items-center gap-3">
                 <button id="buyNowBtn" class="btn-primary flex-1 py-3.5 px-6 rounded-xl font-black text-base shadow-md flex items-center justify-center gap-2 transition-all active:scale-[0.98] bg-blue-500 text-white" ${product.stock <= 0 ? 'disabled style="opacity:.5;cursor:not-allowed"' : ''}>
-                  <span>⚡</span>
-                  <span>${product.stock <= 0 ? 'غير متوفر حاليًا' : (isWholesale ? 'اطلب الآن (عبوة كاملة)' : 'اطلب الآن ⚡')}</span>
+                  <span>âš¡</span>
+                  <span>${product.stock <= 0 ? 'ØºÙŠØ± Ù…ØªÙˆÙØ± Ø­Ø§Ù„ÙŠÙ‹Ø§' : (isWholesale ? 'Ø§Ø·Ù„Ø¨ Ø§Ù„Ø¢Ù† (Ø¹Ø¨ÙˆØ© ÙƒØ§Ù…Ù„Ø©)' : 'Ø§Ø·Ù„Ø¨ Ø§Ù„Ø¢Ù† âš¡')}</span>
                 </button>
                 <button id="addBtn" class="btn-outline flex-1 py-3.5 px-6 rounded-xl font-black text-base shadow-md flex items-center justify-center gap-2 transition-all active:scale-[0.98]" ${product.stock <= 0 ? 'disabled style="opacity:.5;cursor:not-allowed"' : ''}>
-                  <span>🛒</span>
-                  <span id="addBtnText">${product.stock <= 0 ? 'غير متوفر' : (isWholesale ? 'أضف العبوة للسلة' : 'أضف للسلة')}</span>
+                  <span>ðŸ›’</span>
+                  <span id="addBtnText">${product.stock <= 0 ? 'ØºÙŠØ± Ù…ØªÙˆÙØ±' : (isWholesale ? 'Ø£Ø¶Ù Ø§Ù„Ø¹Ø¨ÙˆØ© Ù„Ù„Ø³Ù„Ø©' : 'Ø£Ø¶Ù Ù„Ù„Ø³Ù„Ø©')}</span>
                 </button>
               </div>`;
               })()}
 
               <div id="productSocialIcons" class="flex gap-2 pt-1"></div>
-              <p id="variantHint" class="text-xs text-rose-700 font-black mt-2 hidden flex items-center gap-1">⚠️ <span id="variantHintText">الرجاء اختيار المواصفات المطلوبة</span></p>
+              <p id="variantHint" class="text-xs text-rose-700 font-black mt-2 hidden flex items-center gap-1">âš ï¸ <span id="variantHintText">Ø§Ù„Ø±Ø¬Ø§Ø¡ Ø§Ø®ØªÙŠØ§Ø± Ø§Ù„Ù…ÙˆØ§ØµÙØ§Øª Ø§Ù„Ù…Ø·Ù„ÙˆØ¨Ø©</span></p>
             </div>
           </div>
         </div>
@@ -577,7 +577,7 @@
       renderMainImage();
       setupVariantSelectors(product);
 
-      // إدارة أزرار عداد الكمية
+      // Ø¥Ø¯Ø§Ø±Ø© Ø£Ø²Ø±Ø§Ø± Ø¹Ø¯Ø§Ø¯ Ø§Ù„ÙƒÙ…ÙŠØ©
       const qtyInput = document.getElementById('productQtyInput');
       const qtyDec = document.getElementById('qtyDecBtn');
       const qtyInc = document.getElementById('qtyIncBtn');
@@ -586,10 +586,10 @@
         const val = parseInt(qtyInput.value, 10) || 1;
         const totalPieces = val * (product.pack_quantity || 1);
         const piecesEl = document.getElementById('calculatedTotalPieces');
-        if (piecesEl) piecesEl.textContent = `${totalPieces} قطعة`;
+        if (piecesEl) piecesEl.textContent = `${totalPieces} Ù‚Ø·Ø¹Ø©`;
       };
 
-      const unitLabel = (product.pack_quantity || 1) > 1 ? 'عبوة' : 'قطعة';
+      const unitLabel = (product.pack_quantity || 1) > 1 ? 'Ø¹Ø¨ÙˆØ©' : 'Ù‚Ø·Ø¹Ø©';
 
       if (qtyDec && qtyInc && qtyInput) {
         qtyDec.addEventListener('click', () => {
@@ -608,7 +608,7 @@
             PRODUCT_QTY = val + 1;
             updatePiecesCount();
           } else {
-            showToast(`الكمية المتوفرة بالمخزون ${maxStock} ${unitLabel} فقط ⚠️`);
+            showToast(`Ø§Ù„ÙƒÙ…ÙŠØ© Ø§Ù„Ù…ØªÙˆÙØ±Ø© Ø¨Ø§Ù„Ù…Ø®Ø²ÙˆÙ† ${maxStock} ${unitLabel} ÙÙ‚Ø· âš ï¸`);
           }
         });
         qtyInput.addEventListener('change', () => {
@@ -617,7 +617,7 @@
           if (val < 1) val = 1;
           if (val > maxStock) {
             val = maxStock;
-            showToast(`الكمية المتوفرة بالمخزون ${maxStock} ${unitLabel} فقط ⚠️`);
+            showToast(`Ø§Ù„ÙƒÙ…ÙŠØ© Ø§Ù„Ù…ØªÙˆÙØ±Ø© Ø¨Ø§Ù„Ù…Ø®Ø²ÙˆÙ† ${maxStock} ${unitLabel} ÙÙ‚Ø· âš ï¸`);
           }
           qtyInput.value = val;
           PRODUCT_QTY = val;
@@ -631,7 +631,7 @@
       });
       enableSwipe(document.getElementById('mainImageWrap'), () => goToImage(GALLERY_INDEX + 1), () => goToImage(GALLERY_INDEX - 1));
 
-      // دالة مساعدة للتحقق من المتغيرات وإضافة الكمية المحددة للسلة
+      // Ø¯Ø§Ù„Ø© Ù…Ø³Ø§Ø¹Ø¯Ø© Ù„Ù„ØªØ­Ù‚Ù‚ Ù…Ù† Ø§Ù„Ù…ØªØºÙŠØ±Ø§Øª ÙˆØ¥Ø¶Ø§ÙØ© Ø§Ù„ÙƒÙ…ÙŠØ© Ø§Ù„Ù…Ø­Ø¯Ø¯Ø© Ù„Ù„Ø³Ù„Ø©
       function handleAddProduct(isDirectCheckout = false) {
         const hint = document.getElementById('variantHint');
         const hintText = document.getElementById('variantHintText');
@@ -642,37 +642,37 @@
           const hasSizes = product.variants.some((v) => v.size);
 
           if (hasColors && !SELECTED_COLOR) {
-            hintText.textContent = 'الرجاء اختيار اللون أولاً';
+            hintText.textContent = 'Ø§Ù„Ø±Ø¬Ø§Ø¡ Ø§Ø®ØªÙŠØ§Ø± Ø§Ù„Ù„ÙˆÙ† Ø£ÙˆÙ„Ø§Ù‹';
             hint.classList.remove('hidden');
             return false;
           }
 
           if (!SELECTED_VARIANT) {
-            hintText.textContent = hasSizes ? 'الرجاء اختيار المقاس أولاً' : 'الرجاء اختيار الخيار المطلوب';
+            hintText.textContent = hasSizes ? 'Ø§Ù„Ø±Ø¬Ø§Ø¡ Ø§Ø®ØªÙŠØ§Ø± Ø§Ù„Ù…Ù‚Ø§Ø³ Ø£ÙˆÙ„Ø§Ù‹' : 'Ø§Ù„Ø±Ø¬Ø§Ø¡ Ø§Ø®ØªÙŠØ§Ø± Ø§Ù„Ø®ÙŠØ§Ø± Ø§Ù„Ù…Ø·Ù„ÙˆØ¨';
             hint.classList.remove('hidden');
             return false;
           }
 
           if (SELECTED_VARIANT.stock <= 0) {
-            showToast(`عذرًا، هذا الخيار (${SELECTED_VARIANT.label || SELECTED_VARIANT.color}) نفد من المخزون ⚠️`);
+            showToast(`Ø¹Ø°Ø±Ù‹Ø§ØŒ Ù‡Ø°Ø§ Ø§Ù„Ø®ÙŠØ§Ø± (${SELECTED_VARIANT.label || SELECTED_VARIANT.color}) Ù†ÙØ¯ Ù…Ù† Ø§Ù„Ù…Ø®Ø²ÙˆÙ† âš ï¸`);
             return false;
           }
 
           const inCart = Cart.get().find((i) => i.id === product.id && i.variant_id === SELECTED_VARIANT.id);
           const currentQty = inCart ? inCart.qty : 0;
           if (currentQty + quantityToAdd > SELECTED_VARIANT.stock) {
-            showToast(`الكمية المتوفرة من "${SELECTED_VARIANT.label || SELECTED_VARIANT.color}" هي ${SELECTED_VARIANT.stock} فقط ⚠️`);
+            showToast(`Ø§Ù„ÙƒÙ…ÙŠØ© Ø§Ù„Ù…ØªÙˆÙØ±Ø© Ù…Ù† "${SELECTED_VARIANT.label || SELECTED_VARIANT.color}" Ù‡ÙŠ ${SELECTED_VARIANT.stock} ÙÙ‚Ø· âš ï¸`);
             return false;
           }
 
           Cart.add(product, quantityToAdd, SELECTED_VARIANT, SELECTED_VARIANT.image || (SELECTED_COLOR ? SELECTED_COLOR.image : null));
           hint.classList.add('hidden');
         } else {
-          // منتج بسيط
+          // Ù…Ù†ØªØ¬ Ø¨Ø³ÙŠØ·
           const inCart = Cart.get().find((i) => i.id === product.id && !i.variant_id);
           const currentQty = inCart ? inCart.qty : 0;
           if (currentQty + quantityToAdd > product.stock) {
-            showToast(`الكمية المتوفرة من هذا المنتج ${product.stock} فقط ⚠️`);
+            showToast(`Ø§Ù„ÙƒÙ…ÙŠØ© Ø§Ù„Ù…ØªÙˆÙØ±Ø© Ù…Ù† Ù‡Ø°Ø§ Ø§Ù„Ù…Ù†ØªØ¬ ${product.stock} ÙÙ‚Ø· âš ï¸`);
             return false;
           }
           Cart.add(product, quantityToAdd);
@@ -681,13 +681,13 @@
         if (isDirectCheckout) {
           openCheckout();
         } else {
-          showToast('تمت إضافة المنتج إلى السلة بنجاح ✅');
+          showToast('ØªÙ…Øª Ø¥Ø¶Ø§ÙØ© Ø§Ù„Ù…Ù†ØªØ¬ Ø¥Ù„Ù‰ Ø§Ù„Ø³Ù„Ø© Ø¨Ù†Ø¬Ø§Ø­ âœ…');
           openCart();
         }
         return true;
       }
 
-      // معالجة زر الإضافة للسلة وزر الشراء الفوري
+      // Ù…Ø¹Ø§Ù„Ø¬Ø© Ø²Ø± Ø§Ù„Ø¥Ø¶Ø§ÙØ© Ù„Ù„Ø³Ù„Ø© ÙˆØ²Ø± Ø§Ù„Ø´Ø±Ø§Ø¡ Ø§Ù„ÙÙˆØ±ÙŠ
       if (product.stock > 0) {
         document.getElementById('addBtn').addEventListener('click', () => handleAddProduct(false));
         document.getElementById('buyNowBtn').addEventListener('click', () => handleAddProduct(true));
@@ -702,7 +702,7 @@
 
     })();
 
-    // ---------- نظام الألوان والمقاسات التفاعلي ----------
+    // ---------- Ù†Ø¸Ø§Ù… Ø§Ù„Ø£Ù„ÙˆØ§Ù† ÙˆØ§Ù„Ù…Ù‚Ø§Ø³Ø§Øª Ø§Ù„ØªÙØ§Ø¹Ù„ÙŠ ----------
     
     // ---------- RELATED PRODUCTS & CATEGORY BAR ----------
     let CURRENT_STORE_ID = null;
@@ -716,12 +716,12 @@
       
       // 1. Similar Products Grid
       container.innerHTML += `
-        <h2 class="font-display text-2xl font-black text-slate-900 mb-6">منتجات مشابهة</h2>
+        <h2 class="font-display text-2xl font-black text-slate-900 mb-6">Ù…Ù†ØªØ¬Ø§Øª Ù…Ø´Ø§Ø¨Ù‡Ø©</h2>
         <div id="similarGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 mb-10">
-          <p class="text-slate-400 font-bold col-span-full text-center py-10">جاري التحميل...</p>
+          <p class="text-slate-400 font-bold col-span-full text-center py-10">Ø¬Ø§Ø±ÙŠ Ø§Ù„ØªØ­Ù…ÙŠÙ„...</p>
         </div>
         
-        <h2 class="font-display text-2xl font-black text-slate-900 mb-4">تصنيفات المتجر</h2>
+        <h2 class="font-display text-2xl font-black text-slate-900 mb-4">ØªØµÙ†ÙŠÙØ§Øª Ø§Ù„Ù…ØªØ¬Ø±</h2>
         <div id="productCategoryNav" class="flex overflow-x-auto gap-2 no-scrollbar pb-4 mb-6"></div>
         <div id="categoryProductsGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6"></div>
       `;
@@ -757,7 +757,7 @@
       if (similar.length) {
         simGrid.innerHTML = similar.map(p => generateProductCardHtml(p)).join('');
       } else {
-        simGrid.innerHTML = '<p class="text-slate-500 font-bold col-span-full text-sm text-center py-10">لا توجد منتجات مشابهة.</p>';
+        simGrid.innerHTML = '<p class="text-slate-500 font-bold col-span-full text-sm text-center py-10">Ù„Ø§ ØªÙˆØ¬Ø¯ Ù…Ù†ØªØ¬Ø§Øª Ù…Ø´Ø§Ø¨Ù‡Ø©.</p>';
       }
 
       
@@ -808,7 +808,7 @@
 
     async function loadCategoryProducts(catId, storeId) {
       const grid = document.getElementById('categoryProductsGrid');
-      grid.innerHTML = '<p class="text-slate-400 font-bold col-span-full text-center py-10">جاري التحميل...</p>';
+      grid.innerHTML = '<p class="text-slate-400 font-bold col-span-full text-center py-10">Ø¬Ø§Ø±ÙŠ Ø§Ù„ØªØ­Ù…ÙŠÙ„...</p>';
       try {
         const storeParam = storeId ? `&store_id=${storeId}` : '';
         const catParam = catId ? `&category_id=${catId}` : '';
@@ -818,7 +818,7 @@
           if (products.length) {
             grid.innerHTML = products.map(p => generateProductCardHtml(p)).join('');
           } else {
-            grid.innerHTML = '<p class="text-slate-500 font-bold col-span-full text-sm text-center py-10">لا توجد منتجات في هذا التصنيف.</p>';
+            grid.innerHTML = '<p class="text-slate-500 font-bold col-span-full text-sm text-center py-10">Ù„Ø§ ØªÙˆØ¬Ø¯ Ù…Ù†ØªØ¬Ø§Øª ÙÙŠ Ù‡Ø°Ø§ Ø§Ù„ØªØµÙ†ÙŠÙ.</p>';
           }
         }
       } catch (e) {}
@@ -849,7 +849,7 @@
         <div class="bg-white rounded-2xl shadow-sm hover:shadow-xl border border-gray-100 transition-all duration-300 overflow-hidden flex flex-col group cursor-pointer" onclick="location.href='${prodUrl.replace(/'/g, "\\'")}'">
           <div class="relative aspect-[4/5] bg-gray-100 overflow-hidden cursor-pointer" onclick="location.href='${prodUrl.replace(/'/g, "\\'")}'">
             <img src="${mainImg}" class="product-img w-full h-full object-cover transition-all duration-700 ${outOfStock ? 'grayscale' : 'group-hover:scale-110'}" />
-            ${outOfStock ? '<span class="absolute top-2 right-2 bg-red-500 text-white text-[10px] font-black px-2 py-1 rounded shadow-sm">نفذت</span>' : ''}
+            ${outOfStock ? '<span class="absolute top-2 right-2 bg-red-500 text-white text-[10px] font-black px-2 py-1 rounded shadow-sm">Ù†ÙØ°Øª</span>' : ''}
             <div class="absolute inset-0 bg-blue-900/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           </div>
           <div class="p-4 flex flex-col gap-2 flex-1">
@@ -863,7 +863,7 @@
                 <span class="text-lg font-black text-blue-600">${money(p.price)}</span>
                 ${p.compare_price > p.price ? `<span class="text-[10px] text-gray-400 font-bold line-through">${money(p.compare_price)}</span>` : ''}
               </div>
-              <button onclick="${outOfStock ? '' : (p.has_variants ? `event.stopPropagation(); location.href='${prodUrl.replace(/'/g, "\\'")}'` : `event.stopPropagation(); Cart.add({id:${p.id}, name:'${escapeHtml(p.name).replace(/'/g,"\\'")}', price:${p.price}, image:'${mainImg.replace(/'/g, "\\'")}'}, 1); showToast('تمت إضافته إلى السلة بنجاح');`)}" class="${outOfStock ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700 shadow-md hover:shadow-lg hover:-translate-y-0.5'} add-to-cart w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300">
+              <button onclick="${outOfStock ? '' : (p.has_variants ? `event.stopPropagation(); location.href='${prodUrl.replace(/'/g, "\\'")}'` : `event.stopPropagation(); Cart.add({id:${p.id}, name:'${escapeHtml(p.name).replace(/'/g,"\\'")}', price:${p.price}, image:'${mainImg.replace(/'/g, "\\'")}'}, 1); showToast('ØªÙ…Øª Ø¥Ø¶Ø§ÙØªÙ‡ Ø¥Ù„Ù‰ Ø§Ù„Ø³Ù„Ø© Ø¨Ù†Ø¬Ø§Ø­');`)}" class="${outOfStock ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700 shadow-md hover:shadow-lg hover:-translate-y-0.5'} add-to-cart w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300">
                 ${outOfStock ? '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>' : '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>'}
               </button>
             </div>
@@ -902,18 +902,18 @@
 
       if (distinctColors.length > 0) {
         container.innerHTML = `
-          <!-- اختيار اللون -->
+          <!-- Ø§Ø®ØªÙŠØ§Ø± Ø§Ù„Ù„ÙˆÙ† -->
           <div class="color-section">
             <div class="flex items-center justify-between mb-2">
-              <span class="text-sm font-black text-slate-900">اللون: <span id="selectedColorName" class="text-forest font-black mr-1 text-base">اختر لونًا</span></span>
+              <span class="text-sm font-black text-slate-900">Ø§Ù„Ù„ÙˆÙ†: <span id="selectedColorName" class="text-forest font-black mr-1 text-base">Ø§Ø®ØªØ± Ù„ÙˆÙ†Ù‹Ø§</span></span>
             </div>
             <div id="colorSwatches" class="flex flex-wrap gap-2.5 items-center"></div>
           </div>
 
-          <!-- اختيار المقاس -->
+          <!-- Ø§Ø®ØªÙŠØ§Ø± Ø§Ù„Ù…Ù‚Ø§Ø³ -->
           <div id="sizeSection" class="size-section">
             <div class="flex items-center justify-between mb-2">
-              <span class="text-sm font-black text-slate-900">المقاس: <span id="selectedSizeName" class="text-forest font-black mr-1 text-base">اختر مقاسًا</span></span>
+              <span class="text-sm font-black text-slate-900">Ø§Ù„Ù…Ù‚Ø§Ø³: <span id="selectedSizeName" class="text-forest font-black mr-1 text-base">Ø§Ø®ØªØ± Ù…Ù‚Ø§Ø³Ù‹Ø§</span></span>
             </div>
             <div id="sizeButtons" class="flex flex-wrap gap-2"></div>
           </div>
@@ -936,7 +936,7 @@
           btn.innerHTML = `
             <span class="w-5 h-5 rounded-full border border-slate-200 shadow-inner shrink-0" style="background-color: ${colorObj.code || '#ddd'}"></span>
             <span class="text-xs font-black text-slate-900">${escapeHtml(colorObj.name)}</span>
-            ${isOutOfStock ? '<span class="text-[10px] text-slate-900 font-bold">(نفد)</span>' : ''}
+            ${isOutOfStock ? '<span class="text-[10px] text-slate-900 font-bold">(Ù†ÙØ¯)</span>' : ''}
           `;
 
           btn.addEventListener('click', () => {
@@ -954,14 +954,14 @@
       } else {
         container.innerHTML = `
           <div>
-            <p class="text-sm font-black text-slate-900 mb-2.5">اختر المقاس / الحجم:</p>
+            <p class="text-sm font-black text-slate-900 mb-2.5">Ø§Ø®ØªØ± Ø§Ù„Ù…Ù‚Ø§Ø³ / Ø§Ù„Ø­Ø¬Ù…:</p>
             <div id="simpleSizeButtons" class="flex flex-wrap gap-2">
               ${variants.map((v) => `
                 <button type="button" class="variant-btn px-4 py-2 rounded-xl border-2 text-sm font-black transition-all ${
                   v.stock <= 0 ? 'opacity-40 cursor-not-allowed border-slate-200/40 bg-slate-50-deep text-slate-900' : 'border-slate-200 hover:border-forest bg-white text-slate-900'
                 }"
                   data-vid="${v.id}" ${v.stock <= 0 ? 'disabled' : ''}>
-                  ${escapeHtml(v.label || v.size || 'خيار')}${v.stock <= 0 ? ' (نفد)' : ''}
+                  ${escapeHtml(v.label || v.size || 'Ø®ÙŠØ§Ø±')}${v.stock <= 0 ? ' (Ù†ÙØ¯)' : ''}
                 </button>
               `).join('')}
             </div>
@@ -984,7 +984,7 @@
 
             const stockEl = document.getElementById('stockAvailability');
             if (stockEl && variant) {
-              stockEl.textContent = `المتوفر في المخزون: ${variant.stock} قطعة`;
+              stockEl.textContent = `Ø§Ù„Ù…ØªÙˆÙØ± ÙÙŠ Ø§Ù„Ù…Ø®Ø²ÙˆÙ†: ${variant.stock} Ù‚Ø·Ø¹Ø©`;
             }
 
             if (variant && variant.image) {
@@ -1030,17 +1030,17 @@
       const sizeWrap = document.getElementById('sizeButtons');
       const sizeLabel = document.getElementById('selectedSizeName');
       sizeWrap.innerHTML = '';
-      sizeLabel.textContent = 'اختر مقاسًا';
+      sizeLabel.textContent = 'Ø§Ø®ØªØ± Ù…Ù‚Ø§Ø³Ù‹Ø§';
 
       const variants = colorObj.variants || [];
       if (!variants.length) {
-        sizeWrap.innerHTML = '<p class="text-xs text-slate-900/40">لا توجد مقاسات مسجلة لهذا اللون</p>';
+        sizeWrap.innerHTML = '<p class="text-xs text-slate-900/40">Ù„Ø§ ØªÙˆØ¬Ø¯ Ù…Ù‚Ø§Ø³Ø§Øª Ù…Ø³Ø¬Ù„Ø© Ù„Ù‡Ø°Ø§ Ø§Ù„Ù„ÙˆÙ†</p>';
         return;
       }
 
       variants.forEach((v) => {
         const isOutOfStock = v.stock <= 0;
-        const sizeText = v.size || v.label || 'مقاس موحد';
+        const sizeText = v.size || v.label || 'Ù…Ù‚Ø§Ø³ Ù…ÙˆØ­Ø¯';
 
         const btn = document.createElement('button');
         btn.type = 'button';
@@ -1053,7 +1053,7 @@
         btn.dataset.size = sizeText;
         if (isOutOfStock) btn.disabled = true;
 
-        btn.innerHTML = `${escapeHtml(sizeText)}${isOutOfStock ? ' <span class="text-[9px] mr-1">(نفد)</span>' : ''}`;
+        btn.innerHTML = `${escapeHtml(sizeText)}${isOutOfStock ? ' <span class="text-[9px] mr-1">(Ù†ÙØ¯)</span>' : ''}`;
 
         btn.addEventListener('click', () => {
           selectSize(v, btn);
@@ -1066,7 +1066,7 @@
       if (firstAvailableSizeBtn) {
         firstAvailableSizeBtn.click();
       } else {
-        document.getElementById('stockAvailability').textContent = 'نفد المخزون من هذا اللون';
+        document.getElementById('stockAvailability').textContent = 'Ù†ÙØ¯ Ø§Ù„Ù…Ø®Ø²ÙˆÙ† Ù…Ù† Ù‡Ø°Ø§ Ø§Ù„Ù„ÙˆÙ†';
       }
     }
 
@@ -1084,11 +1084,11 @@
 
       const stockEl = document.getElementById('stockAvailability');
       if (stockEl) {
-        stockEl.textContent = `المتوفر في المخزون: ${variant.stock} قطعة`;
+        stockEl.textContent = `Ø§Ù„Ù…ØªÙˆÙØ± ÙÙŠ Ø§Ù„Ù…Ø®Ø²ÙˆÙ†: ${variant.stock} Ù‚Ø·Ø¹Ø©`;
       }
       document.getElementById('variantHint').classList.add('hidden');
 
-      // إذا كان للمقاس صورة خاصة منفردة
+      // Ø¥Ø°Ø§ ÙƒØ§Ù† Ù„Ù„Ù…Ù‚Ø§Ø³ ØµÙˆØ±Ø© Ø®Ø§ØµØ© Ù…Ù†ÙØ±Ø¯Ø©
       if (variant.image) {
         renderMainImage(variant.image);
       }
@@ -1098,15 +1098,15 @@
 
   <!-- Bottom Mobile Navbar -->
   
-  <!-- شريط التنقل السفلي للهاتف -->
+  <!-- Ø´Ø±ÙŠØ· Ø§Ù„ØªÙ†Ù‚Ù„ Ø§Ù„Ø³ÙÙ„ÙŠ Ù„Ù„Ù‡Ø§ØªÙ -->
   <nav class="md:hidden bottom-nav fixed bottom-0 left-0 w-full z-40 flex justify-around items-center h-16 shadow-[0_-4px_10px_-1px_rgba(0,0,0,0.05)] bg-white/95 backdrop-blur-md border-t border-slate-200" style="padding-bottom: env(safe-area-inset-bottom);">
     <a href="/" class="flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-blue-600 transition-all relative group">
       <svg class="w-6 h-6 mb-1 transition-transform group-hover:-translate-y-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-      <span class="text-[10px] font-bold opacity-0 group-hover:opacity-100 absolute bottom-1 transition-opacity">الرئيسية</span>
+      <span class="text-[10px] font-bold opacity-0 group-hover:opacity-100 absolute bottom-1 transition-opacity">Ø§Ù„Ø±Ø¦ÙŠØ³ÙŠØ©</span>
     </a>
     <button id="mobileNavCart" class="flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-blue-600 transition-all relative group">
       <svg class="w-6 h-6 mb-1 transition-transform group-hover:-translate-y-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-      <span class="text-[10px] font-bold opacity-0 group-hover:opacity-100 absolute bottom-1 transition-opacity">السلة</span>
+      <span class="text-[10px] font-bold opacity-0 group-hover:opacity-100 absolute bottom-1 transition-opacity">Ø§Ù„Ø³Ù„Ø©</span>
       <span id="bottomCartCount" class="absolute top-2 right-4 bg-red-500 text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center border-2 border-white shadow-sm">0</span>
     </button>
   </nav>
