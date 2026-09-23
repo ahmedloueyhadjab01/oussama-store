@@ -1,7 +1,7 @@
-﻿require('express-async-errors');
+require('express-async-errors');
 process.on('unhandledRejection', (err) => { console.error('Unhandled Rejection:', err); });
 process.on('uncaughtException', (err) => { console.error('Uncaught Exception:', err); process.exit(1); });
-ï»¿require('dotenv').config();
+require('dotenv').config();
 const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
