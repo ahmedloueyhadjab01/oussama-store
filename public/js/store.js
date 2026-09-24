@@ -181,7 +181,6 @@ async function loadProducts() {
   for (const p of products) {
     const outOfStock = p.stock <= 0;
     const card = document.createElement('div');
-      card.onclick = () => location.href = prodUrl;
     card.className = 'bg-white rounded-md shadow-sm hover:shadow-xl border border-gray-100 transition-all duration-300 overflow-hidden flex flex-col group cursor-pointer';
 
     // جمع الألوان الفريدة إن وجدت
@@ -210,6 +209,9 @@ async function loadProducts() {
     const storeParam = CURRENT_STORE_ID ? `&store_id=${CURRENT_STORE_ID}` : '';
     const prodUrl = `/product.html?slug=${encodeURIComponent(p.slug)}${storeParam}`;
 
+    // BUG FIX #1: rely solely on the card-level click handler — no inline onclick inside innerHTML
+    card.onclick = () => location.href = prodUrl;
+
     const isWholesale = p.pack_quantity && Number(p.pack_quantity) > 1;
     const packBadge = isWholesale
       ? `<span class="text-[11px] bg-forest/10 text-forest-dark font-bold px-2 py-0.5 rounded-md">عبوة (${p.pack_quantity} قطعة)</span>`
@@ -219,20 +221,18 @@ async function loadProducts() {
       : '';
     const addBtnLabel = outOfStock
       ? 'غير متوفر حاليًا'
-      : (p.has_variants ? 'اختر الخيارات 📦' : (isWholesale ? 'أضف العبوة للسلة ' : 'أضف للسلة '));
+      : (p.has_variants ? 'اختر الخيارات' : (isWholesale ? 'أضف العبوة للسلة ' : 'أضف للسلة '));
 
-    
-      // Clean SVGs instead of emojis, beautiful blue theme
       const mainImg = p.image || '/img/placeholder.svg';
       card.innerHTML = `
-        <div class="relative aspect-[4/5] bg-gray-100 overflow-hidden cursor-pointer" >
+        <div class="relative aspect-[4/5] bg-gray-100 overflow-hidden">
           <img src="${mainImg}" class="product-img opacity-0 w-full h-full object-cover transition-all duration-700 ${outOfStock ? 'grayscale' : 'group-hover:scale-110'}" />
           ${outOfStock ? '<span class="absolute top-2 right-2 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded shadow-sm">نفد</span>' : ''}
           <div class="absolute inset-0 bg-neutral-900/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         </div>
         <div class="p-4 flex flex-col gap-2 flex-1">
           <div class="flex items-start justify-between gap-2">
-            <h3 class="font-bold text-sm text-gray-900 line-clamp-2 leading-snug cursor-pointer hover:text-neutral-900 transition-colors" >${escapeHtml(p.name)}</h3>
+            <h3 class="font-bold text-sm text-gray-900 line-clamp-2 leading-snug">${escapeHtml(p.name)}</h3>
             ${p.compare_price > p.price ? `<span class="bg-neutral-100 text-neutral-900 text-[9px] font-bold px-1.5 py-0.5 rounded-full shrink-0">-${Math.round((1 - p.price/p.compare_price)*100)}%</span>` : ''}
           </div>
           ${colorDotsHtml ? `<div class="flex items-center gap-1.5 mt-0.5">${colorDotsHtml}</div>` : ''}
@@ -241,7 +241,7 @@ async function loadProducts() {
               <span class="text-lg font-bold text-neutral-900">${money(p.price)}</span>
               ${p.compare_price > p.price ? `<span class="text-[10px] text-gray-400 font-bold line-through">${money(p.compare_price)}</span>` : ''}
             </div>
-            <button class="${outOfStock ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-neutral-900 text-white hover:bg-neutral-800 shadow-md hover:shadow-lg hover:-translate-y-0.5'} add-to-cart w-9 h-9 rounded-md flex items-center justify-center transition-all duration-300">
+            <button class="${outOfStock ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-neutral-900 text-white hover:bg-gold hover:text-neutral-900 shadow-md hover:shadow-lg hover:-translate-y-0.5'} add-to-cart w-9 h-9 rounded-md flex items-center justify-center transition-all duration-300">
               ${outOfStock ? '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>' : '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>'}
             </button>
           </div>
@@ -281,27 +281,27 @@ async function loadProducts() {
         });
       }
     }
-    
+
     let targetContainer = grid;
 
     if (!CURRENT_CATEGORY && !SEARCH_QUERY) {
       let catId = p.category_id || 'other';
       let catName = p.category_name || 'أخرى';
       let catSection = document.getElementById('cat-section-' + catId);
-      
+
       if (!catSection) {
         catSection = document.createElement('div');
         catSection.id = 'cat-section-' + catId;
-        catSection.className = 'col-span-full mb-4 sm:mb-8 bg-white/50 rounded-3xl p-3 sm:p-5 border border-slate-200/50'; 
-        
+        catSection.className = 'col-span-full mb-4 sm:mb-8 bg-white/50 rounded-3xl p-3 sm:p-5 border border-slate-200/50';
+
         catSection.innerHTML = `
           <div class="flex justify-between items-center mb-4 px-1">
             <h2 class="text-lg sm:text-2xl font-bold text-slate-900 flex items-center gap-2">
-              <span class="w-1.5 h-6 sm:h-8 bg-neutral-900 rounded-full inline-block"></span> 
+              <span class="w-1.5 h-6 sm:h-8 bg-neutral-900 rounded-full inline-block"></span>
               ${escapeHtml(catName)}
             </h2>
             <button onclick="CURRENT_CATEGORY='${p.category_id || ''}'; loadProducts(); window.scrollTo(0,0);" class="text-neutral-900 text-xs sm:text-sm font-bold hover:bg-neutral-100 px-3 py-1.5 rounded-full transition-colors flex items-center gap-1">
-              عرض الكل 
+              عرض الكل
               <svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
             </button>
           </div>
@@ -310,7 +310,7 @@ async function loadProducts() {
         `;
         grid.appendChild(catSection);
       }
-      
+
       targetContainer = catSection.querySelector('#cat-slider-' + catId);
       card.className = card.className + ' min-w-[160px] max-w-[160px] sm:min-w-[240px] sm:max-w-[240px] shrink-0 snap-start';
     }
@@ -332,16 +332,16 @@ function showToast(msg, isError = false) {
   const toast = document.createElement('div');
   toast.className = 'transform translate-y-[-100%] opacity-0 transition-all duration-300 bg-neutral-900 text-white px-4 py-3 rounded-md shadow-lg flex items-center gap-3 text-sm font-medium w-full pointer-events-auto';
   if(isError) toast.className = toast.className.replace('bg-neutral-900', 'bg-red-600');
-  
+
   toast.innerHTML = `<svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${isError ? 'M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' : 'M5 13l4 4L19 7'}"></path></svg><span>${msg}</span>`;
-  
+
   container.appendChild(toast);
-  
+
   // Animate in
   requestAnimationFrame(() => {
     toast.classList.remove('translate-y-[-100%]', 'opacity-0');
   });
-  
+
   setTimeout(() => {
     toast.classList.add('translate-y-[-100%]', 'opacity-0');
     setTimeout(() => toast.remove(), 300);
@@ -395,24 +395,19 @@ function renderCartDrawer() {
   document.getElementById('cartTotal').textContent = money(Cart.total());
 }
 
+// BUG FIX #4: open/close cart using Tailwind transform/opacity classes only
 function openCart() {
   renderCartDrawer();
   const drawer = document.getElementById('cartDrawer');
   const overlay = document.getElementById('cartOverlay');
-  if(drawer) drawer.classList.remove('-translate-x-full');
-  if(overlay) {
-    overlay.classList.remove('hidden');
-    setTimeout(() => overlay.classList.remove('opacity-0'), 10);
-  }
+  if (drawer) drawer.classList.remove('-translate-x-full');
+  if (overlay) overlay.classList.remove('opacity-0', 'pointer-events-none');
 }
 function closeCart() {
   const drawer = document.getElementById('cartDrawer');
   const overlay = document.getElementById('cartOverlay');
-  if(drawer) drawer.classList.add('-translate-x-full');
-  if(overlay) {
-    overlay.classList.add('opacity-0');
-    setTimeout(() => overlay.classList.add('hidden'), 300);
-  }
+  if (drawer) drawer.classList.add('-translate-x-full');
+  if (overlay) overlay.classList.add('opacity-0', 'pointer-events-none');
 }
 
 document.getElementById('cartBtn')?.addEventListener('click', openCart);
@@ -472,7 +467,8 @@ document.querySelectorAll('.delivery-option').forEach((label) => {
     updateDeliveryPrices();
   });
 });
-document.querySelector('.delivery-option[data-type="home"]').classList.add('selected');
+// BUG FIX #3: null-guard the top-level delivery option access
+document.querySelector('.delivery-option[data-type="home"]')?.classList.add('selected');
 
 function currentDeliveryPrice() {
   const rate = Locations.getRate(wilayaSelect.value);
@@ -504,7 +500,7 @@ async function updateDeliveryPrices() {
   try {
     const homeRes = await fetch(`/api/shipping/calculate-cost?store_id=${storeId}&wilaya_code=${code}&delivery_type=home&subtotal=${subtotal}`);
     const deskRes = await fetch(`/api/shipping/calculate-cost?store_id=${storeId}&wilaya_code=${code}&delivery_type=desk&subtotal=${subtotal}`);
-    
+
     if (!homeRes.ok || !deskRes.ok) throw new Error('تعذر حساب تكلفة التوصيل');
     const homeData = await homeRes.json();
     const deskData = await deskRes.json();
@@ -513,7 +509,7 @@ async function updateDeliveryPrices() {
       const priceEl = label.querySelector('.delivery-price');
       const isDesk = label.dataset.type === 'desk';
       const data = isDesk ? deskData : homeData;
-      
+
       if (data.is_unavailable) {
         priceEl.innerHTML = '<span class="text-rose-700 font-bold">غير متاح</span>';
       } else if (data.is_free) {
@@ -547,7 +543,7 @@ async function updateDeliveryPrices() {
 function updateGrandTotal() {
   const deliveryFee = CURRENT_DYNAMIC_SHIPPING !== null ? CURRENT_DYNAMIC_SHIPPING : currentDeliveryPrice();
   const grand = Cart.total() + (deliveryFee || 0);
-  document.getElementById('cartTotal').textContent = money(grand);
+  document.getElementById('checkoutGrandTotal').textContent = money(grand);
 }
 
 // ---------- إتمام الطلب ----------
@@ -635,7 +631,7 @@ function handleSearch(value, immediate = false) {
   clearTimeout(searchTimeout);
   const perform = () => {
     SEARCH_QUERY = (value || '').trim();
-    
+
     // مزامنة حقلي البحث على سطح المكتب والموبايل
     const deskInput = document.getElementById('searchInput');
     const mobInput = document.getElementById('searchInputMobile');
@@ -730,4 +726,3 @@ document.getElementById('searchFormMobile')?.addEventListener('submit', (e) => {
     initSocialIcons('socialIconsFooter', { storeId: CURRENT_STORE_ID });
   }
 })();
-

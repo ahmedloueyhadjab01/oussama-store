@@ -1,272 +1,525 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>OVARO | أوفارو</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    body { font-family: 'IBM Plex Sans Arabic', sans-serif; background-color: #fafafa; color: #171717; }
-    .glass-nav { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); border-bottom: 1px solid #e5e5e5; }
-    .bottom-nav { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); border-top: 1px solid #e5e5e5; padding-bottom: env(safe-area-inset-bottom); }
-    .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; color: #737373; transition: all 0.2s; position: relative; }
-    .nav-item:hover, .nav-item.active { color: #171717; }
-    .nav-icon { width: 22px; height: 22px; margin-bottom: 4px; transition: transform 0.2s; }
-    .nav-item:hover .nav-icon { transform: translateY(-2px); }
-    .nav-label { font-size: 10px; font-weight: 500; opacity: 0; transform: translateY(5px); transition: all 0.2s; position: absolute; bottom: 6px; }
-    .nav-item:hover .nav-label, .nav-item:focus .nav-label, .nav-item:active .nav-label { opacity: 1; transform: translateY(0); }
-    .nav-item:hover .nav-icon, .nav-item:focus .nav-icon, .nav-item:active .nav-icon { transform: translateY(-10px); }
-    
-    /* Scrollbar */
-    ::-webkit-scrollbar { width: 4px; height: 4px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #d4d4d4; }
-    ::-webkit-scrollbar-thumb:hover { background: #a3a3a3; }
-    
-    .checkout-modal { background: rgba(255,255,255,0.98); backdrop-filter: blur(10px); }
-    .input-field { width: 100%; padding: 0.8rem 1rem; font-size: 0.95rem; border-radius: 0.375rem; border: 1px solid #e5e5e5; background: #ffffff; color: #171717; outline: none; transition: border-color 0.2s; }
-    .input-field:focus { border-color: #171717; }
-    .btn-primary { background-color: #171717; color: #ffffff; border-radius: 0.375rem; transition: background-color 0.2s; }
-    .btn-primary:hover { background-color: #262626; }
-    .delivery-option.selected { border-color: #171717; background: #f5f5f5; }
-    .cat-btn.dimmed { opacity: 0.5; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ovaro_28 — المنتج</title>
+<link rel="icon" href="/img/favicon.svg">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        ink: '#111827',
+        forest: '#C9A84C',
+        'forest-dark': '#8A6D2F',
+        'sand-deep': '#EFE9DB',
+        terracotta: '#B3402A',
+        'slate-50-deep': '#F8F7F4',
+        gold: '#C9A84C',
+        golddark: '#8A6D2F'
+      },
+      fontFamily: {
+        sans: ['Inter', 'DM Sans', 'Segoe UI', 'Tahoma', 'sans-serif'],
+        display: ['"DM Sans"', 'Inter', 'Segoe UI', 'Tahoma', 'sans-serif']
+      },
+      boxShadow: { '2xs': '0 1px 2px rgba(17,24,39,.05)' }
+    }
+  }
+};
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=DM+Sans:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  html { scroll-behavior: smooth; }
+  body { background: #FAFAFA; color: #111827; font-family: Inter, 'DM Sans', 'Segoe UI', Tahoma, sans-serif; }
+  .glass { background: rgba(255,255,255,.78); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  .btn-primary { background: #111827; color: #fff; font-weight: 700; transition: all .25s; }
+  .btn-primary:hover { background: #C9A84C; color: #111827; }
+  .btn-outline { border: 1.5px solid #111827; color: #111827; background: #fff; transition: all .2s; }
+  .btn-outline:hover { background: #111827; color: #fff; }
+  .price-ticket { color: #8A6D2F; font-size: 1.6rem; font-weight: 800; }
+  .active-cat { background: #111827 !important; color: #fff !important; opacity: 1 !important; }
+  .dimmed { opacity: .5; }
+  .subcat-btn {
+    padding: .35rem 1rem; border-radius: 9999px; font-size: .8rem; font-weight: 700;
+    white-space: nowrap; background: #fff; border: 1.5px solid #e5e7eb; color: #4b5563;
+    transition: all .2s; cursor: pointer;
+  }
+  .subcat-btn:hover { border-color: #111827; color: #111827; }
+  .delivery-option {
+    display: flex; flex-direction: column; gap: .25rem; cursor: pointer;
+    border: 2px solid #e5e7eb; border-radius: .9rem; padding: .8rem;
+    transition: all .2s; background: #fff;
+  }
+  .delivery-option:hover { border-color: #d1d5db; }
+  .delivery-option.selected { border-color: #C9A84C; background: #FBF7EC; }
+</style>
 </head>
-<body class="pb-20 md:pb-0">
+<body class="min-h-screen flex flex-col">
 
-  <!-- Top Announcement Bar -->
-  <div id="socialIconsTopBar" class="flex justify-center gap-6 py-2.5 bg-neutral-900 text-white text-xs tracking-wide"></div>
+<!-- Navbar -->
+<header class="sticky top-0 z-[70] glass border-b border-gray-100">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+    <div class="flex items-center gap-2">
+      <a href="/" class="p-2.5 rounded-full hover:bg-gray-100 transition-colors" aria-label="رجوع للمتجر">
+        <svg class="w-5 h-5 text-ink" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+      </a>
+      <a href="/" class="flex items-center gap-2.5">
+        <img src="/img/logo-ovaro.png" alt="" class="w-8 h-8 rounded-lg object-contain" onerror="this.style.display='none'">
+        <span class="brand-logo font-display font-bold text-xl tracking-tight text-ink">ovaro_28</span>
+      </a>
+    </div>
+    <div class="flex items-center gap-1">
+      <button id="cartBtn" class="relative p-2.5 rounded-full hover:bg-gray-100 transition-colors" aria-label="سلة التسوق">
+        <svg class="w-6 h-6 text-ink" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+        <span id="cartCount" class="absolute -top-0.5 -left-0.5 bg-gold text-ink text-[10px] font-bold min-w-[18px] h-[18px] rounded-full flex items-center justify-center px-1 shadow">0</span>
+      </button>
+      <button id="cartBtnMobile" class="md:hidden relative p-2.5 rounded-full hover:bg-gray-100 transition-colors" aria-label="سلة التسوق">
+        <svg class="w-6 h-6 text-ink" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+        <span id="cartCountMobile" class="absolute -top-0.5 -left-0.5 bg-gold text-ink text-[10px] font-bold min-w-[18px] h-[18px] rounded-full flex items-center justify-center px-1 shadow">0</span>
+      </button>
+    </div>
+  </div>
+</header>
 
-  <!-- Header -->
-  <header class="sticky top-0 z-40 glass-nav">
-    <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between gap-6">
-      
-      <!-- Logo -->
-      <a href="/" class="flex items-center gap-3">
-        <img src="/img/logo-ovaro.png" alt="OVARO" class="w-10 h-10 object-contain rounded-full" />
-        <span class="text-2xl font-bold tracking-[0.2em] text-neutral-900 uppercase">Ovaro</span>
+<!-- Product -->
+<main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 w-full flex-1">
+  <div id="productDetail">
+    <!-- Skeleton while loading -->
+    <div class="grid md:grid-cols-2 gap-8 animate-pulse">
+      <div class="aspect-square bg-gray-200 rounded-2xl"></div>
+      <div class="space-y-4 pt-2">
+        <div class="h-8 bg-gray-200 rounded w-3/4"></div>
+        <div class="h-6 bg-gray-200 rounded w-1/3"></div>
+        <div class="h-24 bg-gray-200 rounded-xl"></div>
+        <div class="h-12 bg-gray-200 rounded-xl"></div>
+        <div class="h-12 bg-gray-200 rounded-xl"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Footer -->
+<footer class="bg-ink text-white mt-16">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-10 flex flex-col sm:flex-row items-center justify-between gap-6">
+    <span class="brand-logo font-display font-bold text-lg">ovaro_28</span>
+    <div id="socialIconsProductFooter" class="flex flex-wrap gap-3 justify-center"></div>
+    <p class="text-xs text-gray-500">جميع الحقوق محفوظة © <span class="brand-logo">ovaro_28</span></p>
+  </div>
+</footer>
+
+<!-- Lightbox -->
+<div id="lightbox" class="hidden fixed inset-0 z-[95] items-center justify-center bg-black/90 p-4">
+  <button id="lightboxClose" class="absolute top-4 right-4 p-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors" aria-label="إغلاق">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+  </button>
+  <button id="lightboxPrev" class="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors" aria-label="السابق">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+  </button>
+  <img id="lightboxImg" src="/img/placeholder.svg" class="max-h-[80vh] max-w-[90vw] object-contain rounded-xl shadow-2xl" alt="">
+  <button id="lightboxNext" class="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors" aria-label="التالي">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+  </button>
+  <span id="lightboxCounter" class="absolute bottom-5 left-1/2 -translate-x-1/2 text-white/80 text-sm font-bold bg-black/40 px-3 py-1 rounded-full"></span>
+</div>
+
+<!-- Success toast -->
+<div id="successToast" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 bg-ink text-white px-6 py-3.5 rounded-full shadow-2xl z-[110] text-sm font-bold whitespace-nowrap max-w-[92vw] overflow-hidden text-ellipsis"></div>
+
+<!-- Cart Overlay + Drawer -->
+<div id="cartOverlay" class="fixed inset-0 bg-black/50 z-[80] opacity-0 pointer-events-none transition-opacity duration-300"></div>
+<aside id="cartDrawer" class="fixed top-0 left-0 h-full w-[22rem] max-w-[92vw] bg-white z-[85] shadow-2xl transform -translate-x-full transition-transform duration-300 flex flex-col">
+  <div class="flex items-center justify-between p-5 border-b border-gray-100">
+    <h2 class="text-lg font-bold text-ink">سلة التسوق</h2>
+    <button id="closeCartBtn" class="p-2 rounded-full hover:bg-gray-100 transition-colors" aria-label="إغلاق">
+      <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+    </button>
+  </div>
+  <div id="cartItems" class="flex-1 overflow-y-auto p-5 space-y-4"></div>
+  <div class="p-5 border-t border-gray-100 bg-white">
+    <div class="flex items-center justify-between mb-4">
+      <span class="text-sm font-bold text-gray-600">الإجمالي</span>
+      <span id="cartTotal" class="text-lg font-bold text-golddark">0 دج</span>
+    </div>
+    <button id="checkoutBtn" class="btn-primary w-full py-3.5 rounded-xl font-bold">إتمام الطلب</button>
+  </div>
+</aside>
+
+<!-- Checkout Modal -->
+<div id="checkoutModal" class="hidden fixed inset-0 z-[90] items-end sm:items-center justify-center">
+  <div class="checkout-overlay absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+  <div class="relative bg-white w-full sm:max-w-lg sm:rounded-2xl rounded-t-3xl max-h-[92vh] overflow-y-auto translate-y-full transition-transform duration-300 shadow-2xl">
+    <div class="flex items-center justify-between p-5 border-b border-gray-100 sticky top-0 bg-white z-10">
+      <h3 class="text-lg font-bold text-ink">إتمام الطلب</h3>
+      <button type="button" id="cancelCheckoutHeader" class="p-2 rounded-full hover:bg-gray-100 transition-colors" aria-label="إغلاق">
+        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+    </div>
+    <form id="checkoutForm" class="p-5 space-y-4">
+      <div>
+        <label class="block text-sm font-bold mb-1.5">الاسم الكامل</label>
+        <input name="customer_name" type="text" required placeholder="مثال: محمد بن علي" class="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-gold transition-colors">
+      </div>
+      <div>
+        <label class="block text-sm font-bold mb-1.5">رقم الهاتف</label>
+        <input id="customerPhone" type="tel" required placeholder="05 / 06 / 07 ..." class="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-gold transition-colors">
+      </div>
+      <div>
+        <label class="block text-sm font-bold mb-1.5">العنوان الكامل</label>
+        <input id="customerAddress" type="text" required placeholder="الحي، الشارع، رقم المنزل..." class="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-gold transition-colors">
+      </div>
+      <div>
+        <label class="block text-sm font-bold mb-1.5">الولاية</label>
+        <select id="customerWilaya" required class="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-gold transition-colors bg-white">
+          <option value="">اختر الولاية...</option>
+        </select>
+        <p id="selectWilayaHint" class="text-xs text-golddark mt-1.5 font-semibold">اختر الولاية لعرض أسعار التوصيل</p>
+      </div>
+      <div id="communeContainer">
+        <label class="block text-sm font-bold mb-1.5">البلدية</label>
+        <select id="customerCommune" required disabled class="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-gold transition-colors bg-white disabled:bg-gray-50 disabled:text-gray-400">
+          <option value="">البلدية...</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-bold mb-2">طريقة التوصيل</label>
+        <div class="grid grid-cols-2 gap-3">
+          <label class="delivery-option selected" data-type="home">
+            <input type="radio" name="delivery_type" value="home" class="sr-only" checked>
+            <span class="flex items-center gap-1.5 text-sm font-bold text-ink">
+              <svg class="w-4 h-4 text-golddark shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+              توصيل للمنزل
+            </span>
+            <span class="delivery-price text-sm font-bold text-golddark">—</span>
+          </label>
+          <label class="delivery-option" data-type="desk">
+            <input type="radio" name="delivery_type" value="desk" class="sr-only">
+            <span class="flex items-center gap-1.5 text-sm font-bold text-ink">
+              <svg class="w-4 h-4 text-golddark shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+              مكتب التوصيل
+            </span>
+            <span class="delivery-price text-sm font-bold text-golddark">—</span>
+          </label>
+        </div>
+      </div>
+      <div class="flex items-center justify-between border-t border-gray-100 pt-4">
+        <span class="font-bold text-sm">الإجمالي مع التوصيل</span>
+        <span id="checkoutGrandTotal" class="font-bold text-golddark text-lg">0 دج</span>
+      </div>
+      <div id="checkoutError" class="hidden text-sm text-red-600 bg-red-50 rounded-xl p-3 font-semibold"></div>
+      <button type="submit" id="submitOrderBtn" class="btn-primary w-full py-3.5 rounded-xl font-bold text-base">تأكيد الطلب</button>
+      <button type="button" id="cancelCheckout" class="w-full py-2.5 rounded-xl font-bold text-gray-500 hover:bg-gray-100 transition-colors text-sm">إلغاء</button>
+    </form>
+  </div>
+</div>
+
+<script src="/js/cart.js"></script>
+<script src="/js/locations.js"></script>
+<script src="/js/social.js"></script>
+<script src="/js/product.js"></script>
+</body>
+</html>
+
+
+
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ovaro_28</title>
+<link rel="icon" href="/img/favicon.svg">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        ink: '#111827',
+        forest: '#C9A84C',
+        'forest-dark': '#8A6D2F',
+        'sand-deep': '#EFE9DB',
+        terracotta: '#B3402A',
+        'slate-50-deep': '#F8F7F4',
+        gold: '#C9A84C',
+        golddark: '#8A6D2F'
+      },
+      fontFamily: {
+        sans: ['Inter', 'DM Sans', 'Segoe UI', 'Tahoma', 'sans-serif'],
+        display: ['"DM Sans"', 'Inter', 'Segoe UI', 'Tahoma', 'sans-serif']
+      },
+      boxShadow: { '2xs': '0 1px 2px rgba(17,24,39,.05)' }
+    }
+  }
+};
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=DM+Sans:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  html { scroll-behavior: smooth; }
+  body { background: #FAFAFA; color: #111827; font-family: Inter, 'DM Sans', 'Segoe UI', Tahoma, sans-serif; }
+  .glass { background: rgba(255,255,255,.78); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* Legacy class compatibility used by store.js / cart rendering */
+  .btn-primary { background: #111827; color: #fff; font-weight: 700; transition: all .25s; }
+  .btn-primary:hover { background: #C9A84C; color: #111827; }
+  .btn-outline { border: 1.5px solid #111827; color: #111827; background: #fff; transition: all .2s; }
+  .btn-outline:hover { background: #111827; color: #fff; }
+  .price-ticket { color: #8A6D2F; font-size: 1.6rem; font-weight: 800; }
+  .active-cat { background: #111827 !important; color: #fff !important; opacity: 1 !important; }
+  .dimmed { opacity: .5; }
+  .subcat-btn {
+    padding: .35rem 1rem; border-radius: 9999px; font-size: .8rem; font-weight: 700;
+    white-space: nowrap; background: #fff; border: 1.5px solid #e5e7eb; color: #4b5563;
+    transition: all .2s; cursor: pointer;
+  }
+  .subcat-btn:hover { border-color: #111827; color: #111827; }
+  .delivery-option {
+    display: flex; flex-direction: column; gap: .25rem; cursor: pointer;
+    border: 2px solid #e5e7eb; border-radius: .9rem; padding: .8rem;
+    transition: all .2s; background: #fff;
+  }
+  .delivery-option:hover { border-color: #d1d5db; }
+  .delivery-option.selected { border-color: #C9A84C; background: #FBF7EC; }
+</style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+<!-- Toasts -->
+<div id="toastContainer" class="fixed top-4 inset-x-0 z-[100] flex flex-col items-center gap-2 px-4 pointer-events-none"></div>
+
+<!-- Navbar -->
+<header class="sticky top-0 z-[70] glass border-b border-gray-100">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="flex items-center justify-between h-16 gap-4">
+      <a href="/" class="flex items-center gap-2.5 shrink-0">
+        <img src="/img/logo-ovaro.png" alt="" class="w-8 h-8 rounded-lg object-contain" onerror="this.style.display='none'">
+        <span class="brand-logo font-display font-bold text-xl tracking-tight text-ink">ovaro_28</span>
       </a>
 
-      <!-- Desktop Search -->
-      <form id="searchFormDesktop" class="hidden md:flex flex-1 max-w-lg relative items-center">
-        <input id="searchInput" type="search" placeholder="ابحث عن منتج..." autocomplete="off" class="w-full pr-4 pl-12 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 rounded-md border border-neutral-200 bg-neutral-50 focus:bg-white focus:border-neutral-900 outline-none transition-all" />
-        <button id="searchBtn" type="button" class="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-900 transition-colors">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+      <form id="searchFormDesktop" class="hidden md:flex flex-1 max-w-md items-center gap-2 bg-gray-100 rounded-full px-4 py-2 transition-colors focus-within:bg-white focus-within:ring-2 focus-within:ring-gold/50">
+        <svg class="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 10.5a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z"></path></svg>
+        <input id="searchInput" type="text" placeholder="ابحث عن منتج، ساعة، عطر..." class="bg-transparent flex-1 text-sm outline-none placeholder:text-gray-400">
+        <button type="button" id="clearSearchBtn" class="hidden text-gray-400 hover:text-gray-700 transition-colors" aria-label="مسح">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+        <button type="submit" id="searchBtn" class="text-golddark hover:text-ink transition-colors" aria-label="بحث">
+          <svg class="w-4 h-4 rtl:-scale-x-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 12h14"></path></svg>
         </button>
       </form>
 
-      <!-- Cart Button -->
-      <button id="cartBtn" class="relative items-center gap-2 px-5 py-2.5 rounded-md text-sm font-medium btn-primary hidden md:flex shadow-sm">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-        <span>السلة</span>
-        <span id="cartCount" class="absolute -top-2 -right-2 bg-neutral-100 text-neutral-900 text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border border-neutral-200">0</span>
-      </button>
+      <div class="flex items-center gap-1">
+        <button id="cartBtn" class="relative p-2.5 rounded-full hover:bg-gray-100 transition-colors" aria-label="سلة التسوق">
+          <svg class="w-6 h-6 text-ink" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+          <span id="cartCount" class="absolute -top-0.5 -left-0.5 bg-gold text-ink text-[10px] font-bold min-w-[18px] h-[18px] rounded-full flex items-center justify-center px-1 shadow">0</span>
+        </button>
+        <button id="cartBtnMobile" class="md:hidden relative p-2.5 rounded-full hover:bg-gray-100 transition-colors" aria-label="سلة التسوق">
+          <svg class="w-6 h-6 text-ink" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+          <span id="cartCountMobile" class="absolute -top-0.5 -left-0.5 bg-gold text-ink text-[10px] font-bold min-w-[18px] h-[18px] rounded-full flex items-center justify-center px-1 shadow">0</span>
+        </button>
+      </div>
     </div>
-  </header>
 
-  <!-- Mobile Search Bar -->
-  <div class="md:hidden px-4 py-3 bg-white border-b border-neutral-100">
-    <form id="searchFormMobile" class="relative">
-      <input id="searchInputMobile" type="search" placeholder="ابحث عن منتج..." autocomplete="off" class="w-full pr-4 pl-10 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 rounded-md border border-neutral-200 bg-neutral-50 focus:bg-white focus:border-neutral-900 outline-none" />
-      <button id="searchBtnMobile" type="button" class="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+    <form id="searchFormMobile" class="md:hidden pb-3 flex items-center gap-2 bg-gray-100 rounded-full px-4 py-2.5">
+      <svg class="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 10.5a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z"></path></svg>
+      <input id="searchInputMobile" type="text" placeholder="ابحث عن منتج..." class="bg-transparent flex-1 text-sm outline-none placeholder:text-gray-400">
+      <button type="button" id="clearSearchBtnMobile" class="hidden text-gray-400" aria-label="مسح">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+      <button type="submit" id="searchBtnMobile" class="text-golddark" aria-label="بحث">
+        <svg class="w-4 h-4 rtl:-scale-x-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 12h14"></path></svg>
       </button>
     </form>
   </div>
+</header>
 
-  <main class="max-w-7xl mx-auto px-4 py-8">
-    
-    <!-- Hero Banner -->
-    <div class="mb-12 rounded-lg bg-neutral-900 text-white overflow-hidden relative min-h-[250px] flex items-center">
-      <div class="absolute inset-0 opacity-20 bg-[url('https://images.pexels.com/photos/3735641/pexels-photo-3735641.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')] bg-cover bg-center mix-blend-overlay"></div>
-      <div class="relative z-10 p-8 md:p-12 max-w-2xl">
-        <span class="text-sm tracking-widest uppercase text-neutral-300 mb-2 block">تسوق الأفضل</span>
-        <h1 class="text-3xl md:text-5xl font-bold leading-tight mb-4 text-white">كل ما تحتاجه،<br>بين يديك</h1>
-        <p class="text-neutral-400 mb-8 max-w-md leading-relaxed text-sm md:text-base">اكتشف تشكيلتنا الواسعة من المنتجات، الملابس، والإكسسوارات. مجموعة مختارة بعناية لتناسب جميع أذواقك وتلبي كافة احتياجاتك اليومية.</p>
-        <button onclick="window.scrollTo({top: document.getElementById('productsGrid').offsetTop - 100, behavior: 'smooth'})" class="bg-white text-neutral-900 px-8 py-3 rounded-md font-medium text-sm hover:bg-neutral-100 transition-colors">
-          تصفح المنتجات
-        </button>
-      </div>
-    </div>
-
-    <!-- Category Navigation -->
-    <div class="mb-10 overflow-x-auto hide-scrollbar">
-      <div id="categoryNav" class="flex items-center gap-3 min-w-max pb-2">
-        <button class="cat-btn active-cat px-5 py-2 rounded-md text-sm font-medium transition-colors bg-neutral-900 text-white" data-cat="">الكل</button>
-      </div>
-      <div id="subCategoryNav" class="hidden flex items-center gap-2 min-w-max pt-3"></div>
-    </div>
-
-    <!-- Products Grid -->
-    <div id="productsGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-      <!-- Products loaded dynamically -->
-    </div>
-    <div id="emptyState" class="hidden text-center text-neutral-500 py-16 text-sm"></div>
-  </main>
-
-  <!-- About Us Section -->
-  <section class="bg-white border-t border-neutral-100 py-16 mt-12">
-    <div class="max-w-4xl mx-auto px-4 text-center">
-      <img src="/img/logo-ovaro.png" alt="OVARO" class="w-16 h-16 mx-auto mb-6 rounded-full" />
-      <h2 class="text-2xl font-bold tracking-widest uppercase text-neutral-900 mb-4">OVARO</h2>
-      <p class="text-neutral-500 leading-relaxed text-sm md:text-base max-w-2xl mx-auto">
-        أوفارو هي وجهتك الأولى للتسوق الشامل. نحن نؤمن بتقديم تشكيلة واسعة ومتنوعة من الأزياء، الإكسسوارات، وأحدث المنتجات التي تواكب تطلعاتك. نسعى دائماً لتقديم أفضل جودة وخامات مميزة لتلبية كافة احتياجاتك اليومية ومنحك تجربة تسوق استثنائية.
-      </p>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer class="border-t border-neutral-200 pt-16 pb-8 bg-neutral-50 text-center md:text-right">
-    <div class="max-w-7xl mx-auto px-4">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-12">
-        <!-- Brand Info -->
-        <div class="flex flex-col items-center md:items-start">
-          <div class="flex items-center gap-3 mb-4">
-            <img src="/img/logo-ovaro.png" alt="OVARO" class="w-10 h-10 rounded-full" />
-            <span class="text-xl font-bold tracking-[0.2em] text-neutral-900 uppercase">Ovaro</span>
-          </div>
-          <p class="text-neutral-500 text-sm leading-relaxed max-w-xs">نقدم لك تشكيلة واسعة من المنتجات المتنوعة بجودة عالية تلبي كل احتياجاتك.</p>
-        </div>
-        
-        <!-- Quick Links -->
-        <div class="flex flex-col items-center md:items-start">
-          <h3 class="text-neutral-900 font-bold mb-4">روابط سريعة</h3>
-          <ul class="space-y-3 text-sm text-neutral-500">
-            <li><a href="/" class="hover:text-neutral-900 transition-colors">الرئيسية</a></li>
-            <li><a href="#" class="hover:text-neutral-900 transition-colors">من نحن</a></li>
-            <li><a href="#" class="hover:text-neutral-900 transition-colors">سياسة الاسترجاع والاستبدال</a></li>
-          </ul>
-        </div>
-        
-        <!-- Contact -->
-        <div class="flex flex-col items-center md:items-start">
-          <h3 class="text-neutral-900 font-bold mb-4">اتصل بنا</h3>
-          <p class="text-neutral-500 text-sm mb-4 leading-relaxed text-center md:text-right">نسعد بتواصلكم معنا، لا تترددوا في مراسلتنا عبر الواتساب أو الإنستغرام:</p>
-          <div id="socialIconsFooter" class="flex flex-wrap gap-4 justify-center md:justify-start"></div>
-        </div>
-      </div>
-      <div class="border-t border-neutral-200 pt-8 text-center">
-        <p class="text-neutral-400 text-xs tracking-wider uppercase">&copy; <span id="currentYear"></span> OVARO STORE. All rights reserved.</p>
-      </div>
-    </div>
-  </footer>
-
-  <!-- Mobile Bottom Nav -->
-  <nav class="md:hidden fixed bottom-0 w-full bottom-nav z-40 flex justify-around items-center h-16 px-2">
-    <a href="/" class="nav-item active">
-      <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-      <span class="nav-label">الرئيسية</span>
-    </a>
-    <button id="cartBtnMobile" class="nav-item">
-      <div class="relative">
-        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-        <span id="cartCountMobile" class="absolute -top-1 -right-2 bg-neutral-900 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">0</span>
-      </div>
-      <span class="nav-label">السلة</span>
+<!-- Hero -->
+<section class="relative overflow-hidden bg-ink">
+  <div class="absolute inset-0" style="background: radial-gradient(ellipse 70% 60% at 85% 0%, rgba(201,168,76,.20), transparent 60%), linear-gradient(160deg, #111827 0%, #0a0d14 100%);"></div>
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 py-24 sm:py-32 text-center">
+    <span class="inline-block text-gold text-[11px] sm:text-xs font-bold tracking-[0.35em] mb-6">OVARO_28</span>
+    <h1 class="font-display text-4xl sm:text-6xl font-bold text-white leading-[1.15] mb-6">كل ما تحتاجه،<br>بجودة تليق بك</h1>
+    <p class="text-gray-300/90 max-w-xl mx-auto mb-10 text-sm sm:text-base leading-relaxed">
+      أزياء رجالية ونسائية، ساعات، عطور، حقائب وإكسسوارات مختارة بعناية.
+      توصيل سريع لجميع الولايات، والدفع عند الاستلام.
+    </p>
+    <button onclick="document.getElementById('productsGrid').scrollIntoView({behavior:'smooth'})"
+      class="bg-gold hover:bg-golddark text-ink font-bold px-10 py-4 rounded-full transition-all duration-300 shadow-lg shadow-gold/20 hover:shadow-xl hover:-translate-y-0.5">
+      تصفح المنتجات
     </button>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="max-w-7xl mx-auto px-4 sm:px-6 -mt-10 relative z-10">
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex items-center gap-4">
+      <span class="w-11 h-11 rounded-xl bg-gold/10 text-golddark flex items-center justify-center shrink-0">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.6a1 1 0 01.9.55L20 12v4a1 1 0 01-1 1h-1m-8 0a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0 2 2 0 00-4 0z"></path></svg>
+      </span>
+      <div><p class="font-bold text-sm text-ink">توصيل لكل الولايات</p><p class="text-xs text-gray-500 mt-0.5">للمنزل أو مكتب التوصيل</p></div>
+    </div>
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex items-center gap-4">
+      <span class="w-11 h-11 rounded-xl bg-gold/10 text-golddark flex items-center justify-center shrink-0">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+      </span>
+      <div><p class="font-bold text-sm text-ink">الدفع عند الاستلام</p><p class="text-xs text-gray-500 mt-0.5">ادفع فقط عند استلام طلبك</p></div>
+    </div>
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex items-center gap-4">
+      <span class="w-11 h-11 rounded-xl bg-gold/10 text-golddark flex items-center justify-center shrink-0">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 4v5h.6a1 1 0 01.9.55L9 12v6a2 2 0 002 2h2a2 2 0 002-2v-4.4a1 1 0 01.2-.6l1.4-1.87a1 1 0 01.8-.4H20V4h-4a8 8 0 00-8 8v0H4z" transform="scale(-1,1) translate(-24,0)"></path></svg>
+      </span>
+      <div><p class="font-bold text-sm text-ink">إرجاع سهل</p><p class="text-xs text-gray-500 mt-0.5">استبدال وإرجاع بدون تعقيد</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- Categories -->
+<section class="max-w-7xl mx-auto px-4 sm:px-6 pt-12">
+  <h2 class="font-display text-xl sm:text-2xl font-bold mb-4">تصفح حسب الفئة</h2>
+  <nav id="categoryNav" class="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+    <button data-cat="" class="cat-btn active-cat px-4 py-1.5 rounded-full text-sm font-bold whitespace-nowrap bg-slate-100 text-slate-600 transition-all">الكل</button>
   </nav>
+  <div id="subCategoryNav" class="hidden flex gap-2 overflow-x-auto no-scrollbar mt-3"></div>
+</section>
 
-  <!-- Cart Drawer -->
-  <div id="cartDrawer" class="fixed inset-y-0 left-0 w-full md:w-96 bg-white shadow-2xl transform -translate-x-full transition-transform duration-300 z-50 flex flex-col">
-    <div class="p-5 border-b border-neutral-100 flex justify-between items-center bg-white">
-      <h2 class="text-lg font-bold text-neutral-900">سلة التسوق</h2>
-      <button id="closeCartBtn" class="text-neutral-400 hover:text-neutral-900 transition-colors p-2">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-      </button>
-    </div>
-    <div id="cartItems" class="flex-1 overflow-y-auto p-5 space-y-4 bg-neutral-50/50"></div>
-    <div class="p-5 border-t border-neutral-100 bg-white">
-      <div class="flex justify-between items-center mb-4">
-        <span class="text-neutral-500 text-sm">المجموع</span>
-        <span id="cartTotal" class="text-xl font-bold text-neutral-900">0 د.ج</span>
-      </div>
-      <button id="checkoutBtn" class="w-full btn-primary py-3.5 text-sm font-medium flex items-center justify-center gap-2">
-        إتمام الطلب
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
-      </button>
-    </div>
-  </div>
-  <div id="cartOverlay" class="fixed inset-0 bg-neutral-900/40 backdrop-blur-sm z-40 hidden opacity-0 transition-opacity duration-300"></div>
+<!-- Products -->
+<main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex-1 w-full">
+  <div id="productsGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6"></div>
+  <div id="emptyState" class="hidden text-center py-24 text-gray-500 font-bold bg-white rounded-2xl border border-gray-100 mt-2"></div>
+</main>
 
-  <!-- Checkout Modal -->
-  <div id="checkoutModal" class="fixed inset-0 z-50 hidden items-end justify-center sm:items-center p-4">
-    <div class="absolute inset-0 bg-neutral-900/40 backdrop-blur-sm checkout-overlay"></div>
-    <div class="relative bg-white rounded-t-2xl sm:rounded-xl w-full max-w-lg overflow-hidden shadow-2xl transform translate-y-full transition-transform duration-300 flex flex-col max-h-[90vh]">
-      <div class="p-5 border-b border-neutral-100 flex justify-between items-center bg-white sticky top-0 z-10">
-        <h2 class="text-lg font-bold text-neutral-900">تأكيد الطلب</h2>
-        <button class="close-checkout text-neutral-400 hover:text-neutral-900 p-2">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-        </button>
+<!-- Footer -->
+<footer class="bg-ink text-white mt-20">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-14 grid grid-cols-1 sm:grid-cols-3 gap-10">
+    <div>
+      <h3 class="font-display font-bold text-lg mb-4 brand-logo">ovaro_28</h3>
+      <p class="text-gray-400 text-sm leading-relaxed">وجهتك الموثوقة للتسوق الإلكتروني في الجزائر. منتجات أصلية، أسعار منافسة، وتوصيل سريع حتى باب المنزل.</p>
+    </div>
+    <div>
+      <h3 class="font-bold text-lg mb-4">روابط سريعة</h3>
+      <ul class="space-y-2.5 text-sm text-gray-400">
+        <li><a href="/" class="hover:text-gold transition-colors">الرئيسية</a></li>
+        <li><a href="#productsGrid" class="hover:text-gold transition-colors">المنتجات</a></li>
+        <li><a href="#productsGrid" class="hover:text-gold transition-colors">الفئات</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3 class="font-bold text-lg mb-4">اتصل بنا</h3>
+      <div class="flex gap-3">
+        <a href="https://wa.me/" target="_blank" rel="noopener" aria-label="واتساب" class="w-10 h-10 rounded-full bg-white/10 hover:bg-gold hover:text-ink flex items-center justify-center transition-all">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.5 14.4c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.5 0 1.47 1.07 2.9 1.22 3.1.15.2 2.1 3.2 5.1 4.49.71.31 1.27.49 1.7.63.72.23 1.37.2 1.88.12.57-.09 1.76-.72 2-1.42.25-.7.25-1.29.17-1.42-.07-.12-.27-.2-.57-.35m-5.42 7.4h-.01a9.87 9.87 0 01-5.03-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.86 9.86 0 01-1.51-5.26c0-5.45 4.44-9.88 9.9-9.88a9.83 9.83 0 016.99 2.9 9.82 9.82 0 012.9 7c0 5.45-4.44 9.88-9.9 9.88m8.42-18.3A11.8 11.8 0 0012.06 0C5.5 0 .16 5.34.16 11.9c0 2.1.55 4.14 1.59 5.95L.06 24l6.3-1.65a11.9 11.9 0 005.68 1.45h.01c6.55 0 11.89-5.34 11.89-11.9 0-3.18-1.24-6.16-3.44-8.4"></path></svg>
+        </a>
+        <a href="https://instagram.com/" target="_blank" rel="noopener" aria-label="إنستغرام" class="w-10 h-10 rounded-full bg-white/10 hover:bg-gold hover:text-ink flex items-center justify-center transition-all">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none"></circle></svg>
+        </a>
       </div>
-      <div class="p-6 overflow-y-auto">
-        <form id="checkoutForm" class="space-y-4">
-          <div>
-            <label class="block text-xs font-medium text-neutral-500 mb-1.5">الاسم الكامل *</label>
-            <input type="text" id="customerName" required class="input-field" placeholder="الاسم واللقب" />
-          </div>
-          <div>
-            <label class="block text-xs font-medium text-neutral-500 mb-1.5">رقم الهاتف *</label>
-            <input type="tel" id="customerPhone" required class="input-field text-left" dir="ltr" placeholder="0550 00 00 00" />
-          </div>
-          <div>
-            <label class="block text-xs font-medium text-neutral-500 mb-1.5">الولاية *</label>
-            <select id="customerWilaya" required class="input-field"><option value="">جاري التحميل...</option></select>
-          </div>
-          <div id="communeContainer" class="hidden">
-            <label class="block text-xs font-medium text-neutral-500 mb-1.5">البلدية *</label>
-            <select id="customerCommune" required class="input-field"><option value="">اختر البلدية...</option></select>
-          </div>
-          <div>
-            <label class="block text-xs font-medium text-neutral-500 mb-1.5">عنوان التوصيل *</label>
-            <textarea id="customerAddress" required rows="2" class="input-field resize-none" placeholder="الشارع، الحي، ورقم المنزل..."></textarea>
-          </div>
-          <div>
-            <label class="block text-xs font-medium text-neutral-500 mb-1.5">طريقة التوصيل *</label>
-            <p id="selectWilayaHint" class="text-xs text-neutral-400 mb-2 hidden">الرجاء اختيار الولاية أولاً لعرض أسعار التوصيل</p>
-            <div class="grid grid-cols-2 gap-3">
-              <label class="delivery-option cursor-pointer flex flex-col items-center gap-1 p-3 rounded-md border border-neutral-200 text-sm" data-type="home">
-                <input type="radio" name="deliveryType" value="home" checked class="hidden" />
-                <span class="font-medium text-neutral-900">توصيل للمنزل</span>
-                <span class="delivery-price text-xs text-neutral-500">—</span>
-              </label>
-              <label class="delivery-option cursor-pointer flex flex-col items-center gap-1 p-3 rounded-md border border-neutral-200 text-sm" data-type="desk">
-                <input type="radio" name="deliveryType" value="desk" class="hidden" />
-                <span class="font-medium text-neutral-900">توصيل لمكتب التوصيل</span>
-                <span class="delivery-price text-xs text-neutral-500">—</span>
-              </label>
-            </div>
-          </div>
-          <div id="checkoutError" class="hidden text-xs text-red-600 bg-red-50 border border-red-200 rounded-md px-3 py-2"></div>
-          <div class="pt-4 border-t border-neutral-100">
-            <div class="flex justify-between text-sm text-neutral-600 mb-2">
-              <span>قيمة المنتجات</span>
-              <span id="summarySubtotal" class="font-medium">0 د.ج</span>
-            </div>
-            <div class="flex justify-between text-sm text-neutral-600 mb-4">
-              <span>تكلفة التوصيل</span>
-              <span id="summaryDelivery" class="font-medium">0 د.ج</span>
-            </div>
-            <div class="flex justify-between text-base font-bold text-neutral-900 pt-3 border-t border-neutral-100">
-              <span>المجموع النهائي</span>
-              <span id="summaryTotal">0 د.ج</span>
-            </div>
-          </div>
-          <button type="submit" id="confirmOrderBtn" class="w-full btn-primary py-3.5 text-sm font-medium mt-4">
-            تأكيد الطلب
-          </button>
-        </form>
-      </div>
+      <div id="socialIconsFooter" class="flex flex-wrap gap-3 mt-4"></div>
     </div>
   </div>
+  <div class="border-t border-white/10 py-5 text-center text-xs text-gray-500">جميع الحقوق محفوظة © <span class="brand-logo">ovaro_28</span></div>
+</footer>
 
-  <div id="toastContainer" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2 w-full max-w-sm px-4 pointer-events-none"></div>
+<!-- Cart Overlay + Drawer -->
+<div id="cartOverlay" class="fixed inset-0 bg-black/50 z-[80] opacity-0 pointer-events-none transition-opacity duration-300"></div>
+<aside id="cartDrawer" class="fixed top-0 left-0 h-full w-[22rem] max-w-[92vw] bg-white z-[85] shadow-2xl transform -translate-x-full transition-transform duration-300 flex flex-col">
+  <div class="flex items-center justify-between p-5 border-b border-gray-100">
+    <h2 class="text-lg font-bold text-ink">سلة التسوق</h2>
+    <button id="closeCartBtn" class="p-2 rounded-full hover:bg-gray-100 transition-colors" aria-label="إغلاق">
+      <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+    </button>
+  </div>
+  <div id="cartItems" class="flex-1 overflow-y-auto p-5 space-y-4"></div>
+  <div class="p-5 border-t border-gray-100 bg-white">
+    <div class="flex items-center justify-between mb-4">
+      <span class="text-sm font-bold text-gray-600">الإجمالي</span>
+      <span id="cartTotal" class="text-lg font-bold text-golddark">0 دج</span>
+    </div>
+    <button id="checkoutBtn" class="btn-primary w-full py-3.5 rounded-xl font-bold">إتمام الطلب</button>
+  </div>
+</aside>
 
-  <script src="/js/locations.js?v=1790291321342"></script>
-  <script src="/js/cart.js?v=1790291321342"></script>
-  <script src="/js/social.js?v=1790291321342"></script>
-  <script src="/js/store.js?v=1790291321342"></script>
+<!-- Checkout Modal -->
+<div id="checkoutModal" class="hidden fixed inset-0 z-[90] items-end sm:items-center justify-center">
+  <div class="checkout-overlay absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+  <div class="relative bg-white w-full sm:max-w-lg sm:rounded-2xl rounded-t-3xl max-h-[92vh] overflow-y-auto translate-y-full transition-transform duration-300 shadow-2xl">
+    <div class="flex items-center justify-between p-5 border-b border-gray-100 sticky top-0 bg-white z-10">
+      <h3 class="text-lg font-bold text-ink">إتمام الطلب</h3>
+      <button type="button" class="close-checkout p-2 rounded-full hover:bg-gray-100 transition-colors" aria-label="إغلاق">
+        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+    </div>
+    <form id="checkoutForm" class="p-5 space-y-4">
+      <div>
+        <label class="block text-sm font-bold mb-1.5">الاسم الكامل</label>
+        <input id="customerName" type="text" required placeholder="مثال: محمد بن علي" class="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-gold transition-colors">
+      </div>
+      <div>
+        <label class="block text-sm font-bold mb-1.5">رقم الهاتف</label>
+        <input id="customerPhone" type="tel" required placeholder="05 / 06 / 07 ..." class="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-gold transition-colors">
+      </div>
+      <div>
+        <label class="block text-sm font-bold mb-1.5">العنوان الكامل</label>
+        <input id="customerAddress" type="text" required placeholder="الحي، الشارع، رقم المنزل..." class="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-gold transition-colors">
+      </div>
+      <div>
+        <label class="block text-sm font-bold mb-1.5">الولاية</label>
+        <select id="customerWilaya" required class="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-gold transition-colors bg-white">
+          <option value="">اختر الولاية...</option>
+        </select>
+        <p id="selectWilayaHint" class="text-xs text-golddark mt-1.5 font-semibold">اختر الولاية لعرض أسعار التوصيل</p>
+      </div>
+      <div id="communeContainer">
+        <label class="block text-sm font-bold mb-1.5">البلدية</label>
+        <select id="customerCommune" required disabled class="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-gold transition-colors bg-white disabled:bg-gray-50 disabled:text-gray-400">
+          <option value="">البلدية...</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-bold mb-2">طريقة التوصيل</label>
+        <div class="grid grid-cols-2 gap-3">
+          <label class="delivery-option selected" data-type="home">
+            <input type="radio" name="delivery_type" value="home" class="sr-only" checked>
+            <span class="flex items-center gap-1.5 text-sm font-bold text-ink">
+              <svg class="w-4 h-4 text-golddark shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+              توصيل للمنزل
+            </span>
+            <span class="delivery-price text-sm font-bold text-golddark">—</span>
+          </label>
+          <label class="delivery-option" data-type="desk">
+            <input type="radio" name="delivery_type" value="desk" class="sr-only">
+            <span class="flex items-center gap-1.5 text-sm font-bold text-ink">
+              <svg class="w-4 h-4 text-golddark shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+              مكتب التوصيل
+            </span>
+            <span class="delivery-price text-sm font-bold text-golddark">—</span>
+          </label>
+        </div>
+      </div>
+      <div class="flex items-center justify-between border-t border-gray-100 pt-4">
+        <span class="font-bold text-sm">الإجمالي مع التوصيل</span>
+        <span id="checkoutGrandTotal" class="font-bold text-golddark text-lg">0 دج</span>
+      </div>
+      <div id="checkoutError" class="hidden text-sm text-red-600 bg-red-50 rounded-xl p-3 font-semibold"></div>
+      <button type="submit" class="btn-primary w-full py-3.5 rounded-xl font-bold text-base">تأكيد الطلب</button>
+      <button type="button" id="cancelCheckout" class="w-full py-2.5 rounded-xl font-bold text-gray-500 hover:bg-gray-100 transition-colors text-sm">إلغاء</button>
+    </form>
+  </div>
+</div>
+
+<script src="/js/locations.js"></script>
+<script src="/js/cart.js"></script>
+<script src="/js/social.js"></script>
+<script src="/js/store.js"></script>
 </body>
 </html>
