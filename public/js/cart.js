@@ -82,6 +82,8 @@ const Cart = {
   updateBadge() {
     const badge = document.getElementById('cartCount');
     if (badge) badge.textContent = this.count();
+    const badgeM = document.getElementById('cartCountMobile');
+    if (badgeM) badgeM.textContent = this.count();
   },
 };
 

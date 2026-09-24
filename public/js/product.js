@@ -62,19 +62,30 @@ if (!found && document.referrer && !sessionStorage.getItem('utm_source')) {
     }
 
     function openCart() {
-      renderCartDrawer();
-      document.getElementById('cartOverlay').classList.remove('hidden');
-      document.getElementById('cartDrawer').classList.add('open');
-    }
+  renderCartDrawer();
+  const drawer = document.getElementById('cartDrawer');
+  const overlay = document.getElementById('cartOverlay');
+  if(drawer) drawer.classList.remove('-translate-x-full');
+  if(overlay) {
+    overlay.classList.remove('hidden');
+    setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+  }
+}
 
     function closeCart() {
-      document.getElementById('cartOverlay').classList.add('hidden');
-      document.getElementById('cartDrawer').classList.remove('open');
-    }
+  const drawer = document.getElementById('cartDrawer');
+  const overlay = document.getElementById('cartOverlay');
+  if(drawer) drawer.classList.add('-translate-x-full');
+  if(overlay) {
+    overlay.classList.add('opacity-0');
+    setTimeout(() => overlay.classList.add('hidden'), 300);
+  }
+}
 
-    document.getElementById('cartBtn').addEventListener('click', openCart);
-    document.getElementById('closeCart').addEventListener('click', closeCart);
-    document.getElementById('cartOverlay').addEventListener('click', closeCart);
+    document.getElementById('cartBtn')?.addEventListener('click', openCart);
+document.getElementById('cartBtnMobile')?.addEventListener('click', openCart);
+document.getElementById('closeCartBtn')?.addEventListener('click', closeCart);
+document.getElementById('cartOverlay')?.addEventListener('click', closeCart);
 
     // ---------- ��Ϭ+�Ϻ+� Ϻ+���+�Ͽ (Checkout Modal) ϻϺϫ+� ��+�ϡϮ Ϻ+�+�+�Ϭϼ ----------
     const wilayaSelect = document.getElementById('wilayaSelect');
@@ -174,11 +185,21 @@ if (!found && document.referrer && !sessionStorage.getItem('utm_source')) {
       }
       closeCart();
       updateGrandTotal();
-      document.getElementById('checkoutOverlay').classList.remove('hidden');
+      const modal = document.getElementById('checkoutModal');
+if(modal) {
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+  setTimeout(() => modal.querySelector('.bg-white').classList.remove('translate-y-full'), 10);
+}
     }
 
     function closeCheckout() {
-      document.getElementById('checkoutOverlay').classList.add('hidden');
+      const modal = document.getElementById('checkoutModal');
+if(modal) {
+  const inner = modal.querySelector('.bg-white');
+  if(inner) inner.classList.add('translate-y-full');
+  setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 300);
+}
     }
 
     document.getElementById('checkoutBtn').addEventListener('click', openCheckout);
@@ -189,7 +210,7 @@ if (!found && document.referrer && !sessionStorage.getItem('utm_source')) {
     document.getElementById('checkoutForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const form = e.target;
-      const errorEl = document.getElementById('checkoutError');
+      const errorEl = document.getElementById('checkoutError') || document.createElement('div');
       errorEl.classList.add('hidden');
 
       const submitBtn = document.getElementById('submitOrderBtn');
@@ -206,9 +227,9 @@ if (!found && document.referrer && !sessionStorage.getItem('utm_source')) {
         return;
       }
       const payload = {
-        customer_name: form.customer_name.value.trim(),
-        phone: form.phone.value.trim(),
-        address: form.address.value.trim(),
+        customer_name: document.getElementById('customerName').value.trim(),
+        phone: document.getElementById('customerPhone').value.trim(),
+        address: document.getElementById('customerAddress').value.trim(),
         wilaya_code: Number(wilayaSelect.value),
         commune: communeSelect.value.trim(),
         delivery_type: CURRENT_DELIVERY_TYPE,

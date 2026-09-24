@@ -164,7 +164,7 @@ async function loadProducts() {
     CURRENT_STORE_ID = products[0].user_id;
   }
 
-  const empty = document.getElementById('emptyState');
+  const empty = document.getElementById('emptyState') || document.createElement('div');
   grid.innerHTML = '';
 
   if (!products.length) {
@@ -352,14 +352,14 @@ function showToast(msg, isError = false) {
 function updateCartCount() {
   const count = Cart.get().reduce((acc, i) => acc + i.qty, 0);
   document.getElementById('cartCount').textContent = count;
-  const bcc = document.getElementById('bottomCartCount');
+  const bcc = document.getElementById('cartCountMobile');
   if (bcc) bcc.textContent = count;
 }
 
 function renderCartDrawer() {
   updateCartCount();
   const items = Cart.get();
-  const container = document.getElementById('cartItemsList');
+  const container = document.getElementById('cartItems');
   container.innerHTML = '';
 
   if (!items.length) {
@@ -397,20 +397,57 @@ function renderCartDrawer() {
 
 function openCart() {
   renderCartDrawer();
-  document.getElementById('checkoutOverlay' /* renamed overlay */).classList.remove('hidden');
-  document.getElementById('cartDrawer').classList.add('open');
+  const drawer = document.getElementById('cartDrawer');
+  const overlay = document.getElementById('cartOverlay');
+  if(drawer) drawer.classList.remove('-translate-x-full');
+  if(overlay) {
+    overlay.classList.remove('hidden');
+    setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+  }
 }
 function closeCart() {
-  document.getElementById('checkoutOverlay' /* renamed overlay */).classList.add('hidden');
-  document.getElementById('cartDrawer').classList.remove('open');
+  const drawer = document.getElementById('cartDrawer');
+  const overlay = document.getElementById('cartOverlay');
+  if(drawer) drawer.classList.add('-translate-x-full');
+  if(overlay) {
+    overlay.classList.add('opacity-0');
+    setTimeout(() => overlay.classList.add('hidden'), 300);
+  }
 }
 
 document.getElementById('cartBtn')?.addEventListener('click', openCart);
-document.getElementById('closeCart')?.addEventListener('click', closeCart);
-document.getElementById('checkoutOverlay' /* renamed overlay */).addEventListener('click', closeCart);
+document.getElementById('cartBtnMobile')?.addEventListener('click', openCart);
+document.getElementById('closeCartBtn')?.addEventListener('click', closeCart);
+document.getElementById('cartOverlay')?.addEventListener('click', closeCart);
 
-// ---------- إتمام الطلب: الولاية / البلدية / نوع التوصيل ----------
-const wilayaSelect = document.getElementById('custWilaya');
+// Checkout modal open logic
+document.getElementById('checkoutBtn')?.addEventListener('click', () => {
+  if (!Cart.get().length) return;
+  closeCart();
+  const modal = document.getElementById('checkoutModal');
+  if(modal) {
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    setTimeout(() => modal.querySelector('.bg-white').classList.remove('translate-y-full'), 10);
+  }
+  updateGrandTotal();
+});
+
+// Checkout modal close logic
+document.querySelectorAll('.close-checkout, .checkout-overlay').forEach(el => {
+  el.addEventListener('click', () => {
+    const modal = document.getElementById('checkoutModal');
+    if(modal) {
+      modal.querySelector('.bg-white').classList.add('translate-y-full');
+      setTimeout(() => {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }, 300);
+    }
+  });
+});
+
+  const wilayaSelect = document.getElementById('custWilaya');
 const communeSelect = document.getElementById('custCommune');
 
 Locations.loadWilayas(wilayaSelect);
@@ -521,13 +558,18 @@ document.getElementById('checkoutBtn')?.addEventListener('click', () => {
   document.getElementById('checkoutOverlay').classList.remove('hidden');
 });
 document.getElementById('cancelCheckout')?.addEventListener('click', () => {
-  document.getElementById('checkoutOverlay').classList.add('hidden');
+  const modal = document.getElementById('checkoutModal');
+if(modal) {
+  const inner = modal.querySelector('.bg-white');
+  if(inner) inner.classList.add('translate-y-full');
+  setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 300);
+}
 });
 
 document.getElementById('checkoutForm')?.addEventListener('submit', async (e) => {
   e.preventDefault();
   const form = e.target;
-  const errorEl = document.getElementById('checkoutError' /* */);
+  const errorEl = document.getElementById('checkoutError') || document.createElement('div');
   errorEl.classList.add('hidden');
 
   const submitBtn = form.querySelector('button[type="submit"]');
@@ -539,9 +581,9 @@ document.getElementById('checkoutForm')?.addEventListener('submit', async (e) =>
 
   const storeId = CURRENT_STORE_ID || (Cart.get()[0] && Cart.get()[0].user_id) || 1;
   const payload = {
-    customer_name: form.customer_name.value.trim(),
-    phone: form.phone.value.trim(),
-    address: form.address.value.trim(),
+    customer_name: document.getElementById('customerName').value.trim(),
+    phone: document.getElementById('customerPhone').value.trim(),
+    address: document.getElementById('customerAddress').value.trim(),
     wilaya_code: Number(wilayaSelect.value),
     commune: (communeSelect ? communeSelect.value : '').trim(),
     delivery_type: CURRENT_DELIVERY_TYPE,
@@ -571,7 +613,12 @@ document.getElementById('checkoutForm')?.addEventListener('submit', async (e) =>
 
     Cart.clear();
     renderCartDrawer();
-    document.getElementById('checkoutOverlay').classList.add('hidden');
+    const modal = document.getElementById('checkoutModal');
+if(modal) {
+  const inner = modal.querySelector('.bg-white');
+  if(inner) inner.classList.add('translate-y-full');
+  setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 300);
+}
     form.reset();
     if(communeSelect) communeSelect.disabled = true;
     if(communeSelect) communeSelect.innerHTML = '<option value="">البلدية...</option>';
