@@ -1,4 +1,6 @@
-<!DOCTYPE html>
+const fs = require('fs');
+
+const indexHtml = `<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
@@ -250,3 +252,7 @@
   <script src="/js/store.js"></script>
 </body>
 </html>
+`;
+
+fs.writeFileSync('public/index.html', indexHtml, 'utf8');
+console.log('index.html updated successfully.');

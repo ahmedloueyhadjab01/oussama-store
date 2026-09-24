@@ -1,4 +1,6 @@
-<!DOCTYPE html>
+const fs = require('fs');
+
+const productHtml = `<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
@@ -42,7 +44,89 @@
   </header>
 
   <!-- Main Content -->
-  <main id='productDetail' class='max-w-7xl mx-auto px-4 py-8 md:py-12'></main>
+  <main class="max-w-7xl mx-auto px-4 py-8 md:py-12">
+    <button onclick="history.back()" class="flex items-center gap-2 text-sm font-medium text-neutral-500 hover:text-neutral-900 transition-colors mb-6">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+      عودة
+    </button>
+
+    <div id="loading" class="flex justify-center items-center py-20">
+      <div class="w-8 h-8 border-2 border-neutral-200 border-t-neutral-900 rounded-full animate-spin"></div>
+    </div>
+    
+    <div id="error" class="hidden text-center py-20 text-red-500 font-medium"></div>
+
+    <div id="productContent" class="hidden flex-col md:flex-row gap-8 lg:gap-16">
+      <!-- Gallery -->
+      <div class="w-full md:w-1/2">
+        <div class="aspect-[4/5] bg-neutral-50 rounded-lg overflow-hidden mb-4 relative group">
+          <img id="mainImage" src="" class="w-full h-full object-cover" />
+          <div id="videoContainer" class="absolute inset-0 bg-black hidden"></div>
+        </div>
+        <div id="thumbnails" class="flex gap-3 overflow-x-auto hide-scrollbar pb-2"></div>
+      </div>
+
+      <!-- Details -->
+      <div class="w-full md:w-1/2 flex flex-col">
+        <span id="productCategory" class="text-xs font-bold tracking-widest text-neutral-400 uppercase mb-2"></span>
+        <h1 id="productTitle" class="text-2xl md:text-3xl font-bold text-neutral-900 leading-tight mb-4"></h1>
+        
+        <div class="flex items-end gap-3 mb-8 pb-8 border-b border-neutral-100">
+          <span id="productPrice" class="text-3xl font-bold text-neutral-900"></span>
+          <span id="comparePrice" class="text-lg text-neutral-400 line-through mb-1"></span>
+          <span id="discountBadge" class="hidden bg-neutral-100 text-neutral-900 text-xs font-bold px-2 py-1 rounded-md mb-1.5 ml-2"></span>
+        </div>
+
+        <div id="variantsContainer" class="mb-8 hidden">
+          <h3 class="text-sm font-bold text-neutral-900 mb-3 uppercase tracking-wider">المقاس / اللون</h3>
+          <div id="variantsList" class="flex flex-wrap gap-2"></div>
+        </div>
+
+        <!-- Quantity & Add to Cart -->
+        <div class="flex flex-col sm:flex-row gap-4 mb-8">
+          <div class="flex items-center border border-neutral-200 rounded-md bg-white w-full sm:w-32 shrink-0">
+            <button id="qtyMinus" class="w-10 h-12 flex items-center justify-center text-neutral-500 hover:text-neutral-900 transition-colors">−</button>
+            <input type="number" id="qtyInput" value="1" min="1" class="w-full h-12 text-center font-medium text-neutral-900 border-none outline-none appearance-none bg-transparent" readonly />
+            <button id="qtyPlus" class="w-10 h-12 flex items-center justify-center text-neutral-500 hover:text-neutral-900 transition-colors">+</button>
+          </div>
+          <button id="addToCartBtn" class="flex-1 btn-primary py-3.5 px-6 font-medium text-sm w-full flex justify-center items-center gap-2">
+            إضافة إلى السلة
+          </button>
+        </div>
+
+        <!-- Stock Status -->
+        <div id="stockStatus" class="flex items-center gap-2 text-sm mb-8"></div>
+
+        <!-- Features/Assurance -->
+        <div class="grid grid-cols-2 gap-4 py-6 border-y border-neutral-100 mb-8">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-neutral-50 flex items-center justify-center text-neutral-900">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <div class="text-xs">
+              <p class="font-bold text-neutral-900">توصيل سريع</p>
+              <p class="text-neutral-500 mt-0.5">خلال 24-48 ساعة</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-neutral-50 flex items-center justify-center text-neutral-900">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+            </div>
+            <div class="text-xs">
+              <p class="font-bold text-neutral-900">دفع آمن</p>
+              <p class="text-neutral-500 mt-0.5">الدفع عند الاستلام</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div>
+          <h3 class="text-sm font-bold text-neutral-900 mb-4 uppercase tracking-wider">تفاصيل المنتج</h3>
+          <div id="productDescription" class="prose prose-sm text-neutral-500 leading-relaxed max-w-none"></div>
+        </div>
+      </div>
+    </div>
+  </main>
 
   <!-- Cart Drawer -->
   <div id="cartDrawer" class="fixed inset-y-0 left-0 w-full md:w-96 bg-white shadow-2xl transform -translate-x-full transition-transform duration-300 z-50 flex flex-col">
@@ -148,3 +232,7 @@
   <script src="/js/product.js"></script>
 </body>
 </html>
+`;
+
+fs.writeFileSync('public/product.html', productHtml, 'utf8');
+console.log('product.html updated successfully.');

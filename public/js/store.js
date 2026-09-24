@@ -138,7 +138,7 @@ async function loadProducts() {
   const grid = document.getElementById('productsGrid');
   if (grid) {
     grid.innerHTML = Array(8).fill(`
-      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col animate-pulse">
+      <div class="bg-white rounded-md shadow-sm border border-gray-100 overflow-hidden flex flex-col animate-pulse">
         <div class="aspect-[4/5] bg-gray-200"></div>
         <div class="p-4 flex flex-col gap-2">
           <div class="h-4 bg-gray-200 rounded w-3/4"></div>
@@ -182,7 +182,7 @@ async function loadProducts() {
     const outOfStock = p.stock <= 0;
     const card = document.createElement('div');
       card.onclick = () => location.href = prodUrl;
-    card.className = 'bg-white rounded-2xl shadow-sm hover:shadow-xl border border-gray-100 transition-all duration-300 overflow-hidden flex flex-col group cursor-pointer';
+    card.className = 'bg-white rounded-md shadow-sm hover:shadow-xl border border-gray-100 transition-all duration-300 overflow-hidden flex flex-col group cursor-pointer';
 
     // جمع الألوان الفريدة إن وجدت
     let colorDotsHtml = '';
@@ -201,7 +201,7 @@ async function loadProducts() {
             ${distinctColors.slice(0, 5).map(c => `
               <span class="w-3.5 h-3.5 rounded-full border-2 border-ink shadow-xs inline-block" title="${escapeHtml(c.color)}" style="background-color: ${c.color_code || '#ddd'}"></span>
             `).join('')}
-            ${distinctColors.length > 5 ? `<span class="text-[10px] text-ink font-black">+${distinctColors.length - 5}</span>` : ''}
+            ${distinctColors.length > 5 ? `<span class="text-[10px] text-ink font-bold">+${distinctColors.length - 5}</span>` : ''}
           </div>
         `;
       }
@@ -212,14 +212,14 @@ async function loadProducts() {
 
     const isWholesale = p.pack_quantity && Number(p.pack_quantity) > 1;
     const packBadge = isWholesale
-      ? `<span class="text-[11px] bg-forest/10 text-forest-dark font-black px-2 py-0.5 rounded-md">عبوة (${p.pack_quantity} قطعة)</span>`
-      : `<span class="text-[11px] bg-sand-deep text-ink/70 font-black px-2 py-0.5 rounded-md">قطعة واحدة</span>`;
+      ? `<span class="text-[11px] bg-forest/10 text-forest-dark font-bold px-2 py-0.5 rounded-md">عبوة (${p.pack_quantity} قطعة)</span>`
+      : `<span class="text-[11px] bg-sand-deep text-ink/70 font-bold px-2 py-0.5 rounded-md">قطعة واحدة</span>`;
     const perPieceText = isWholesale
       ? `<span class="text-[10px] text-ink/60 font-bold">سعر القطعة: ${money(Math.round(p.price / p.pack_quantity))}</span>`
       : '';
     const addBtnLabel = outOfStock
       ? 'غير متوفر حاليًا'
-      : (p.has_variants ? 'اختر الخيارات 📦' : (isWholesale ? 'أضف العبوة للسلة 🛒' : 'أضف للسلة 🛒'));
+      : (p.has_variants ? 'اختر الخيارات 📦' : (isWholesale ? 'أضف العبوة للسلة ' : 'أضف للسلة '));
 
     
       // Clean SVGs instead of emojis, beautiful blue theme
@@ -227,21 +227,21 @@ async function loadProducts() {
       card.innerHTML = `
         <div class="relative aspect-[4/5] bg-gray-100 overflow-hidden cursor-pointer" onclick="location.href='/product.html?id=${p.id}'">
           <img src="${mainImg}" class="product-img opacity-0 w-full h-full object-cover transition-all duration-700 ${outOfStock ? 'grayscale' : 'group-hover:scale-110'}" />
-          ${outOfStock ? '<span class="absolute top-2 right-2 bg-red-500 text-white text-[10px] font-black px-2 py-1 rounded shadow-sm">نفد</span>' : ''}
-          <div class="absolute inset-0 bg-blue-900/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          ${outOfStock ? '<span class="absolute top-2 right-2 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded shadow-sm">نفد</span>' : ''}
+          <div class="absolute inset-0 bg-neutral-900/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         </div>
         <div class="p-4 flex flex-col gap-2 flex-1">
           <div class="flex items-start justify-between gap-2">
-            <h3 class="font-black text-sm text-gray-900 line-clamp-2 leading-snug cursor-pointer hover:text-blue-600 transition-colors" onclick="location.href='/product.html?id=${p.id}'">${escapeHtml(p.name)}</h3>
-            ${p.compare_price > p.price ? `<span class="bg-blue-50 text-blue-600 text-[9px] font-black px-1.5 py-0.5 rounded-full shrink-0">-${Math.round((1 - p.price/p.compare_price)*100)}%</span>` : ''}
+            <h3 class="font-bold text-sm text-gray-900 line-clamp-2 leading-snug cursor-pointer hover:text-neutral-900 transition-colors" onclick="location.href='/product.html?id=${p.id}'">${escapeHtml(p.name)}</h3>
+            ${p.compare_price > p.price ? `<span class="bg-neutral-100 text-neutral-900 text-[9px] font-bold px-1.5 py-0.5 rounded-full shrink-0">-${Math.round((1 - p.price/p.compare_price)*100)}%</span>` : ''}
           </div>
           ${colorDotsHtml ? `<div class="flex items-center gap-1.5 mt-0.5">${colorDotsHtml}</div>` : ''}
           <div class="mt-auto pt-2 flex items-center justify-between">
             <div class="flex flex-col">
-              <span class="text-lg font-black text-blue-600">${money(p.price)}</span>
+              <span class="text-lg font-bold text-neutral-900">${money(p.price)}</span>
               ${p.compare_price > p.price ? `<span class="text-[10px] text-gray-400 font-bold line-through">${money(p.compare_price)}</span>` : ''}
             </div>
-            <button onclick="${outOfStock ? '' : `addToCart(${p.id}, '${escapeHtml(p.name).replace(/'/g,"\\'")}', ${p.price}, '${mainImg}')`}" class="${outOfStock ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700 shadow-md hover:shadow-lg hover:-translate-y-0.5'} add-to-cart w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300">
+            <button onclick="${outOfStock ? '' : `addToCart(${p.id}, '${escapeHtml(p.name).replace(/'/g,"\\'")}', ${p.price}, '${mainImg}')`}" class="${outOfStock ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-neutral-900 text-white hover:bg-neutral-800 shadow-md hover:shadow-lg hover:-translate-y-0.5'} add-to-cart w-9 h-9 rounded-md flex items-center justify-center transition-all duration-300">
               ${outOfStock ? '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>' : '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>'}
             </button>
           </div>
@@ -272,11 +272,11 @@ async function loadProducts() {
           const inCart = Cart.get().find((i) => i.id === p.id && !i.variant_id);
           const currentQty = inCart ? inCart.qty : 0;
           if (currentQty + 1 > p.stock) {
-            showToast(`الكمية المتوفرة من هذا المنتج ${p.stock} فقط ⚠️`);
+            showToast(`الكمية المتوفرة من هذا المنتج ${p.stock} فقط `);
             return;
           }
           Cart.add(p, 1);
-          showToast('تمت إضافة المنتج إلى السلة ✅');
+          showToast('تمت إضافة المنتج إلى السلة ');
           openCart();
         });
       }
@@ -296,11 +296,11 @@ async function loadProducts() {
         
         catSection.innerHTML = `
           <div class="flex justify-between items-center mb-4 px-1">
-            <h2 class="text-lg sm:text-2xl font-black text-slate-900 flex items-center gap-2">
-              <span class="w-1.5 h-6 sm:h-8 bg-blue-600 rounded-full inline-block"></span> 
+            <h2 class="text-lg sm:text-2xl font-bold text-slate-900 flex items-center gap-2">
+              <span class="w-1.5 h-6 sm:h-8 bg-neutral-900 rounded-full inline-block"></span> 
               ${escapeHtml(catName)}
             </h2>
-            <button onclick="CURRENT_CATEGORY='${p.category_id || ''}'; loadProducts(); window.scrollTo(0,0);" class="text-blue-600 text-xs sm:text-sm font-bold hover:bg-blue-50 px-3 py-1.5 rounded-full transition-colors flex items-center gap-1">
+            <button onclick="CURRENT_CATEGORY='${p.category_id || ''}'; loadProducts(); window.scrollTo(0,0);" class="text-neutral-900 text-xs sm:text-sm font-bold hover:bg-neutral-100 px-3 py-1.5 rounded-full transition-colors flex items-center gap-1">
               عرض الكل 
               <svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
             </button>
@@ -326,11 +326,26 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
-function showToast(msg) {
-  const toast = document.getElementById('successToast');
-  toast.textContent = msg;
-  toast.classList.remove('hidden');
-  setTimeout(() => toast.classList.add('hidden'), 2200);
+function showToast(msg, isError = false) {
+  const container = document.getElementById('toastContainer');
+  if(!container) return;
+  const toast = document.createElement('div');
+  toast.className = 'transform translate-y-[-100%] opacity-0 transition-all duration-300 bg-neutral-900 text-white px-4 py-3 rounded-md shadow-lg flex items-center gap-3 text-sm font-medium w-full pointer-events-auto';
+  if(isError) toast.className = toast.className.replace('bg-neutral-900', 'bg-red-600');
+  
+  toast.innerHTML = `<svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${isError ? 'M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' : 'M5 13l4 4L19 7'}"></path></svg><span>${msg}</span>`;
+  
+  container.appendChild(toast);
+  
+  // Animate in
+  requestAnimationFrame(() => {
+    toast.classList.remove('translate-y-[-100%]', 'opacity-0');
+  });
+  
+  setTimeout(() => {
+    toast.classList.add('translate-y-[-100%]', 'opacity-0');
+    setTimeout(() => toast.remove(), 300);
+  }, 2500);
 }
 
 // ---------- سلة التسوق (Drawer) ----------
@@ -348,7 +363,7 @@ function renderCartDrawer() {
   container.innerHTML = '';
 
   if (!items.length) {
-    container.innerHTML = '<p class="text-center text-ink font-black mt-10 text-base">السلة فارغة</p>';
+    container.innerHTML = '<p class="text-center text-ink font-bold mt-10 text-base">السلة فارغة</p>';
     document.getElementById('cartTotal').textContent = money(0);
     return;
   }
@@ -360,16 +375,16 @@ function renderCartDrawer() {
     row.innerHTML = `
       <img src="${item.image || '/img/placeholder.svg'}" class="w-14 h-14 object-cover rounded-lg bg-sand-deep border-2 border-ink shadow-2xs" />
       <div class="flex-1">
-        <p class="text-sm font-black text-ink line-clamp-1">${escapeHtml(item.name)}${item.variant_label ? ` <span class="text-xs text-forest-dark font-black">(${escapeHtml(item.variant_label)})</span>` : ''}</p>
+        <p class="text-sm font-bold text-ink line-clamp-1">${escapeHtml(item.name)}${item.variant_label ? ` <span class="text-xs text-forest-dark font-bold">(${escapeHtml(item.variant_label)})</span>` : ''}</p>
         <p class="text-xs text-ink font-bold">${money(item.price)} <span class="text-[10px] text-ink/60 font-normal">/ عبوة</span></p>
-        <p class="text-[11px] text-forest-dark font-black">المجموع: ${totalPieces} قطعة (${item.qty} عبوة)</p>
+        <p class="text-[11px] text-forest-dark font-bold">المجموع: ${totalPieces} قطعة (${item.qty} عبوة)</p>
         <div class="flex items-center gap-2 mt-1">
-          <button class="qty-btn dec btn-outline rounded-lg w-6 h-6 text-sm font-black flex items-center justify-center">-</button>
-          <span class="text-sm font-black text-ink">${item.qty} عبوة</span>
-          <button class="qty-btn inc btn-outline rounded-lg w-6 h-6 text-sm font-black flex items-center justify-center">+</button>
+          <button class="qty-btn dec btn-outline rounded-lg w-6 h-6 text-sm font-bold flex items-center justify-center">-</button>
+          <span class="text-sm font-bold text-ink">${item.qty} عبوة</span>
+          <button class="qty-btn inc btn-outline rounded-lg w-6 h-6 text-sm font-bold flex items-center justify-center">+</button>
         </div>
       </div>
-      <button class="remove-btn text-terracotta text-xs font-black hover:underline">حذف</button>
+      <button class="remove-btn text-terracotta text-xs font-bold hover:underline">حذف</button>
     `;
     row.querySelector('.inc').addEventListener('click', () => { Cart.updateQty(item.id, item.variant_id, item.qty + 1); renderCartDrawer(); });
     row.querySelector('.dec').addEventListener('click', () => { Cart.updateQty(item.id, item.variant_id, item.qty - 1); renderCartDrawer(); });
@@ -463,9 +478,9 @@ async function updateDeliveryPrices() {
       const data = isDesk ? deskData : homeData;
       
       if (data.is_unavailable) {
-        priceEl.innerHTML = '<span class="text-rose-700 font-black">غير متاح</span>';
+        priceEl.innerHTML = '<span class="text-rose-700 font-bold">غير متاح</span>';
       } else if (data.is_free) {
-        priceEl.innerHTML = '<span class="text-forest font-black">مجاني 🎉</span>';
+        priceEl.innerHTML = '<span class="text-forest font-bold">مجاني </span>';
       } else {
         priceEl.textContent = money(data.price);
       }
@@ -560,7 +575,7 @@ document.getElementById('checkoutForm')?.addEventListener('submit', async (e) =>
     form.reset();
     if(communeSelect) communeSelect.disabled = true;
     if(communeSelect) communeSelect.innerHTML = '<option value="">البلدية...</option>';
-    showToast(`تم إرسال طلبك بنجاح 🎉 رقم الطلب: ${data.order_id}`);
+    showToast(`تم إرسال طلبك بنجاح  رقم الطلب: ${data.order_id}`);
   } catch (err) {
     errorEl.textContent = err.message;
     errorEl.classList.remove('hidden');
