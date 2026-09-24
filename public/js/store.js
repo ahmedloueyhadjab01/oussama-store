@@ -241,7 +241,7 @@ async function loadProducts() {
               <span class="text-lg font-bold text-neutral-900">${money(p.price)}</span>
               ${p.compare_price > p.price ? `<span class="text-[10px] text-gray-400 font-bold line-through">${money(p.compare_price)}</span>` : ''}
             </div>
-            <button onclick="${outOfStock ? '' : `addToCart(${p.id}, '${escapeHtml(p.name).replace(/'/g,"\\'")}', ${p.price}, '${mainImg}')`}" class="${outOfStock ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-neutral-900 text-white hover:bg-neutral-800 shadow-md hover:shadow-lg hover:-translate-y-0.5'} add-to-cart w-9 h-9 rounded-md flex items-center justify-center transition-all duration-300">
+            <button \\'")}', ${p.price}, '${mainImg}')`}" class="${outOfStock ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-neutral-900 text-white hover:bg-neutral-800 shadow-md hover:shadow-lg hover:-translate-y-0.5'} add-to-cart w-9 h-9 rounded-md flex items-center justify-center transition-all duration-300">
               ${outOfStock ? '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>' : '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>'}
             </button>
           </div>
@@ -447,12 +447,12 @@ document.querySelectorAll('.close-checkout, .checkout-overlay').forEach(el => {
   });
 });
 
-  const wilayaSelect = document.getElementById('custWilaya');
-const communeSelect = document.getElementById('custCommune');
+  const wilayaSelect = document.getElementById('customerWilaya');
+const communeSelect = document.getElementById('customerCommune');
 
 Locations.loadWilayas(wilayaSelect);
 
-wilayaSelect.addEventListener('change', async () => {
+wilayaSelect?.addEventListener('change', async () => {
   const code = wilayaSelect.value;
   if (!code) {
     if(communeSelect) communeSelect.disabled = true;
@@ -551,12 +551,7 @@ function updateGrandTotal() {
 }
 
 // ---------- إتمام الطلب ----------
-document.getElementById('checkoutBtn')?.addEventListener('click', () => {
-  if (!Cart.get().length) return;
-  closeCart();
-  updateGrandTotal();
-  document.getElementById('checkoutOverlay').classList.remove('hidden');
-});
+
 document.getElementById('cancelCheckout')?.addEventListener('click', () => {
   const modal = document.getElementById('checkoutModal');
 if(modal) {

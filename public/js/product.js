@@ -93,7 +93,7 @@ document.getElementById('cartOverlay')?.addEventListener('click', closeCart);
 
     Locations.loadWilayas(wilayaSelect);
 
-    wilayaSelect.addEventListener('change', async () => {
+    wilayaSelect?.addEventListener('change', async () => {
       const code = wilayaSelect.value;
       if (!code) {
         communeSelect.disabled = true;
