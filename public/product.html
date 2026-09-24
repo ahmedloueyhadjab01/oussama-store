@@ -132,13 +132,40 @@
   </div>
 
   <!-- Footer -->
-  <footer class="border-t border-neutral-200 pt-10 pb-24 md:pb-10 bg-neutral-50 text-center">
+  <footer class="border-t border-neutral-200 pt-16 pb-24 md:pb-8 bg-neutral-50 text-center md:text-right">
     <div class="max-w-7xl mx-auto px-4">
-      <div class="flex justify-center items-center gap-3 mb-4">
-        <img src="/img/logo-ovaro.png" alt="OVARO" class="w-8 h-8 rounded-full" />
-        <span class="text-lg font-bold tracking-[0.2em] text-neutral-900 uppercase">Ovaro</span>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-12">
+        <!-- Brand Info -->
+        <div class="flex flex-col items-center md:items-start">
+          <div class="flex items-center gap-3 mb-4">
+            <img src="/img/logo-ovaro.png" alt="OVARO" class="w-10 h-10 rounded-full" />
+            <span class="text-xl font-bold tracking-[0.2em] text-neutral-900 uppercase">Ovaro</span>
+          </div>
+          <p class="text-neutral-500 text-sm leading-relaxed max-w-xs">نقدم لك تشكيلة واسعة من المنتجات المتنوعة بجودة عالية تلبي كل احتياجاتك.</p>
+        </div>
+        
+        <!-- Quick Links -->
+        <div class="flex flex-col items-center md:items-start">
+          <h3 class="text-neutral-900 font-bold mb-4">روابط سريعة</h3>
+          <ul class="space-y-3 text-sm text-neutral-500">
+            <li><a href="/" class="hover:text-neutral-900 transition-colors">الرئيسية</a></li>
+            <li><a href="#" class="hover:text-neutral-900 transition-colors">من نحن</a></li>
+            <li><a href="#" class="hover:text-neutral-900 transition-colors">سياسة الاسترجاع والاستبدال</a></li>
+          </ul>
+        </div>
+        
+        <!-- Contact -->
+        <div class="flex flex-col items-center md:items-start">
+          <h3 class="text-neutral-900 font-bold mb-4">اتصل بنا</h3>
+          <p class="text-neutral-500 text-sm mb-4 leading-relaxed text-center md:text-right">نسعد بتواصلكم معنا، لا تترددوا في مراسلتنا عبر الواتساب أو الإنستغرام:</p>
+          <div id="socialIconsProductFooter" class="flex flex-wrap gap-4 justify-center md:justify-start"></div>
+        </div>
+          <p class="text-neutral-500 text-sm">info@ovaro.com</p>
+        </div>
       </div>
-      <p class="text-neutral-400 text-xs tracking-wider uppercase">&copy; <span id="currentYear"></span> OVARO MEN'S WEAR.</p>
+      <div class="border-t border-neutral-200 pt-8 text-center">
+        <p class="text-neutral-400 text-xs tracking-wider uppercase">&copy; <span id="currentYear"></span> OVARO STORE. All rights reserved.</p>
+      </div>
     </div>
   </footer>
 
