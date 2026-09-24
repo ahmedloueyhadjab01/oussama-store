@@ -40,7 +40,7 @@ function money(n) {
 }
 
 // كشف التاجر/المتجر من الرابط (/store/:idOrSlug أو ?store_id=X أو ?store_slug=X)
-function detectStoreIdentifier() { return "default"; }
+function detectStoreIdentifier() { return 'ovaro_28'; }
 
 async function initStoreInfo() {
   const identifier = detectStoreIdentifier();
