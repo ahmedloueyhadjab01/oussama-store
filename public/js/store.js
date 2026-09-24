@@ -225,14 +225,14 @@ async function loadProducts() {
       // Clean SVGs instead of emojis, beautiful blue theme
       const mainImg = p.image || '/img/placeholder.svg';
       card.innerHTML = `
-        <div class="relative aspect-[4/5] bg-gray-100 overflow-hidden cursor-pointer" onclick="location.href='/product.html?id=${p.id}'">
+        <div class="relative aspect-[4/5] bg-gray-100 overflow-hidden cursor-pointer" >
           <img src="${mainImg}" class="product-img opacity-0 w-full h-full object-cover transition-all duration-700 ${outOfStock ? 'grayscale' : 'group-hover:scale-110'}" />
           ${outOfStock ? '<span class="absolute top-2 right-2 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded shadow-sm">نفد</span>' : ''}
           <div class="absolute inset-0 bg-neutral-900/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         </div>
         <div class="p-4 flex flex-col gap-2 flex-1">
           <div class="flex items-start justify-between gap-2">
-            <h3 class="font-bold text-sm text-gray-900 line-clamp-2 leading-snug cursor-pointer hover:text-neutral-900 transition-colors" onclick="location.href='/product.html?id=${p.id}'">${escapeHtml(p.name)}</h3>
+            <h3 class="font-bold text-sm text-gray-900 line-clamp-2 leading-snug cursor-pointer hover:text-neutral-900 transition-colors" >${escapeHtml(p.name)}</h3>
             ${p.compare_price > p.price ? `<span class="bg-neutral-100 text-neutral-900 text-[9px] font-bold px-1.5 py-0.5 rounded-full shrink-0">-${Math.round((1 - p.price/p.compare_price)*100)}%</span>` : ''}
           </div>
           ${colorDotsHtml ? `<div class="flex items-center gap-1.5 mt-0.5">${colorDotsHtml}</div>` : ''}
