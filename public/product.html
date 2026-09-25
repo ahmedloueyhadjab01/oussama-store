@@ -543,9 +543,9 @@
                 <div class="flex items-center gap-2">
                   <span class="text-xs font-black text-slate-900">${isWholesale ? 'عدد العبوات:' : 'الكمية:'}</span>
                   <div class="flex items-center gap-1.5 bg-slate-50-deep border border-slate-200 rounded-lg px-2 py-0.5 shadow-2xs">
-                    <button id="qtyDecBtn" class="w-7 h-7 rounded-md font-black text-base flex items-center justify-center hover:bg-slate-50 transition-colors">-</button>
+                    <button id="qtyDecBtn" class="w-8 h-8 rounded-xl bg-white border-2 border-slate-200 text-slate-700 font-bold text-lg flex items-center justify-center hover:border-blue-400 hover:text-blue-700 transition-all cursor-pointer">-</button>
                     <input id="productQtyInput" type="number" min="1" value="1" class="w-10 text-center font-black text-sm text-slate-900 outline-none bg-transparent" />
-                    <button id="qtyIncBtn" class="w-7 h-7 rounded-md font-black text-base flex items-center justify-center hover:bg-slate-50 transition-colors">+</button>
+                    <button id="qtyIncBtn" class="w-8 h-8 rounded-xl bg-white border-2 border-slate-200 text-slate-700 font-bold text-lg flex items-center justify-center hover:border-blue-400 hover:text-blue-700 transition-all cursor-pointer">+</button>
                   </div>
                 </div>
                 ${isWholesale ? `
@@ -556,11 +556,11 @@
               </div>
 
               <div class="flex flex-wrap items-center gap-3">
-                <button id="buyNowBtn" class="btn-primary flex-1 py-3.5 px-6 rounded-xl font-black text-base shadow-md flex items-center justify-center gap-2 transition-all active:scale-[0.98] bg-blue-500 text-white" ${product.stock <= 0 ? 'disabled style="opacity:.5;cursor:not-allowed"' : ''}>
+                <button id="buyNowBtn" class="flex-1 py-4 px-6 rounded-2xl font-black text-base shadow-lg flex items-center justify-center gap-2 transition-all active:scale-[0.98] text-white hover:shadow-xl hover:-translate-y-0.5" style="background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);" ${product.stock <= 0 ? 'disabled style="opacity:.5;cursor:not-allowed"' : ''}>
                   <span>⚡</span>
                   <span>${product.stock <= 0 ? 'غير متوفر حاليًا' : (isWholesale ? 'اطلب الآن (عبوة كاملة)' : 'اطلب الآن ⚡')}</span>
                 </button>
-                <button id="addBtn" class="btn-outline flex-1 py-3.5 px-6 rounded-xl font-black text-base shadow-md flex items-center justify-center gap-2 transition-all active:scale-[0.98]" ${product.stock <= 0 ? 'disabled style="opacity:.5;cursor:not-allowed"' : ''}>
+                <button id="addBtn" class="flex-1 py-4 px-6 rounded-2xl font-black text-base flex items-center justify-center gap-2 transition-all active:scale-[0.98] bg-white border-2 border-slate-200 text-slate-800 hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50 hover:-translate-y-0.5" ${product.stock <= 0 ? 'disabled style="opacity:.5;cursor:not-allowed"' : ''}>
                   <span>🛒</span>
                   <span id="addBtnText">${product.stock <= 0 ? 'غير متوفر' : (isWholesale ? 'أضف العبوة للسلة' : 'أضف للسلة')}</span>
                 </button>
@@ -863,7 +863,7 @@
                 <span class="text-lg font-black text-blue-600">${money(p.price)}</span>
                 ${p.compare_price > p.price ? `<span class="text-[10px] text-gray-400 font-bold line-through">${money(p.compare_price)}</span>` : ''}
               </div>
-              <button onclick="${outOfStock ? '' : (p.has_variants ? `event.stopPropagation(); location.href='${prodUrl.replace(/'/g, "\\'")}'` : `event.stopPropagation(); Cart.add({id:${p.id}, name:'${escapeHtml(p.name).replace(/'/g,"\\'")}', price:${p.price}, image:'${mainImg.replace(/'/g, "\\'")}'}, 1); showToast('تمت إضافته إلى السلة بنجاح');`)}" class="${outOfStock ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700 shadow-md hover:shadow-lg hover:-translate-y-0.5'} add-to-cart w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300">
+              <button onclick="${outOfStock ? '' : (p.has_variants ? `event.stopPropagation(); location.href='${prodUrl.replace(/'/g, "\\'")}'` : `event.stopPropagation(); Cart.add({id:${p.id}, name:'${escapeHtml(p.name).replace(/'/g,"\\'")}', price:${p.price}, image:'${mainImg.replace(/'/g, "\\'")}'}, 1); showToast('تمت إضافته إلى السلة بنجاح');`)}" class="${outOfStock ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700 shadow-md hover:shadow-lg hover:-translate-y-0.5'} add-to-cart w-10 h-10 rounded-2xl flex items-center justify-center transition-all duration-200 shrink-0 hover:-translate-y-0.5">
                 ${outOfStock ? '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>' : '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>'}
               </button>
             </div>
