@@ -17,7 +17,7 @@
 </script>
 </head>
 <body class="font-sans bg-slate-50 text-gray-900 pb-20 md:pb-0">
-  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm">
+  <header class="relative z-40 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm">
     <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
       <a href="/" class="text-2xl brand-logo font-black">ovaro_28</a>
       <button id="cartBtn" class="relative flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-sm hidden md:flex">
@@ -31,7 +31,7 @@
   <footer class="border-t-2 border-slate-200 mt-10 py-8 text-center text-sm">
     <p class="font-display text-2xl text-blue-600 mb-3 font-black">?????? ??? ????? ???????</p>
     <div id="socialIconsProductFooter" class="flex items-center justify-center gap-3 mb-4"></div>
-    <p class="text-slate-900 font-bold">© 2026 ovaro_28 - ???? ?????? ??????</p>
+    <p class="text-slate-900 font-bold">ï¿½ 2026 ovaro_28 - ???? ?????? ??????</p>
   </footer>
 
   <!-- ??? ?????? (Drawer) -->
@@ -80,13 +80,13 @@
               <input type="radio" name="delivery_type" value="home" class="hidden" checked />
               <span class="text-lg">??</span>
               <span class="text-xs font-black mt-1 text-slate-900">??????</span>
-              <span class="delivery-price text-xs font-black mt-1">—</span>
+              <span class="delivery-price text-xs font-black mt-1">ï¿½</span>
             </label>
             <label class="delivery-option flex flex-col items-center py-3 px-2 text-center" data-type="desk">
               <input type="radio" name="delivery_type" value="desk" class="hidden" />
               <span class="text-lg">??</span>
               <span class="text-xs font-black mt-1 text-slate-900">???? ??????</span>
-              <span class="delivery-price text-xs font-black mt-1">—</span>
+              <span class="delivery-price text-xs font-black mt-1">ï¿½</span>
             </label>
           </div>
           <p id="selectWilayaHint" class="text-xs text-slate-900 font-bold mt-1">???? ??????? ????? ?????? ??? ???????</p>
@@ -287,7 +287,7 @@
       } catch (err) {
         const rate = Locations.getRate(code);
         document.querySelectorAll('.delivery-option').forEach((label) => {
-          if (!rate) { label.querySelector('.delivery-price').textContent = '—'; return; }
+          if (!rate) { label.querySelector('.delivery-price').textContent = 'ï¿½'; return; }
           const price = label.dataset.type === 'desk' ? rate.desk_price : rate.home_price;
           label.querySelector('.delivery-price').textContent = money(price);
         });

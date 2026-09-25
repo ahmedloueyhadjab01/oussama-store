@@ -1417,11 +1417,11 @@ function addColorBlock(colorName = '', colorCode = '#17241F', imagePath = '', in
  const sizesList = block.querySelector('.cb-sizes-list');
  function addSizeRow(sizeLabel = '', qty = '', cost = '') {
  const sRow = document.createElement('div');
- sRow.className = 'cb-size-row grid grid-cols-[1fr_1fr_1fr_auto] gap-2 items-center';
+ sRow.className = 'cb-size-row grid grid-cols-[1.4fr_1fr_1fr_auto] gap-1 items-center';
  sRow.innerHTML = `
- <input class="cb-s-label field px-2 py-1 text-sm" placeholder="المقاس (مثال: M)" value="${escapeHtml(sizeLabel)}" />
- <input class="cb-s-qty field px-2 py-1 text-sm" type="number" min="0" placeholder="الكمية بالمخزون" value="${qty}" />
- <input class="cb-s-cost field px-2 py-1 text-sm" type="number" step="0.01" min="0" placeholder="سعر الشراء" value="${cost}" />
+ <input class="cb-s-label field px-1 py-1 text-[12px] min-w-0" placeholder="??????" value="${escapeHtml(sizeLabel)}" />
+ <input class="cb-s-qty field px-1 py-1 text-[12px] min-w-0" type="number" min="0" placeholder="??????" value="${qty}" />
+ <input class="cb-s-cost field px-1 py-1 text-[12px] min-w-0" type="number" step="0.01" min="0" placeholder="??????" value="${cost}" />
  <button type="button" class="cb-s-del text-blue-500 font-extrabold text-sm px-1 hover:bg-blue-500/10 rounded">&times;</button>
  `;
  sRow.querySelector('.cb-s-del').addEventListener('click', () => sRow.remove());
@@ -1458,12 +1458,12 @@ document.getElementById('addColorBlockBtn')?.addEventListener('click', () => {
 function addVariantRow(label = '', qty = '', cost = '') {
  const id = `vrow-${VARIANT_ROW_ID++}`;
  const row = document.createElement('div');
- row.className = 'grid grid-cols-[1fr_1fr_1fr_auto] gap-2 items-center';
+ row.className = 'grid grid-cols-[1.4fr_1fr_1fr_auto] gap-1 items-center';
  row.dataset.rowId = id;
  row.innerHTML = `
- <input class="v-label field px-2 py-1.5 text-sm" placeholder="المقاس (مثال: 42 أو M)" value="${escapeHtml(label)}" />
- <input class="v-qty field px-2 py-1.5 text-sm" type="number" min="0" placeholder="الكمية" value="${qty}" />
- <input class="v-cost field px-2 py-1.5 text-sm" type="number" step="0.01" min="0" placeholder="سعر الشراء" value="${cost}" />
+ <input class="v-label field px-1 py-1 text-[12px] min-w-0" placeholder="??????" value="${escapeHtml(label)}" />
+ <input class="v-qty field px-1 py-1 text-[12px] min-w-0" type="number" min="0" placeholder="??????" value="${qty}" />
+ <input class="v-cost field px-1 py-1 text-[12px] min-w-0" type="number" step="0.01" min="0" placeholder="??????" value="${cost}" />
  <button type="button" class="v-remove text-blue-500 font-extrabold text-sm px-1">حذف</button>
  `;
  row.querySelector('.v-remove').addEventListener('click', () => row.remove());
