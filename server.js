@@ -27,12 +27,12 @@ if (process.env.NODE_ENV === 'production' && (!process.env.JWT_SECRET || process
   throw new Error('JWT_SECRET must be a strong secret of at least 32 characters in production.');
 }
 if (!process.env.JWT_SECRET || process.env.JWT_SECRET.includes('change_this')) {
-  console.warn('\nâš ï¸  ØªØ­Ø°ÙŠØ± Ø£Ù…Ù†ÙŠ: ÙŠØ±Ø¬Ù‰ ØªØ¹ÙŠÙŠÙ† JWT_SECRET Ù‚ÙˆÙŠ ÙˆØ¹Ø´ÙˆØ§Ø¦ÙŠ ÙÙŠ Ù…Ù„Ù .env Ù‚Ø¨Ù„ Ø§Ù„Ù†Ø´Ø± Ø§Ù„ÙØ¹Ù„ÙŠ!\n');
+  console.warn('\n⚠️  تحذير أمني: يرجى تعيين JWT_SECRET قوي وعشوائي في ملف .env قبل النشر الفعلي!\n');
 }
 
 app.set('trust proxy', 1);
 
-// ----- Ø£Ù…Ø§Ù† Ø¹Ø§Ù… -----
+// ----- أمان عام -----
 app.use(
   helmet({
     contentSecurityPolicy: {
@@ -94,7 +94,7 @@ app.use(express.json({ limit: '5mb' }));
 app.use(express.urlencoded({ extended: true, limit: '5mb' }));
 app.use(cookieParser());
 
-// Ø­Ø¯ Ø¹Ø§Ù… Ù„Ø¹Ø¯Ø¯ Ø§Ù„Ø·Ù„Ø¨Ø§Øª Ù„ÙƒÙ„ IP
+// حد عام لعدد الطلبات لكل IP
 const globalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 500,
@@ -103,17 +103,17 @@ const globalLimiter = rateLimit({
 });
 app.use('/api/', globalLimiter);
 
-// ----- Ø§Ù„Ù…Ù„ÙØ§Øª Ø§Ù„Ø«Ø§Ø¨ØªØ© (Ø§Ù„ÙˆØ§Ø¬Ù‡Ø© Ø§Ù„Ø£Ù…Ø§Ù…ÙŠØ©) -----
+// ----- الملفات الثابتة (الواجهة الأمامية) -----
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
 
-// Ù…Ø³Ø§Ø±Ø§Øª ÙˆØªÙˆØ¬ÙŠÙ‡Ø§Øª Ø§Ù„Ø±Ø§Ø¨Ø·ÙŠÙ† Ø§Ù„Ù…Ù†ÙØµÙ„ÙŠÙ†: Ø§Ù„Ø²Ø¨ÙˆÙ† ÙˆØ§Ù„Ø¨Ø§Ø¦Ø¹
+// مسارات وتوجيهات الرابطين المنفصلين: الزبون والبائع
 app.get('/seller', (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin.html')));
 app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin.html')));
 
-// ÙˆØ§Ø¬Ù‡Ø© Ø§Ù„Ù…ØªØ¬Ø± Ø§Ù„Ø¹Ø§Ù…Ø© Ù„ØªØ§Ø¬Ø± Ù…Ø¹ÙŠÙ†: /store/3 Ø£Ùˆ /store/my-slug
+// واجهة المتجر العامة لتاجر معين: /store/3 أو /store/my-slug
 
-// ----- Ù…Ø³Ø§Ø±Ø§Øª Ø§Ù„Ù€ API -----
+// ----- مسارات الـ API -----
 app.use('/api/auth', authRoutes);
 app.get('/api/subscription', (req, res) => res.json({ status: 'active', plan: 'lifetime', ends_at: null, days_left: 9999 }));
 app.use('/api/categories', categoryRoutes);
@@ -132,16 +132,16 @@ app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.ht
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok', database: require('./db').getMode() }));
 
-// Ù…Ø¹Ø§Ù„Ø¬ Ø£Ø®Ø·Ø§Ø¡ Ù…ÙˆØ­Ù‘Ø¯
+// معالج أخطاء موحّد
 app.use((err, req, res, next) => {
   console.error(err);
   if (err.code && err.code.startsWith('LIMIT_')) {
-    return res.status(400).json({ error: 'Ø­Ø¬Ù… Ø£Ùˆ Ø¹Ø¯Ø¯ Ø§Ù„Ù…Ù„ÙØ§Øª ÙˆØ§Ù„Ø­Ù‚ÙˆÙ„ ÙŠØªØ¬Ø§ÙˆØ² Ø§Ù„Ø­Ø¯ Ø§Ù„Ù…Ø³Ù…ÙˆØ­.' });
+    return res.status(400).json({ error: 'حجم أو عدد الملفات والحقول يتجاوز الحد المسموح.' });
   }
-  if (err.message && err.message.includes('Ù†ÙˆØ¹ Ø§Ù„Ù…Ù„Ù')) {
+  if (err.message && err.message.includes('نوع الملف')) {
     return res.status(400).json({ error: err.message });
   }
-  res.status(500).json({ error: 'Ø­Ø¯Ø« Ø®Ø·Ø£ ÙÙŠ Ø§Ù„Ø®Ø§Ø¯Ù…' });
+  res.status(500).json({ error: 'حدث خطأ في الخادم' });
 });
 
 const PORT = process.env.PORT || 3000;
@@ -150,11 +150,11 @@ async function startServer() {
   try {
     await db.initDb();
     app.listen(PORT, () => {
-      console.log(`âœ… Ø§Ù„Ù…ØªØ¬Ø± ÙŠØ¹Ù…Ù„ Ø§Ù„Ø¢Ù† Ø¹Ù„Ù‰ Ø§Ù„Ù…Ù†ÙØ° ${PORT}`);
-      console.log(`ðŸ” Ù„ÙˆØ­Ø© Ø§Ù„ØªØ­ÙƒÙ…: http://localhost:${PORT}/admin.html`);
+      console.log(`✅ المتجر يعمل الآن على المنفذ ${PORT}`);
+      console.log(`🔐 لوحة التحكم: http://localhost:${PORT}/admin.html`);
     });
   } catch (err) {
-    console.error('âŒ ÙØ´Ù„ Ø¨Ø¯Ø¡ ØªØ´ØºÙŠÙ„ Ø§Ù„Ø®Ø§Ø¯Ù… Ø¨Ø³Ø¨Ø¨ Ø®Ø·Ø£ ÙÙŠ Ù‚Ø§Ø¹Ø¯Ø© Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª:', err);
+    console.error('❌ فشل بدء تشغيل الخادم بسبب خطأ في قاعدة البيانات:', err);
     process.exit(1);
   }
 }

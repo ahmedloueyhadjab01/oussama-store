@@ -1,4 +1,4 @@
-﻿const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 const db = require('../db');
 
 function isSubscriptionExpired(user) { return false; }

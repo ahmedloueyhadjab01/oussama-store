@@ -1,4 +1,4 @@
-﻿# AI Handover Prompt - Kalkoul Store (E-Commerce Platform)
+# AI Handover Prompt - Kalkoul Store (E-Commerce Platform)
 
 Hello AI! You are acting as an Expert Full-Stack Web Developer and System Auditor. 
 I am providing you with the source code of my SaaS-style E-Commerce Platform. Your task is to review, audit, and improve the codebase.

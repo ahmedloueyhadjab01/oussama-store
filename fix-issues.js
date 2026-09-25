@@ -1,4 +1,4 @@
-﻿const fs = require('fs');
+const fs = require('fs');
 
 let dbjs = fs.readFileSync('db.js', 'utf8');
 dbjs = dbjs.replace(/\.replace\(\/\\\\\$\\d\+\/g, '\?'\)/g, ".replace(/\\\\(\\d+)/g, '?1')");

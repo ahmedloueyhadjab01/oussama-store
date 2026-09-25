@@ -1,4 +1,4 @@
-﻿
+
 const fs = require("fs");
 let campaigns = fs.readFileSync("routes/campaigns.js", "utf8");
 

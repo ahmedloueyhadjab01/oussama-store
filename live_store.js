@@ -1,4 +1,4 @@
-﻿let ALL_CATEGORIES = [];
+let ALL_CATEGORIES = [];
 let CURRENT_CATEGORY = '';
 let SEARCH_QUERY = '';
 let CURRENT_DELIVERY_TYPE = 'home';

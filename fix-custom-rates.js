@@ -1,4 +1,4 @@
-﻿
+
 const fs = require("fs");
 let shipping = fs.readFileSync("routes/shipping.js", "utf8");
 

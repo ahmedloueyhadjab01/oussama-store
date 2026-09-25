@@ -1,4 +1,4 @@
-﻿const db = require('./db.js');
+const db = require('./db.js');
 const bcrypt = require('bcryptjs');
 
 async function setup() {

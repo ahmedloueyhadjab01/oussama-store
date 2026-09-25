@@ -1,4 +1,4 @@
-﻿
+
 const fs = require("fs");
 let settings = fs.readFileSync("routes/settings.js", "utf8");
 

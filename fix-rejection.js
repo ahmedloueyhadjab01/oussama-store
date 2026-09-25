@@ -1,4 +1,4 @@
-﻿
+
 const fs = require("fs");
 let server = fs.readFileSync("server.js", "utf8");
 

@@ -1,4 +1,4 @@
-﻿const fs = require("fs");
+const fs = require("fs");
 let content = fs.readFileSync("routes/orders.js", "utf8");
 
 const oldStr1 = "SELECT * FROM orders WHERE status = " + "\u0027" + ". \"\"S." + "\u0027" + " AND created_at >= datetime(" + "\u0027now\u0027" + ", " + "\u0027-30 days\u0027" + ")";

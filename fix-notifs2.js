@@ -1,4 +1,4 @@
-﻿
+
 const fs = require("fs");
 let notifs = fs.readFileSync("routes/notifications.js", "utf8");
 

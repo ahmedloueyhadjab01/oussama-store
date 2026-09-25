@@ -1,4 +1,4 @@
-﻿
+
 const fs = require("fs");
 let serverjs = fs.readFileSync("server.js", "utf8");
 serverjs = serverjs.replace(

@@ -1,4 +1,4 @@
-﻿const { Client } = require('pg');
+const { Client } = require('pg');
 const bcrypt = require('bcryptjs');
 require('dotenv').config();
 

@@ -1,4 +1,4 @@
-﻿
+
 const fs = require("fs");
 let authjs = fs.readFileSync("routes/auth.js", "utf8");
 
