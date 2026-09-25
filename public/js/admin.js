@@ -1484,6 +1484,7 @@ function openProductModal(product = null) {
  const variantTypeWrap = document.getElementById('variantTypeSelectorWrap');
  const editSummary = document.getElementById('stockSummaryEdit');
  const variantsEditPanel = document.getElementById('variantsEditPanel');
+ document.getElementById('editProductImagePreview').classList.add('hidden');
  
  document.getElementById('colorBlocksContainer').innerHTML = '';
  document.getElementById('variantRows').innerHTML = '';

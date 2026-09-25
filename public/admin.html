@@ -975,8 +975,12 @@
  </div>
 
  <div>
- <label class="text-sm font-bold text-slate-900/70 block mb-1">صور إضافية للمنتج / المعرض العام</label>
- <input name="images" type="file" accept="image/*" multiple class="w-full text-sm" />
+ <div id="editProductImagePreview" class="hidden mb-2 flex items-center gap-3 bg-white p-2 rounded-xl border border-slate-200/50">
+   <img id="currentCoverImage" src="" class="w-12 h-12 object-cover rounded-lg border border-slate-200 shadow-sm" />
+   <p class="text-[11px] font-bold text-slate-500">??? ?? ???? ?????? ??????? ??????. ????? ?????? ?? ??? ??? ????? ????? ????????.</p>
+ </div>
+ <label class="text-sm font-bold text-slate-900/70 block mb-1">????? ?? ??? ??? ?????? (?????? ?????? ????? ??????)</label>
+ <input name="images" type="file" accept="image/*" multiple class="w-full text-sm p-1 border border-slate-200 rounded-lg bg-white" />
  </div>
 
  <label class="flex items-center gap-2 text-sm font-bold pt-1">
@@ -1143,6 +1147,6 @@
 
  <div id="toast" class="hidden fixed bottom-6 right-6 px-5 py-3 rounded-xl shadow-lg z-[60] font-bold border text-white"></div>
 
- <script src="/js/admin.js?v=1790331647769"></script>
+ <script src="/js/admin.js?v=1790332691684"></script>
 </body>
 </html>
