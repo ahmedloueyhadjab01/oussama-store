@@ -392,7 +392,8 @@ function closeCart() {
 
 document.getElementById('cartBtn')?.addEventListener('click', openCart);
 document.getElementById('closeCart')?.addEventListener('click', closeCart);
-document.getElementById('checkoutOverlay' /* renamed overlay */).addEventListener('click', closeCart);
+document.getElementById('cartDrawer')?.addEventListener('click', (e) => { if (e.target === e.currentTarget) closeCart(); });
+  document.getElementById('checkoutOverlay')?.addEventListener('click', (e) => { if (e.target === e.currentTarget) { document.getElementById('checkoutOverlay').classList.add('hidden'); } });
 
 // ---------- إتمام الطلب: الولاية / البلدية / نوع التوصيل ----------
 const wilayaSelect = document.getElementById('custWilaya');
