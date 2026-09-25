@@ -671,6 +671,7 @@ document.getElementById('searchFormMobile')?.addEventListener('submit', (e) => {
   await loadProducts();
   if (typeof initSocialIcons === 'function') {
     initSocialIcons('socialIconsFooter', { storeId: CURRENT_STORE_ID });
+    initSocialIcons('socialIconsTopBar', { storeId: CURRENT_STORE_ID, size: 'w-8 h-8' });
   }
 })();
 

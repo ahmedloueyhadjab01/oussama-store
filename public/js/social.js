@@ -100,7 +100,7 @@ function renderSocialIcons(container, links, { size = 'w-12 h-12' } = {}) {
             style="background:${e.color}; color:#fff; min-width:48px; min-height:48px; border:2px solid rgba(0,0,0,0.1);">
         ${e.svg}
       </span>
-      <span class="text-xs font-bold text-ink/70 max-w-[80px] truncate text-center" dir="ltr" style="font-size:10px">${e.handle || e.label}</span>
+      <span class="text-xs font-bold text-slate-500 max-w-[80px] truncate text-center" dir="ltr" style="font-size:10px">${e.handle || e.label}</span>
     </a>`
     )
     .join('');
