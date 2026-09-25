@@ -382,12 +382,16 @@ function renderCartDrawer() {
 
 function openCart() {
   renderCartDrawer();
-  document.getElementById('checkoutOverlay' /* renamed overlay */).classList.remove('hidden');
-  document.getElementById('cartDrawer').classList.add('open');
+  const drawer = document.getElementById('cartDrawer');
+  const content = document.getElementById('cartDrawerContent');
+  if(drawer) drawer.classList.remove('hidden');
+  if(content) setTimeout(() => content.classList.remove('translate-x-full'), 10);
 }
 function closeCart() {
-  document.getElementById('checkoutOverlay' /* renamed overlay */).classList.add('hidden');
-  document.getElementById('cartDrawer').classList.remove('open');
+  const drawer = document.getElementById('cartDrawer');
+  const content = document.getElementById('cartDrawerContent');
+  if(content) content.classList.add('translate-x-full');
+  if(drawer) setTimeout(() => drawer.classList.add('hidden'), 300);
 }
 
 document.getElementById('cartBtn')?.addEventListener('click', openCart);
