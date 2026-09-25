@@ -446,6 +446,7 @@ async function initDb() {
       flat_desk_price NUMERIC(10, 2) DEFAULT 350,
       free_shipping_enabled INTEGER DEFAULT 0,
       free_shipping_threshold NUMERIC(10, 2) DEFAULT 15000,
+        manual_provider_name VARCHAR(255) DEFAULT NULL,
       is_active INTEGER DEFAULT 1,
       created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
