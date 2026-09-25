@@ -238,7 +238,7 @@ async function loadProducts() {
               <span class="text-base font-bold text-slate-900">${money(p.price)}</span>
               ${p.compare_price > p.price ? `<span class="text-[10px] text-slate-400 line-through">${money(p.compare_price)}</span>` : ''}
             </div>
-            <button class="${outOfStock ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-blue-700 text-white hover:bg-blue-800 shadow-md hover:shadow-lg'} add-to-cart w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 shrink-0">
+            <button class="${outOfStock ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-blue-700 text-white hover:bg-blue-800 shadow-md hover:shadow-lg'} add-to-cart w-10 h-10 rounded-2xl flex items-center justify-center transition-all duration-200 shrink-0 hover:-translate-y-0.5">
               ${outOfStock 
                 ? '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>'
                 : '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>'
@@ -364,12 +364,12 @@ function renderCartDrawer() {
         <p class="text-xs text-ink font-bold">${money(item.price)} <span class="text-[10px] text-ink/60 font-normal">/ عبوة</span></p>
         <p class="text-[11px] text-forest-dark font-black">المجموع: ${totalPieces} قطعة (${item.qty} عبوة)</p>
         <div class="flex items-center gap-2 mt-1">
-          <button class="qty-btn dec btn-outline rounded-lg w-6 h-6 text-sm font-black flex items-center justify-center">-</button>
+          <button class="qty-btn dec w-8 h-8 rounded-xl border-2 border-slate-200 bg-white text-slate-700 font-bold text-base flex items-center justify-center hover:border-blue-400 hover:text-blue-700 transition-all">-</button>
           <span class="text-sm font-black text-ink">${item.qty} عبوة</span>
-          <button class="qty-btn inc btn-outline rounded-lg w-6 h-6 text-sm font-black flex items-center justify-center">+</button>
+          <button class="qty-btn inc w-8 h-8 rounded-xl border-2 border-slate-200 bg-white text-slate-700 font-bold text-base flex items-center justify-center hover:border-blue-400 hover:text-blue-700 transition-all">+</button>
         </div>
       </div>
-      <button class="remove-btn text-terracotta text-xs font-black hover:underline">حذف</button>
+      <button class="remove-btn w-7 h-7 flex items-center justify-center rounded-lg text-slate-400 hover:bg-red-50 hover:text-red-500 transition-all text-base">حذف</button>
     `;
     row.querySelector('.inc').addEventListener('click', () => { Cart.updateQty(item.id, item.variant_id, item.qty + 1); renderCartDrawer(); });
     row.querySelector('.dec').addEventListener('click', () => { Cart.updateQty(item.id, item.variant_id, item.qty - 1); renderCartDrawer(); });
