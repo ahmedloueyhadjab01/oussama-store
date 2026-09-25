@@ -1122,8 +1122,8 @@ function renderCategoryNode(cat, container) {
  <span class="font-bold text-sm">${escapeHtml(cat.name)}</span>
  <div class="flex gap-2">
  <button class="add-sub-btn text-sm bg-blue-600 text-white w-6 h-6 rounded-full font-black" title="إضافة تصنيف فرعي">+</button>
- <button class="edit-cat-btn text-sm text-slate-900/70 hover:text-slate-900 font-bold px-1" title="تعديل التصنيف">️</button>
- <button class="del-cat-btn text-sm text-blue-500 font-extrabold px-1" title="حذف التصنيف">️</button>
+ <button class="edit-cat-btn text-sm text-slate-900/70 hover:text-slate-900 font-bold px-1" title="تعديل التصنيف">✏️</button>
+ <button class="del-cat-btn text-sm text-blue-500 font-extrabold px-1" title="حذف التصنيف">🗑️</button>
  </div>
  </div>
  <div class="children pr-4 space-y-2"></div>
@@ -1307,8 +1307,8 @@ async function loadProducts() {
  <td class="p-3 font-bold">${p.stock} ${unitLabel}${p.has_variants ? ' <span class="text-[10px] bg-yellow-500/20 text-yellow-600 border border-gold/40 rounded-full px-2 py-0.5 font-bold">مقاسات</span>' : ''}</td>
  <td class="p-3">${p.is_active ? '<span class="text-blue-600 font-bold">مفعّل</span>' : '<span class="text-slate-900/40">معطّل</span>'}</td>
  <td class="p-3 flex gap-2">
- <button class="edit-btn text-blue-600 font-extrabold">تعديل</button>
- <button class="del-btn text-blue-500 font-extrabold">حذف</button>
+ <button class="edit-btn text-blue-600 font-extrabold">✏️ تعديل</button>
+ <button class="del-btn text-red-500 font-extrabold">🗑️ حذف</button>
  </td>
  `;
  tr.querySelector('.edit-btn').addEventListener('click', () => openProductModal(p));
@@ -1419,9 +1419,9 @@ function addColorBlock(colorName = '', colorCode = '#17241F', imagePath = '', in
  const sRow = document.createElement('div');
  sRow.className = 'cb-size-row grid grid-cols-[1.4fr_1fr_1fr_auto] gap-1 items-center';
  sRow.innerHTML = `
- <input class="cb-s-label field px-1 py-1 text-[12px] min-w-0" placeholder="??????" value="${escapeHtml(sizeLabel)}" />
- <input class="cb-s-qty field px-1 py-1 text-[12px] min-w-0" type="number" min="0" placeholder="??????" value="${qty}" />
- <input class="cb-s-cost field px-1 py-1 text-[12px] min-w-0" type="number" step="0.01" min="0" placeholder="??????" value="${cost}" />
+ <input class="cb-s-label field px-1 py-1 text-[12px] min-w-0" placeholder="المقاس" value="${escapeHtml(sizeLabel)}" />
+ <input class="cb-s-qty field px-1 py-1 text-[12px] min-w-0" type="number" min="0" placeholder="الكمية" value="${qty}" />
+ <input class="cb-s-cost field px-1 py-1 text-[12px] min-w-0" type="number" step="0.01" min="0" placeholder="سعر الشراء" value="${cost}" />
  <button type="button" class="cb-s-del text-blue-500 font-extrabold text-sm px-1 hover:bg-blue-500/10 rounded">&times;</button>
  `;
  sRow.querySelector('.cb-s-del').addEventListener('click', () => sRow.remove());
@@ -1461,10 +1461,10 @@ function addVariantRow(label = '', qty = '', cost = '') {
  row.className = 'grid grid-cols-[1.4fr_1fr_1fr_auto] gap-1 items-center';
  row.dataset.rowId = id;
  row.innerHTML = `
- <input class="v-label field px-1 py-1 text-[12px] min-w-0" placeholder="??????" value="${escapeHtml(label)}" />
- <input class="v-qty field px-1 py-1 text-[12px] min-w-0" type="number" min="0" placeholder="??????" value="${qty}" />
- <input class="v-cost field px-1 py-1 text-[12px] min-w-0" type="number" step="0.01" min="0" placeholder="??????" value="${cost}" />
- <button type="button" class="v-remove text-blue-500 font-extrabold text-sm px-1">حذف</button>
+ <input class="v-label field px-1 py-1 text-[12px] min-w-0" placeholder="النوع/المقاس" value="${escapeHtml(label)}" />
+ <input class="v-qty field px-1 py-1 text-[12px] min-w-0" type="number" min="0" placeholder="الكمية" value="${qty}" />
+ <input class="v-cost field px-1 py-1 text-[12px] min-w-0" type="number" step="0.01" min="0" placeholder="سعر الشراء" value="${cost}" />
+ <button type="button" class="v-remove text-red-500 font-extrabold text-sm px-1">🗑️ حذف</button>
  `;
  row.querySelector('.v-remove').addEventListener('click', () => row.remove());
  document.getElementById('variantRows').appendChild(row);
@@ -1610,7 +1610,7 @@ function renderVariantsEditPanel(product) {
  <div class="flex gap-2">
  <button type="button" class="v-image-btn text-sky-700 hover:bg-sky-50 px-2 py-1 rounded font-black text-sm" data-vid="${v.id}" title="تغيير صورة اللون أو المقاس">تغيير الصورة</button>
  <button type="button" class="v-restock-btn text-blue-600 hover:bg-blue-600/10 px-2 py-1 rounded font-black text-sm" data-vid="${v.id}" data-label="${escapeHtml(labelText)}" data-stock="${v.stock}">+ تزويد</button>
- <button type="button" class="v-delete-btn text-blue-500 hover:bg-blue-500/10 px-2 py-1 rounded font-black text-sm" data-vid="${v.id}" data-label="${escapeHtml(labelText)}" data-stock="${v.stock}">حذف</button>
+ <button type="button" class="v-delete-btn text-red-500 hover:bg-blue-500/10 px-2 py-1 rounded font-black text-sm" data-vid="${v.id}" data-label="${escapeHtml(labelText)}" data-stock="${v.stock}">🗑️ حذف</button>
  </div>
  </div>
  `;
@@ -2164,7 +2164,7 @@ function addCalcFixedRow(label = '', amount = '') {
  row.innerHTML = `
  <input class="calc-fixed-label field px-2 py-1.5 text-sm" placeholder="اسم المصروف (مثال: إيجار)" value="${escapeHtml(label)}" />
  <input class="calc-fixed-amount field px-2 py-1.5 text-sm" type="number" min="0" placeholder="المبلغ" value="${amount}" />
- <button type="button" class="calc-remove-row text-blue-500 font-extrabold text-sm px-1">حذف</button>
+ <button type="button" class="calc-remove-row text-red-500 font-extrabold text-sm px-1">🗑️ حذف</button>
  `;
  row.querySelector('.calc-remove-row').addEventListener('click', () => { row.remove(); recomputeCalculator(); });
  row.querySelectorAll('input').forEach((inp) => inp.addEventListener('input', recomputeCalculator));
@@ -2355,8 +2355,8 @@ async function loadCampaignAnalytics() {
  <td class="p-3 text-sm text-slate-900/60">${String(s.spend_date).slice(0, 10)}</td>
  <td class="p-3 text-sm text-slate-900/50">${escapeHtml(s.notes || '')}</td>
  <td class="p-3">
- <button data-spend="${encodeURIComponent(JSON.stringify({ id: s.id, campaign_name: s.campaign_name, source: s.source, spend_amount: s.spend_amount, spend_date: String(s.spend_date).slice(0, 10), notes: s.notes || '' }))}" class="edit-spend-btn text-slate-900/70 hover:text-slate-900 text-sm font-black px-2 py-1 rounded-lg hover:bg-slate-50 transition">تعديل</button>
- <button data-spend-id="${s.id}" class="delete-spend-btn text-rose-600 hover:text-rose-700 text-sm font-black px-2 py-1 rounded-lg hover:bg-rose-50 transition">حذف</button>
+ <button data-spend="${encodeURIComponent(JSON.stringify({ id: s.id, campaign_name: s.campaign_name, source: s.source, spend_amount: s.spend_amount, spend_date: String(s.spend_date).slice(0, 10), notes: s.notes || '' }))}" class="edit-spend-btn text-slate-900/70 hover:text-slate-900 text-sm font-black px-2 py-1 rounded-lg hover:bg-slate-50 transition">✏️ تعديل</button>
+ <button data-spend-id="${s.id}" class="delete-spend-btn text-rose-600 hover:text-rose-700 text-sm font-black px-2 py-1 rounded-lg hover:bg-rose-50 transition">🗑️ حذف</button>
  </td>
  </tr>`).join('');
 
@@ -3006,7 +3006,7 @@ function renderOrdersTable() {
  `}
  </td>
  <td class="p-3 text-sm text-slate-900/40">${new Date(o.created_at).toLocaleString('ar-DZ')}</td>
- <td class="p-3"><button class="del-order-btn text-rose-600 font-extrabold text-sm hover:underline">حذف</button></td>
+ <td class="p-3"><button class="del-order-btn text-rose-600 font-extrabold text-sm hover:underline">🗑️ حذف</button></td>
  `;
 
  const selectEl = tr.querySelector('.status-select');
