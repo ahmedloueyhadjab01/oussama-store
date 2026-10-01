@@ -50,7 +50,7 @@ router.put('/social', requireAuth, async (req, res) => {
 });
 
 // ØªØ§Ø¬Ø±: Ø¥Ø¹Ø§Ø¯Ø© ØªØ¹ÙŠÙŠÙ† Ø§Ù„Ø¥Ø­ØµØ§Ø¦ÙŠØ§Øª (Ø­Ø°Ù Ø§Ù„Ø·Ù„Ø¨Ø§Øª Ø§Ù„Ù…Ø¤Ø±Ø´ÙØ© + ØµÙØ± Ø§Ù„Ø£Ø±Ø´ÙŠÙ Ø§Ù„Ù…Ø§Ù„ÙŠ) - Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„ØªØ§Ø¬Ø± ÙÙ‚Ø·
-﻿function getTargetUserId(user) {
+﻿﻿function getTargetUserId(user) {
   if (user.role !== 'admin' || !process.env.MAIN_STORE_USER_ID) return user.id;
   const mainId = parseInt(process.env.MAIN_STORE_USER_ID, 10);
   return isNaN(mainId) ? user.id : mainId;
@@ -74,6 +74,7 @@ router.post('/reset-stats', requireAuth, async (req, res) => {
       await trx.query('DELETE FROM orders WHERE user_id = ', [targetUserId]);
       await trx.query('DELETE FROM campaign_ad_spend WHERE user_id = ', [targetUserId]);
       await trx.query('DELETE FROM ad_visits WHERE user_id = ', [targetUserId]);
+      await trx.query('DELETE FROM ad_campaigns WHERE user_id = ', [targetUserId]);
 
       await ensureFinancialArchive(targetUserId, trx.client);
       await trx.query('UPDATE financial_archive SET archived_sales = 0, archived_cogs = 0, archived_shipping_cost = 0 WHERE user_id = ', [targetUserId]);
@@ -97,21 +98,36 @@ router.post('/reset-store', requireAuth, async (req, res) => {
 
   try {
     await db.transaction(async (trx) => {
+      // 1. Delete Orders and Stats
       await trx.query('DELETE FROM order_items WHERE order_id IN (SELECT id FROM orders WHERE user_id = )', [targetUserId]);
       await trx.query('DELETE FROM order_status_history WHERE order_id IN (SELECT id FROM orders WHERE user_id = )', [targetUserId]);
       await trx.query('DELETE FROM orders WHERE user_id = ', [targetUserId]);
+      
+      // 2. Delete Ads and Finance
       await trx.query('DELETE FROM campaign_ad_spend WHERE user_id = ', [targetUserId]);
       await trx.query('DELETE FROM ad_visits WHERE user_id = ', [targetUserId]);
-
+      await trx.query('DELETE FROM ad_campaigns WHERE user_id = ', [targetUserId]);
       await ensureFinancialArchive(targetUserId, trx.client);
       await trx.query('UPDATE financial_archive SET archived_sales = 0, archived_cogs = 0, archived_shipping_cost = 0 WHERE user_id = ', [targetUserId]);
+
+      // 3. Delete Products and Inventory
+      await trx.query('DELETE FROM stock_restocks WHERE product_id IN (SELECT id FROM products WHERE user_id = )', [targetUserId]);
+      await trx.query('DELETE FROM variant_restocks WHERE variant_id IN (SELECT pv.id FROM product_variants pv JOIN products p ON pv.product_id = p.id WHERE p.user_id = )', [targetUserId]);
+      await trx.query('DELETE FROM product_variants WHERE product_id IN (SELECT id FROM products WHERE user_id = )', [targetUserId]);
+      await trx.query('DELETE FROM products WHERE user_id = ', [targetUserId]);
+
+      // 4. Delete Categories safely (handling parent_id self-referencing foreign keys)
+      await trx.query('DELETE FROM categories WHERE user_id =  AND parent_id IS NOT NULL', [targetUserId]);
+      await trx.query('DELETE FROM categories WHERE user_id = ', [targetUserId]);
+      
+      // 5. Delete settings
+      await trx.query('DELETE FROM settings WHERE user_id = ', [targetUserId]);
     });
-    res.json({ success: true, message: 'تم تصفير المتجر والأرباح بنجاح مع الاحتفاظ بالمنتجات والتصنيفات.' });
+    res.json({ success: true, message: 'تم تصفير المتجر بالكامل بنجاح.' });
   } catch (err) {
     res.status(500).json({ error: 'خطأ: ' + err.message });
   }
 });
-
 
 // ... 
 router.put("/", requireAuth, async (req, res) => {
