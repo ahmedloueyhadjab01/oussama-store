@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>لوحة التحكم - المتجر</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Almarai:wght@400;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="/img/favicon.svg" />
 <link rel="stylesheet" href="/css/style.css?v=3" />
 <script src="/js/chart.min.js"></script>
@@ -19,15 +19,15 @@
       
       <!-- شعار المنصة وعنوانها -->
       <div class="text-center space-y-1">
-        <div class="inline-flex items-center justify-center w-14 h-14 bg-red-700/10 border border-slate-900 text-slate-900 rounded-2xl text-2xl font-black mb-1">
+        <div class="inline-flex items-center justify-center w-14 h-14 bg-red-700/10 border border-slate-900 text-slate-900 rounded-2xl text-2xl font-bold mb-1">
           ️
         </div>
-        <h1 class=" text-2xl font-black text-slate-900">لوحة تحكم المتجر الإلكتروني</h1>
+        <h1 class=" text-2xl font-bold text-slate-900">لوحة تحكم المتجر الإلكتروني</h1>
         <p class="text-xs text-slate-900/60 font-bold">منصة إدارة المتاجر والمبيعات الإلكترونية الشاملة</p>
       </div>
 
       <!-- أزرار التبديل بين الدخول والتسجيل -->
-      <div class="grid grid-cols-2 bg-slate-50 p-1 rounded-xl border border-slate-200/20 text-xs font-black">
+      <div class="grid grid-cols-2 bg-slate-50 p-1 rounded-xl border border-slate-200/20 text-xs font-bold">
         <button type="button" id="tabAuthLogin" 
           onclick="document.getElementById('loginForm').classList.remove('hidden'); document.getElementById('registerForm').classList.add('hidden'); document.getElementById('forgotPasswordSection').classList.add('hidden'); if(document.getElementById('emailVerifySection')) document.getElementById('emailVerifySection').classList.add('hidden'); this.className='py-2.5 rounded-2xl bg-white border border-slate-200 shadow-md text-slate-900 transition-all duration-300 cursor-pointer'; document.getElementById('tabAuthRegister').className='py-2.5 rounded-2xl text-slate-900/70 hover:text-slate-900 transition-all duration-300 flex items-center justify-center gap-1 cursor-pointer';"
           class="py-2.5 rounded-2xl bg-white border border-slate-200 shadow-md text-slate-900 transition-all duration-300 cursor-pointer">
@@ -39,19 +39,19 @@
       <!-- 1. نموذج تسجيل الدخول -->
       <form id="loginForm" class="space-y-4">
         <div class="space-y-1">
-          <label class="text-xs font-black text-slate-900 block">البريد الإلكتروني أو اسم المستخدم:</label>
+          <label class="text-xs font-bold text-slate-900 block">البريد الإلكتروني أو اسم المستخدم:</label>
           <input required name="username" type="text" placeholder="name@example.com" class="field w-full px-3.5 py-2.5 text-sm font-bold text-slate-900 rounded-xl" autocomplete="username" />
         </div>
         <div class="space-y-1">
           <div class="flex justify-between items-center">
-            <label class="text-xs font-black text-slate-900 block">كلمة المرور:</label>
-            <button type="button" id="showForgotPasswordBtn" class="text-xs text-slate-900 hover:text-slate-900-dark font-black underline">نسيت كلمة المرور؟</button>
+            <label class="text-xs font-bold text-slate-900 block">كلمة المرور:</label>
+            <button type="button" id="showForgotPasswordBtn" class="text-xs text-slate-900 hover:text-slate-900-dark font-bold underline">نسيت كلمة المرور؟</button>
           </div>
           <input required name="password" type="password" placeholder="••••••••" class="field w-full px-3.5 py-2.5 text-sm font-bold text-slate-900 rounded-xl" autocomplete="current-password" />
         </div>
-        <p id="loginError" class="text-[#E52F20] text-xs font-black hidden bg-rose-50 p-2.5 rounded-xl border border-rose-200"></p>
-        <button type="submit" id="loginSubmitBtn" class="btn-primary w-full py-3 rounded-xl font-black text-sm shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer">دخول إلى لوحة التحكم </button>
-        <button type="button" id="emergencySupportBtn" class="w-full py-2.5 rounded-xl font-black text-sm text-slate-900-dark border border-slate-900-light bg-red-700-50 hover:bg-red-700-100"> تواصل مع فريق الدعم</button>
+        <p id="loginError" class="text-[#E52F20] text-xs font-bold hidden bg-rose-50 p-2.5 rounded-xl border border-rose-200"></p>
+        <button type="submit" id="loginSubmitBtn" class="btn-primary w-full py-3 rounded-xl font-bold text-sm shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer">دخول إلى لوحة التحكم </button>
+        <button type="button" id="emergencySupportBtn" class="w-full py-2.5 rounded-xl font-bold text-sm text-slate-900-dark border border-slate-900-light bg-red-700-50 hover:bg-red-700-100"> تواصل مع فريق الدعم</button>
       </form>
 
       <!-- 2. نموذج إنشاء حساب جديد (7 أيام تجربة مجانية) -->
@@ -65,24 +65,24 @@
     <header class="bg-white border-b border-slate-200 sticky top-0 z-30">
       <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <h1 class=" text-xl font-black text-slate-900">️ لوحة تحكم المتجر</h1>
+          <h1 class=" text-xl font-bold text-slate-900">️ لوحة تحكم المتجر</h1>
           
         </div>
         <div class="flex items-center gap-2 sm:gap-3">
-          <span id="userGreeting" class="text-xs font-black text-slate-900/70 hidden sm:inline"></span>
-          <a id="vendorStoreLink" href="/" target="_blank" class="btn-primary text-xs px-3 py-1.5 rounded-2xl font-black flex items-center gap-1.5 shadow-md">
+          <span id="userGreeting" class="text-xs font-bold text-slate-900/70 hidden sm:inline"></span>
+          <a id="vendorStoreLink" href="/" target="_blank" class="btn-primary text-xs px-3 py-1.5 rounded-2xl font-bold flex items-center gap-1.5 shadow-md">
             <span></span>
             <span>رابط Ovaro_28_28</span>
             <span class="text-[10px]"></span>
           </a>
-          <button id="contactTeamBtn" type="button" onclick="contactWorkTeam()" class="btn-outline text-xs px-3 py-1.5 rounded-2xl font-black flex items-center gap-1.5" title="التواصل مع فريق العمل عبر واتساب">
+          <button id="contactTeamBtn" type="button" onclick="contactWorkTeam()" class="btn-outline text-xs px-3 py-1.5 rounded-2xl font-bold flex items-center gap-1.5" title="التواصل مع فريق العمل عبر واتساب">
             <span></span>
             <span>فريق العمل</span>
           </button>
-          <button id="copyVendorStoreLinkBtn" type="button" class="btn-outline text-xs px-2.5 py-1.5 rounded-2xl font-black hidden md:inline-flex items-center gap-1" title="نسخ رابط متجرك للزبائن">
+          <button id="copyVendorStoreLinkBtn" type="button" class="btn-outline text-xs px-2.5 py-1.5 rounded-2xl font-bold hidden md:inline-flex items-center gap-1" title="نسخ رابط متجرك للزبائن">
              <span>نسخ الرابط</span>
           </button>
-          <button id="logoutBtn" class="btn-outline text-sm px-3 py-1.5 rounded-2xl font-black">خروج</button>
+          <button id="logoutBtn" class="btn-outline text-sm px-3 py-1.5 rounded-2xl font-bold">خروج</button>
         </div>
       </div>
 
@@ -93,14 +93,14 @@
         <button data-tab="categories" class="admin-tab-btn px-4 py-2 text-sm font-bold border-b border-transparent whitespace-nowrap">التصنيفات</button>
         <button data-tab="orders" class="admin-tab-btn px-4 py-2 text-sm font-bold border-b border-transparent whitespace-nowrap">الطلبات</button>
         <button data-tab="profit" class="admin-tab-btn px-4 py-2 text-sm font-bold border-b border-transparent whitespace-nowrap">الأرباح (30 يوم)</button>
-        <button data-tab="campaigns" class="admin-tab-btn px-4 py-2 text-sm font-black border-b border-transparent whitespace-nowrap text-slate-900-dark"> أداء الإعلانات & ROI</button>
+        <button data-tab="campaigns" class="admin-tab-btn px-4 py-2 text-sm font-bold border-b border-transparent whitespace-nowrap text-slate-900-dark"> أداء الإعلانات & ROI</button>
         <button data-tab="calculator" class="admin-tab-btn px-4 py-2 text-sm font-bold border-b border-transparent whitespace-nowrap">حاسبة التسعير والإعلانات</button>
-        <button data-tab="shipping-settings" class="admin-tab-btn px-4 py-2 text-sm font-black border-b border-transparent whitespace-nowrap text-red-700 hover:text-red-900"> إعدادات الشحن و API</button>
+        <button data-tab="shipping-settings" class="admin-tab-btn px-4 py-2 text-sm font-bold border-b border-transparent whitespace-nowrap text-red-700 hover:text-red-900"> إعدادات الشحن و API</button>
         <button data-tab="delivery" class="admin-tab-btn px-4 py-2 text-sm font-bold border-b border-transparent whitespace-nowrap">أسعار التوصيل (الولايات)</button>
         <button data-tab="social" class="admin-tab-btn px-4 py-2 text-sm font-bold border-b border-transparent whitespace-nowrap">الربط مع السوشيال ميديا</button>
         
         
-        <button data-tab="reset" class="admin-tab-btn px-4 py-2 text-sm font-black border-b border-transparent whitespace-nowrap text-rose-700 hover:text-rose-900">️ إعادة التعيين</button>
+        <button data-tab="reset" class="admin-tab-btn px-4 py-2 text-sm font-bold border-b border-transparent whitespace-nowrap text-rose-700 hover:text-rose-900">️ إعادة التعيين</button>
       </div>
     </header>
 
@@ -114,8 +114,8 @@
         </div>
         <div id="lowStockAlert" class="hidden bg-amber-50 border border-amber-400 rounded-2xl p-4 text-amber-950">
           <div class="flex items-center justify-between gap-3">
-            <p class="font-black">تنبيه: مخزون منخفض</p>
-            <span id="lowStockCount" class="bg-amber-500 text-white rounded-full px-2 py-0.5 text-xs font-black">0</span>
+            <p class="font-bold">تنبيه: مخزون منخفض</p>
+            <span id="lowStockCount" class="bg-amber-500 text-white rounded-full px-2 py-0.5 text-xs font-bold">0</span>
           </div>
           <div id="lowStockItems" class="mt-2 text-xs font-bold space-y-1"></div>
         </div>
@@ -140,8 +140,8 @@
       <!-- تبويب الطلبات -->
       <section id="tab-orders" class="tab-content hidden space-y-4">
         <div class="flex justify-between items-center flex-wrap gap-2">
-          <h2 class=" text-xl font-black">الطلبات</h2>
-          <button id="quickResetStatsBtn" type="button" class="btn-outline px-3 py-1.5 rounded-2xl text-xs font-black text-rose-700 border-rose-700 hover:bg-rose-50 flex items-center gap-1"> تصفير الحسابات والطلبات (0)</button>
+          <h2 class=" text-xl font-bold">الطلبات</h2>
+          <button id="quickResetStatsBtn" type="button" class="btn-outline px-3 py-1.5 rounded-2xl text-xs font-bold text-rose-700 border-rose-700 hover:bg-rose-50 flex items-center gap-1"> تصفير الحسابات والطلبات (0)</button>
         </div>
 
         <!-- ملخص الأرباح -->
@@ -207,7 +207,7 @@
         <p id="profitMeta" class="text-xs text-slate-900/40"></p>
         <!-- مخطط بياني لتطور المبيعات والربح -->
         <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-3">
-          <h3 class=" text-base font-black"> نظرة عامة على الهيكل المالي للطلبات المسلَّمة</h3>
+          <h3 class=" text-base font-bold"> نظرة عامة على الهيكل المالي للطلبات المسلَّمة</h3>
           <div class="h-64 relative">
             <canvas id="profitStructureChart"></canvas>
           </div>
@@ -225,7 +225,7 @@
 
         <!-- رأس الصفحة وملخص الكل -->
         <div>
-          <h2 class=" text-2xl font-black"> أداء الإعلانات والأرباح الحقيقية</h2>
+          <h2 class=" text-2xl font-bold"> أداء الإعلانات والأرباح الحقيقية</h2>
           <p class="text-sm text-slate-900/70 mt-1">
             تتبع كل حملة إعلانية وقس أداءها الحقيقي (Real ROAS & CPA) بناءً على الطلبات المسلَّمة فعلياً وخسائر الإرجاع ومصاريف الإعلانات.
           </p>
@@ -234,19 +234,19 @@
         <!-- بطاقات الملخص العام -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="campaignSummaryCards">
           <div class="bg-white border border-slate-200 rounded-2xl p-4">
-            <p class="text-xs text-slate-900/50 font-black mb-1">إجمالي مصاريف الإعلانات</p>
+            <p class="text-xs text-slate-900/50 font-bold mb-1">إجمالي مصاريف الإعلانات</p>
             <p id="cmpTotalSpend" class=" text-xl text-[#E52F20]">0 دج</p>
           </div>
           <div class="bg-white border border-slate-200 rounded-2xl p-4">
-            <p class="text-xs text-slate-900/50 font-black mb-1">مبيعات الطلبات المسلَّمة</p>
+            <p class="text-xs text-slate-900/50 font-bold mb-1">مبيعات الطلبات المسلَّمة</p>
             <p id="cmpTotalRevenue" class=" text-xl text-slate-900-dark">0 دج</p>
           </div>
           <div class="bg-white border border-slate-200 rounded-2xl p-4">
-            <p class="text-xs text-slate-900/50 font-black mb-1">صافي الربح الحقيقي</p>
+            <p class="text-xs text-slate-900/50 font-bold mb-1">صافي الربح الحقيقي</p>
             <p id="cmpTotalNet" class=" text-xl">0 دج</p>
           </div>
           <div class="bg-white border border-slate-200 rounded-2xl p-4">
-            <p class="text-xs text-slate-900/50 font-black mb-1">Real ROAS الإجمالي</p>
+            <p class="text-xs text-slate-900/50 font-bold mb-1">Real ROAS الإجمالي</p>
             <p id="cmpTotalRoas" class=" text-xl">0×</p>
           </div>
         </div>
@@ -255,10 +255,10 @@
         <div class="bg-white border border-slate-200 rounded-2xl p-5 space-y-3">
           <div class="flex items-center justify-between flex-wrap gap-2">
             <div>
-              <h3 class=" text-lg font-black"> منحنى الأداء اليومي والنمو (آخر 14 يومًا)</h3>
+              <h3 class=" text-lg font-bold"> منحنى الأداء اليومي والنمو (آخر 14 يومًا)</h3>
               <p class="text-xs text-slate-900/60">تتبع حركة المبيعات وصافي الربح ومصاريف الإعلان يومًا بيوم لمعرفة تأثير الإعلانات على نمو المتجر</p>
             </div>
-            <span class="text-xs bg-red-700/10 text-slate-900-dark font-black px-3 py-1 rounded-full">منحنى زمني تفاعلي</span>
+            <span class="text-xs bg-red-700/10 text-slate-900-dark font-bold px-3 py-1 rounded-full">منحنى زمني تفاعلي</span>
           </div>
           <div class="h-72 relative">
             <canvas id="dailyTrendLineChart"></canvas>
@@ -270,8 +270,8 @@
           <!-- مخطط 1: مقارنة المبيعات vs الأرباح vs مصاريف الإعلانات مع وبدون إعلانات -->
           <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-3">
             <div class="flex items-center justify-between">
-              <h3 class=" text-base font-black"> مقارنة الحملات الإعلانية vs الزيارات المباشرة (Organic)</h3>
-              <span class="text-xs bg-red-700/10 text-slate-900-dark font-black px-2 py-0.5 rounded-xl">تحليل الأداء</span>
+              <h3 class=" text-base font-bold"> مقارنة الحملات الإعلانية vs الزيارات المباشرة (Organic)</h3>
+              <span class="text-xs bg-red-700/10 text-slate-900-dark font-bold px-2 py-0.5 rounded-xl">تحليل الأداء</span>
             </div>
             <p class="text-xs text-slate-900/60">يقارن المبيعات المسلمة وصافي الربح ومصاريف كل مصدر (فيسبوك، تيك توك، مباشر...)</p>
             <div class="h-64 relative">
@@ -282,8 +282,8 @@
           <!-- مخطط 2: توزيع المنصات و Real ROAS لكل منصة -->
           <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-3">
             <div class="flex items-center justify-between">
-              <h3 class=" text-base font-black"> عائد الإنفاق الإعلاني (Real ROAS) حسب المنصة</h3>
-              <span class="text-xs bg-yellow-500/10 text-yellow-600 font-black px-2 py-0.5 rounded-xl">كفاءة المنصات</span>
+              <h3 class=" text-base font-bold"> عائد الإنفاق الإعلاني (Real ROAS) حسب المنصة</h3>
+              <span class="text-xs bg-yellow-500/10 text-yellow-600 font-bold px-2 py-0.5 rounded-xl">كفاءة المنصات</span>
             </div>
             <p class="text-xs text-slate-900/60">أي المنصات تعتلي القمة في إرجاع الأرباح الحقيقية لمتجرك؟ (الخط الأصفر = 1x تعادل)</p>
             <div class="h-64 relative">
@@ -294,8 +294,8 @@
           <!-- مخطط 3: دائرة نسبية لحالات طلبات الإعلانات (المسلَّمة vs قيد التوصيل/المعالجة vs الملغاة) -->
           <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-3">
             <div class="flex items-center justify-between">
-              <h3 class=" text-base font-black"> دائرة نسبية: فاعلية وحالات طلبات الإعلانات</h3>
-              <span class="text-xs bg-red-700/10 text-slate-900-dark font-black px-2 py-0.5 rounded-xl">نسبة النجاح الإعلاني</span>
+              <h3 class=" text-base font-bold"> دائرة نسبية: فاعلية وحالات طلبات الإعلانات</h3>
+              <span class="text-xs bg-red-700/10 text-slate-900-dark font-bold px-2 py-0.5 rounded-xl">نسبة النجاح الإعلاني</span>
             </div>
             <p class="text-xs text-slate-900/60">توزيع نسبي لحالات الطلبات القادمة من الإعلانات لمعرفة نسبة التسليم والإلغاء بدقة</p>
             <div class="h-64 relative flex items-center justify-center">
@@ -306,8 +306,8 @@
           <!-- مخطط 4: دائرة نسبية للمنتجات الأكثر تسليماً مقابل الأكثر إلغاءً من الإعلانات -->
           <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-3">
             <div class="flex items-center justify-between">
-              <h3 class=" text-base font-black"> المنتجات الأكثر تسليماً vs الأكثر إلغاءً من الإعلانات</h3>
-              <span class="text-xs bg-rose-50 text-rose-700 font-black px-2 py-0.5 rounded-xl">تحليل المنتجات الإعلانية</span>
+              <h3 class=" text-base font-bold"> المنتجات الأكثر تسليماً vs الأكثر إلغاءً من الإعلانات</h3>
+              <span class="text-xs bg-rose-50 text-rose-700 font-bold px-2 py-0.5 rounded-xl">تحليل المنتجات الإعلانية</span>
             </div>
             <p class="text-xs text-slate-900/60">اكتشف أي المنتجات تحقق أعلى مبيعات فعلية وأيها تسبب أكبر نسبة إلغاء وخسائر شحن</p>
             <div class="h-64 relative flex items-center justify-center">
@@ -318,15 +318,15 @@
 
         <!-- تسجيل مصاريف إعلانية جديدة -->
         <div class="bg-white border border-slate-200 rounded-2xl p-5 space-y-3">
-          <h3 class=" text-lg font-black"> تسجيل مصاريف إعلانية</h3>
+          <h3 class=" text-lg font-bold"> تسجيل مصاريف إعلانية</h3>
           <p class="text-xs text-slate-900/60">أدخل مبلغ الإنفاق الإعلاني لكل حملة يدوياً. استخدم <b>نفس اسم الحملة المكتوب في رابط الإعلان</b> (utm_campaign=اسم_الحملة) للربط التلقائي بالطلبات.</p>
           <form id="addSpendForm" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
             <div>
-              <label class="text-xs font-black text-slate-900/70 block mb-1">اسم الحملة <span class="text-rose-500">*</span></label>
+              <label class="text-xs font-bold text-slate-900/70 block mb-1">اسم الحملة <span class="text-rose-500">*</span></label>
               <input required id="spendCampaignName" type="text" placeholder="مثال: summer_sale أو kampania_1" class="field w-full px-3 py-2 text-sm" dir="ltr" />
             </div>
             <div>
-              <label class="text-xs font-black text-slate-900/70 block mb-1">المنصة</label>
+              <label class="text-xs font-bold text-slate-900/70 block mb-1">المنصة</label>
               <select id="spendSource" class="field w-full px-3 py-2 text-sm">
                 <option value="facebook"> فيسبوك</option>
                 <option value="tiktok"> تيك توك</option>
@@ -337,29 +337,29 @@
               </select>
             </div>
             <div>
-              <label class="text-xs font-black text-slate-900/70 block mb-1">المبلغ المنفق (دج) <span class="text-rose-500">*</span></label>
+              <label class="text-xs font-bold text-slate-900/70 block mb-1">المبلغ المنفق (دج) <span class="text-rose-500">*</span></label>
               <input required id="spendAmount" type="number" min="0.01" step="0.01" placeholder="مثال: 5000" class="field w-full px-3 py-2 text-sm" />
             </div>
             <div>
-              <label class="text-xs font-black text-slate-900/70 block mb-1">التاريخ</label>
+              <label class="text-xs font-bold text-slate-900/70 block mb-1">التاريخ</label>
               <input id="spendDate" type="date" class="field w-full px-3 py-2 text-sm" />
             </div>
             <div class="sm:col-span-2 lg:col-span-3">
-              <label class="text-xs font-black text-slate-900/70 block mb-1">ملاحظات (اختياري)</label>
+              <label class="text-xs font-bold text-slate-900/70 block mb-1">ملاحظات (اختياري)</label>
               <input id="spendNotes" type="text" placeholder="مثال: حملة فيديو القميص الكتاني - 3 أيام" class="field w-full px-3 py-2 text-sm" />
             </div>
             <div class="flex items-end">
-              <button id="spendSubmitBtn" type="submit" class="btn-primary w-full py-2.5 rounded-xl text-sm font-black">+ تسجيل المصاريف</button>
+              <button id="spendSubmitBtn" type="submit" class="btn-primary w-full py-2.5 rounded-xl text-sm font-bold">+ تسجيل المصاريف</button>
             </div>
           </form>
-          <p id="spendFormError" class="text-rose-600 text-xs font-black hidden"></p>
+          <p id="spendFormError" class="text-rose-600 text-xs font-bold hidden"></p>
         </div>
 
         <!-- جدول الحملات وأدائها -->
         <div>
           <div class="flex items-center justify-between flex-wrap gap-2 mb-3">
-            <h3 class=" text-xl font-black">أداء الحملات — ROI الحقيقي لكل حملة</h3>
-            <button id="refreshCampaignsBtn" class="btn-outline px-3 py-1.5 rounded-2xl text-sm font-black"> تحديث</button>
+            <h3 class=" text-xl font-bold">أداء الحملات — ROI الحقيقي لكل حملة</h3>
+            <button id="refreshCampaignsBtn" class="btn-outline px-3 py-1.5 rounded-2xl text-sm font-bold"> تحديث</button>
           </div>
           <div class="flex flex-col sm:flex-row gap-2 mb-3">
             <input id="campaignSearchInput" class="field flex-1 px-3 py-2 text-sm" placeholder="بحث باسم الحملة..." />
@@ -369,7 +369,7 @@
           <div class="bg-white rounded-2xl border border-slate-200 overflow-x-auto">
             <table class="w-full text-sm text-right min-w-[900px]">
               <thead>
-                <tr class="border-b border-slate-200 text-xs text-slate-900/50 font-black">
+                <tr class="border-b border-slate-200 text-xs text-slate-900/50 font-bold">
                   <th class="p-3">الحملة / المنصة</th>
                   <th class="p-3 text-center">الطلبات المسجلة</th>
                   <th class="p-3 text-center">المسلَّمة </th>
@@ -392,11 +392,11 @@
 
         <!-- آخر سجلات مصاريف الإعلانات -->
         <div>
-          <h3 class=" text-lg font-black mb-2">سجل المصاريف الإعلانية المُدخلة</h3>
+          <h3 class=" text-lg font-bold mb-2">سجل المصاريف الإعلانية المُدخلة</h3>
           <div class="bg-white rounded-2xl border border-slate-200 overflow-x-auto">
             <table class="w-full text-sm text-right min-w-[600px]">
               <thead>
-                <tr class="border-b border-slate-200 text-xs text-slate-900/50 font-black">
+                <tr class="border-b border-slate-200 text-xs text-slate-900/50 font-bold">
                   <th class="p-3">الحملة</th>
                   <th class="p-3">المنصة</th>
                   <th class="p-3">المبلغ (دج)</th>
@@ -414,7 +414,7 @@
 
         <!-- كيف أستخدم تتبع الإعلانات (دليل سريع) -->
         <div class="bg-slate-50-deep/30 border border-slate-200/20 rounded-2xl p-5 space-y-3 text-sm leading-7">
-          <h3 class=" text-lg font-black"> كيف تربط إعلاناتك بهذه اللوحة؟</h3>
+          <h3 class=" text-lg font-bold"> كيف تربط إعلاناتك بهذه اللوحة؟</h3>
           <p>عند إنشاء أي إعلان على فيسبوك / تيك توك / انستغرام، ضع رابط المتجر بهذا الشكل:</p>
           <code class="block bg-white border border-slate-200/20 rounded-xl p-3 text-xs dir-ltr break-all" id="utmExampleUrl"></code>
           <ul class="list-disc list-inside space-y-1 text-slate-900/70">
@@ -447,17 +447,17 @@
             <!-- العدّاد الحي حسب المنصة -->
             <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-3" id="platformLiveCard">
               <div class="flex items-center justify-between flex-wrap gap-2">
-                <h3 class="text-base font-black"> العدّاد الآلي حسب منصة الإعلان</h3>
+                <h3 class="text-base font-bold"> العدّاد الآلي حسب منصة الإعلان</h3>
                 <div class="flex items-center gap-2">
                   <span id="platformLiveStamp" class="text-[10px] text-slate-900/40 font-bold"></span>
-                  <button type="button" id="platformResetAllBtn" class="text-[11px] font-black text-rose-600 hover:underline">تصفير الكل</button>
+                  <button type="button" id="platformResetAllBtn" class="text-[11px] font-bold text-rose-600 hover:underline">تصفير الكل</button>
                 </div>
               </div>
               <p class="text-xs text-slate-900/60">كل زبون يدخل من رابط إعلانك ويشتري يُحتسب هنا تلقائياً في منصته. اضغط «تصفير» لتبدأ العدّ من الصفر.</p>
               <div class="overflow-x-auto">
                 <table class="w-full text-xs text-right">
                   <thead>
-                    <tr class="border-b border-slate-200 text-slate-900/60 font-black">
+                    <tr class="border-b border-slate-200 text-slate-900/60 font-bold">
                       <th class="p-2">المنصة</th>
                       <th class="p-2 text-center">الزيارات</th>
                       <th class="p-2 text-center">المشتريات</th>
@@ -509,7 +509,7 @@
                     <span></span>
                     <span>حساب وربط تكلفة الإعلان للطلب (CPA)</span>
                   </p>
-                  <button type="button" id="syncRealAdDataToCalcBtn" class="bg-red-700 hover:bg-red-700-dark text-white text-[11px] font-black px-2.5 py-1 rounded-2xl border border-slate-200/20 shadow-2xs transition-all duration-300 cursor-pointer">
+                  <button type="button" id="syncRealAdDataToCalcBtn" class="bg-red-700 hover:bg-red-700-dark text-white text-[11px] font-bold px-2.5 py-1 rounded-2xl border border-slate-200/20 shadow-2xs transition-all duration-300 cursor-pointer">
                      جلب أرقام CPA الحقيقية من إعلاناتي
                   </button>
                 </div>
@@ -541,7 +541,7 @@
                 </div>
                 <div>
                   <label class="text-[11px] text-slate-900/70 font-bold block mb-1">تكلفة الإعلان للقطعة (CPA) — يُحسب آلياً أو أدخله يدوياً:</label>
-                  <input id="calcAdCost" type="number" min="0" step="0.01" value="0" placeholder="مثال: 2000" class="field w-full px-2.5 py-1.5 text-xs bg-white font-black text-slate-900-dark" />
+                  <input id="calcAdCost" type="number" min="0" step="0.01" value="0" placeholder="مثال: 2000" class="field w-full px-2.5 py-1.5 text-xs bg-white font-bold text-slate-900-dark" />
                 </div>
               </div>
             </div>
@@ -576,21 +576,21 @@
 
             <!-- حفظ التسعيرة الحالية لحساب منتج جديد -->
             <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-3">
-              <h3 class=" text-base font-black"> حفظ هذه الحسبة والبدء بمنتج جديد</h3>
+              <h3 class=" text-base font-bold"> حفظ هذه الحسبة والبدء بمنتج جديد</h3>
               <p class="text-xs text-slate-900/60">احفظ دراسة جدوى هذا المنتج لمقارنتها لاحقاً، والبدء بتسعير منتج آخر نظيف.</p>
               <div class="flex gap-2">
                 <input id="calcSaveTitle" type="text" placeholder="اسم دراسة الجدوى (مثال: حذاء نسائي صيفي)" class="field flex-1 px-3 py-2 text-xs font-bold" />
-                <button type="button" id="saveCalcBtn" class="btn-primary px-4 py-2 rounded-xl text-xs font-black">+ حفظ الحسبة</button>
+                <button type="button" id="saveCalcBtn" class="btn-primary px-4 py-2 rounded-xl text-xs font-bold">+ حفظ الحسبة</button>
               </div>
             </div>
 
             <!-- قائمة الحسبات والمنتجات المحفوظة -->
             <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-3">
-              <h3 class=" text-base font-black"> دراسات الجدوى والتسعيرات المحفوظة</h3>
+              <h3 class=" text-base font-bold"> دراسات الجدوى والتسعيرات المحفوظة</h3>
               <div class="overflow-x-auto">
                 <table class="w-full text-xs text-right">
                   <thead>
-                    <tr class="border-b border-slate-200/20 text-slate-900/60 font-black">
+                    <tr class="border-b border-slate-200/20 text-slate-900/60 font-bold">
                       <th class="p-2">الاسم</th>
                       <th class="p-2 text-center">سعر البيع</th>
                       <th class="p-2 text-center">الإعلان / قطعة</th>
@@ -611,7 +611,7 @@
       <!-- تبويب إعدادات الشحن و API -->
       <section id="tab-shipping-settings" class="tab-content hidden space-y-6">
         <div class="border-b border-slate-200/10 pb-4">
-          <h2 class=" text-2xl font-black text-slate-900 flex items-center gap-2">
+          <h2 class=" text-2xl font-bold text-slate-900 flex items-center gap-2">
             <span></span>
             <span>إعدادات الشحن والربط بشركات التوصيل (خاص بمتجرك)</span>
           </h2>
@@ -621,14 +621,14 @@
         <form id="vendorShippingForm" class="space-y-6 bg-white p-6 rounded-2xl border border-slate-200 shadow-md">
           <!-- 1. اختيار شركة الشحن ومفاتيح API -->
           <div class="space-y-3">
-            <h3 class=" text-base font-black text-slate-900 flex items-center gap-2">
+            <h3 class=" text-base font-bold text-slate-900 flex items-center gap-2">
               <span></span>
               <span>1. اختيار شركة التوصيل وبيانات الـ API</span>
             </h3>
             <div class="grid md:grid-cols-3 gap-4">
               <div>
                 <label class="text-xs font-bold text-slate-900/70 block mb-1">شركة التوصيل الشريكة</label>
-                <select name="provider" id="shipProviderSelect" class="field w-full p-2.5 text-xs sm:text-sm font-black">
+                <select name="provider" id="shipProviderSelect" class="field w-full p-2.5 text-xs sm:text-sm font-bold">
                   <option value="manual">توصيل يدوي / خاص (بدون API)</option>
                   <option value="yalidine">Yalidine Express</option>
                   <option value="zr_express">ZR Express</option>
@@ -654,27 +654,27 @@
 
           <!-- 2. مركز انطلاق الشحن (Origin) -->
           <div class="space-y-3 bg-slate-50-deep/30 p-4 sm:p-5 rounded-2xl border border-slate-200/15">
-            <h3 class=" text-base font-black text-slate-900 flex items-center gap-2">
+            <h3 class=" text-base font-bold text-slate-900 flex items-center gap-2">
               <span></span>
               <span>2. مركز انطلاق سلعك وموقع المستودع (Origin Location)</span>
             </h3>
             <div class="grid md:grid-cols-2 gap-4">
               <div>
                 <label class="text-xs font-bold text-slate-900/70 block mb-1">ولاية انطلاق السلع والمرتجعات</label>
-                <select name="from_wilaya_id" id="fromWilayaSelect" class="field w-full p-2.5 text-xs sm:text-sm font-black">
+                <select name="from_wilaya_id" id="fromWilayaSelect" class="field w-full p-2.5 text-xs sm:text-sm font-bold">
                   <!-- سيتم ملؤها تلقائياً -->
                 </select>
               </div>
               <div>
                 <label class="text-xs font-bold text-slate-900/70 block mb-1">بلدية الانطلاق / عنوان المستودع</label>
-                <input type="text" name="from_commune" placeholder="مثال: سيدي امحمد، سطيف، بئر خادم..." class="field w-full p-2.5 text-xs sm:text-sm font-black" />
+                <input type="text" name="from_commune" placeholder="مثال: سيدي امحمد، سطيف، بئر خادم..." class="field w-full p-2.5 text-xs sm:text-sm font-bold" />
               </div>
             </div>
           </div>
 
           <!-- 3. سياسة التسعير للزبون -->
           <div class="space-y-3">
-            <h3 class=" text-base font-black text-slate-900 flex items-center gap-2">
+            <h3 class=" text-base font-bold text-slate-900 flex items-center gap-2">
               <span></span>
               <span>3. خيارات تسعير الشحن للزبون عند إتمام الطلب</span>
             </h3>
@@ -682,21 +682,21 @@
               <label class="p-3.5 border rounded-2xl flex items-start gap-3 cursor-pointer hover:border-slate-200 transition-all duration-300 has-[:checked]:border-slate-900 has-[:checked]:bg-red-700/5">
                 <input type="radio" name="pricing_mode" value="flat" checked class="accent-forest mt-1" />
                 <div>
-                  <p class="text-xs font-black text-slate-900">سعر موحد ثابت (Flat Rate)</p>
+                  <p class="text-xs font-bold text-slate-900">سعر موحد ثابت (Flat Rate)</p>
                   <p class="text-[10px] text-slate-900/60 mt-0.5">تحديد سعر شحن ثابت لجميع الولايات للتبسيط على المشتري</p>
                 </div>
               </label>
               <label class="p-3.5 border rounded-2xl flex items-start gap-3 cursor-pointer hover:border-slate-200 transition-all duration-300 has-[:checked]:border-slate-900 has-[:checked]:bg-red-700/5">
                 <input type="radio" name="pricing_mode" value="auto" class="accent-forest mt-1" />
                 <div>
-                  <p class="text-xs font-black text-slate-900">تسعير تلقائي عبر API</p>
+                  <p class="text-xs font-bold text-slate-900">تسعير تلقائي عبر API</p>
                   <p class="text-[10px] text-slate-900/60 mt-0.5">جلب تسعيرة شركة التوصيل الرسمية لحظياً حسب ولاية الزبون</p>
                 </div>
               </label>
               <label class="p-3.5 border rounded-2xl flex items-start gap-3 cursor-pointer hover:border-slate-200 transition-all duration-300 has-[:checked]:border-slate-900 has-[:checked]:bg-red-700/5">
                 <input type="radio" name="pricing_mode" value="custom" class="accent-forest mt-1" />
                 <div>
-                  <p class="text-xs font-black text-slate-900">أسعار الولايات المخصصة</p>
+                  <p class="text-xs font-bold text-slate-900">أسعار الولايات المخصصة</p>
                   <p class="text-[10px] text-slate-900/60 mt-0.5">استخدام جدول أسعار الولايات المخصص لمتجرك</p>
                 </div>
               </label>
@@ -706,18 +706,18 @@
             <div id="flatPricingSection" class="grid sm:grid-cols-2 gap-4 bg-slate-50/40 p-4 rounded-2xl border border-slate-200/10">
               <div>
                 <label class="text-xs font-bold text-slate-900/70 block mb-1">سعر التوصيل للمنزل الموحد (دج)</label>
-                <input type="number" name="flat_home_price" value="600" min="0" step="50" class="field w-full p-2.5 text-sm font-black" />
+                <input type="number" name="flat_home_price" value="600" min="0" step="50" class="field w-full p-2.5 text-sm font-bold" />
               </div>
               <div>
                 <label class="text-xs font-bold text-slate-900/70 block mb-1">سعر التوصيل للمكتب / Stop Desk (دج)</label>
-                <input type="number" name="flat_desk_price" value="350" min="0" step="50" class="field w-full p-2.5 text-sm font-black" />
+                <input type="number" name="flat_desk_price" value="350" min="0" step="50" class="field w-full p-2.5 text-sm font-bold" />
               </div>
             </div>
             <div id="customPricingSection" class="hidden bg-slate-50/40 p-4 rounded-2xl border border-slate-200/10 space-y-3">
               <p class="text-xs text-slate-900/70 font-bold">حدد أسعار كل ولاية لمتجرك. اترك التوصيل غير محددًا للولايات التي لا تخدمها.</p>
               <input id="customRatesSearch" class="field w-full max-w-xs px-3 py-2 text-sm" placeholder="بحث عن ولاية..." />
               <div id="customRatesTable" class="bg-white rounded-xl border border-slate-200/10 overflow-x-auto"></div>
-              <button id="saveCustomRatesBtn" type="button" class="btn-primary px-5 py-2 rounded-xl text-sm font-black">حفظ أسعار الولايات الخاصة</button>
+              <button id="saveCustomRatesBtn" type="button" class="btn-primary px-5 py-2 rounded-xl text-sm font-bold">حفظ أسعار الولايات الخاصة</button>
             </div>
           </div>
 
@@ -725,19 +725,19 @@
           <div class="bg-red-700/5 border border-slate-900/20 rounded-2xl p-4 sm:p-5 space-y-3">
             <label class="flex items-center gap-2.5 cursor-pointer">
               <input type="checkbox" name="free_shipping_enabled" id="freeShippingCheckbox" class="accent-forest w-4 h-4 rounded" />
-              <span class="text-xs sm:text-sm font-black text-slate-900-dark">تفعيل عرض "شحن مجاني" عند تجاوز سلة الشراء مبلغاً معيناً</span>
+              <span class="text-xs sm:text-sm font-bold text-slate-900-dark">تفعيل عرض "شحن مجاني" عند تجاوز سلة الشراء مبلغاً معيناً</span>
             </label>
             <div id="freeShippingThresholdWrap" class="grid sm:grid-cols-2 gap-4 pt-1">
               <div>
                 <label class="text-xs font-bold text-slate-900/70 block mb-1">الحد الأدنى لقيمة السلة للشحن المجاني (دج)</label>
-                <input type="number" name="free_shipping_threshold" value="15000" min="0" step="500" class="field w-full p-2.5 text-sm font-black" />
+                <input type="number" name="free_shipping_threshold" value="15000" min="0" step="500" class="field w-full p-2.5 text-sm font-bold" />
               </div>
             </div>
           </div>
 
           <!-- زر الحفظ -->
           <div class="flex justify-end pt-2">
-            <button type="submit" class="btn-primary px-8 py-3 rounded-2xl text-sm font-black shadow-lg hover:shadow-xl transition-shadow duration-300 flex items-center gap-2 transition-all duration-300 active:scale-[0.98]">
+            <button type="submit" class="btn-primary px-8 py-3 rounded-2xl text-sm font-bold shadow-lg hover:shadow-xl transition-shadow duration-300 flex items-center gap-2 transition-all duration-300 active:scale-[0.98]">
               <span></span>
               <span>حفظ إعدادات الشحن</span>
             </button>
@@ -817,12 +817,12 @@
       <!-- تبويب إعادة التعيين والتحكم -->
       <section id="tab-reset" class="tab-content hidden space-y-6">
         <div>
-          <h2 class=" text-2xl font-black text-rose-700">️ منطقة إعادة التعيين والتحكم</h2>
+          <h2 class=" text-2xl font-bold text-rose-700">️ منطقة إعادة التعيين والتحكم</h2>
           <p class="text-sm text-slate-900/70 mt-1">
             من هنا يمكنك تصفير العمليات الحسابية لبدء الحسابات وتجربة المتجر من جديد، أو إعادة ضبط المصنع الكامل للمتجر كأنه أول مرة.
             <b class="text-rose-700">يتطلب تنفيذ أي عملية إدخال كلمة مرور الأدمن للتأكيد الأمني.</b>
           </p>
-          <button id="downloadBackupBtn" type="button" class="hidden btn-outline mt-3 px-4 py-2 rounded-xl text-sm font-black text-slate-900 border-slate-900 hover:bg-red-700/10">⬇️ تنزيل نسخة احتياطية</button>
+          <button id="downloadBackupBtn" type="button" class="hidden btn-outline mt-3 px-4 py-2 rounded-xl text-sm font-bold text-slate-900 border-slate-900 hover:bg-red-700/10">⬇️ تنزيل نسخة احتياطية</button>
         </div>
 
         <div class="grid md:grid-cols-2 gap-6">
@@ -831,7 +831,7 @@
             <div class="flex items-center gap-3">
               <span class="text-3xl"></span>
               <div>
-                <h3 class=" text-lg font-black text-slate-900">تصفير الحسابات والطلبات (إلى 0)</h3>
+                <h3 class=" text-lg font-bold text-slate-900">تصفير الحسابات والطلبات (إلى 0)</h3>
                 <p class="text-xs text-slate-900/60 font-bold">لإعادة الحسابات المالية وتجربة المتجر</p>
               </div>
             </div>
@@ -839,9 +839,9 @@
               <li>حذف جميع الطلبات الحالية والمسجلة.</li>
               <li>تصفير الأرشيف المالي (المبيعات وتكلفة الشحن تعود لـ 0 دج).</li>
               <li>تصفير إحصائيات الأرباح لتبدأ حساباتك من الصفر.</li>
-              <li class="text-slate-900 font-black">يبقى المخزون والمنتجات والتصنيفات كما هي دون حذف.</li>
+              <li class="text-slate-900 font-bold">يبقى المخزون والمنتجات والتصنيفات كما هي دون حذف.</li>
             </ul>
-            <button id="openResetStatsModalBtn" type="button" class="btn-outline w-full py-2.5 rounded-xl text-sm font-black text-[#E52F20] border-[#E52F20] hover:bg-[#E52F20]/10">
+            <button id="openResetStatsModalBtn" type="button" class="btn-outline w-full py-2.5 rounded-xl text-sm font-bold text-[#E52F20] border-[#E52F20] hover:bg-[#E52F20]/10">
                تصفير الحسابات والطلبات فقط (0)
             </button>
           </div>
@@ -851,7 +851,7 @@
             <div class="flex items-center gap-3">
               <span class="text-3xl">️</span>
               <div>
-                <h3 class=" text-lg font-black text-rose-700">إعادة ضبط المصنع الكامل (المتجر كأول مرة)</h3>
+                <h3 class=" text-lg font-bold text-rose-700">إعادة ضبط المصنع الكامل (المتجر كأول مرة)</h3>
                 <p class="text-xs text-rose-600 font-bold">مسح شامل وإعادة المتجر جديداً تماماً</p>
               </div>
             </div>
@@ -859,9 +859,9 @@
               <li>حذف جميع المنتجات وصورها ومتغيراتها والمخزون.</li>
               <li>حذف جميع التصنيفات والتصنيفات الفرعية.</li>
               <li>حذف جميع الطلبات وتصفير كافة الإحصائيات والأرباح ومصاريف الإعلانات.</li>
-              <li class="font-black text-slate-900"><b>تبقى أسعار الشحن والتوصيل للولايات الـ 69 محفوظة كما هي دون مسح.</b></li>
+              <li class="font-bold text-slate-900"><b>تبقى أسعار الشحن والتوصيل للولايات الـ 69 محفوظة كما هي دون مسح.</b></li>
             </ul>
-            <button id="openResetStoreModalBtn" type="button" class="btn-primary w-full py-2.5 rounded-xl text-sm font-black bg-rose-700 hover:bg-rose-800 text-white border-rose-900">
+            <button id="openResetStoreModalBtn" type="button" class="btn-primary w-full py-2.5 rounded-xl text-sm font-bold bg-rose-700 hover:bg-rose-800 text-white border-rose-900">
               ️ إعادة ضبط المتجر بالكامل كأول مرة
             </button>
           </div>
@@ -899,13 +899,13 @@
             <div class="flex items-center justify-between mb-1">
               <label class="text-xs font-bold text-slate-900/70" id="packQtyLabel">عدد القطع بالعبوة</label>
               <button type="button" id="setSinglePieceBtn"
-                class="text-[11px] font-black px-2 py-0.5 rounded transition-all duration-300 cursor-pointer border"
+                class="text-[11px] font-bold px-2 py-0.5 rounded transition-all duration-300 cursor-pointer border"
                 title="تبديل بين البيع بالجملة والبيع بالحبة">
                  البيع بالجملة
               </button>
             </div>
             <div id="packQuantityWrap">
-              <input required name="pack_quantity" id="packQuantityInput" type="number" min="1" value="1" placeholder="مثال: 12" class="field w-full px-3 py-2 text-sm bg-slate-50/60 font-black" />
+              <input required name="pack_quantity" id="packQuantityInput" type="number" min="1" value="1" placeholder="مثال: 12" class="field w-full px-3 py-2 text-sm bg-slate-50/60 font-bold" />
             </div>
             <!-- hidden input used when retail mode active -->
             <input type="hidden" id="packQuantityHidden" name="pack_quantity_retail" value="1" disabled />
@@ -979,8 +979,8 @@
 
       <!-- ملخص المخزون في حالة تعديل منتج بسيط موجود -->
       <div id="stockSummaryEdit" class="hidden bg-white/80 border border-slate-200/10 rounded-xl px-4 py-3 flex items-center justify-between text-sm">
-        <span class="font-bold">المخزون الحالي: <span id="stockSummaryValue" class="text-slate-900 font-black">-</span> قطعة</span>
-        <button type="button" id="openRestockBtn" class="btn-primary px-3 py-1.5 rounded-2xl text-xs font-black">+ تزويد المخزون</button>
+        <span class="font-bold">المخزون الحالي: <span id="stockSummaryValue" class="text-slate-900 font-bold">-</span> قطعة</span>
+        <button type="button" id="openRestockBtn" class="btn-primary px-3 py-1.5 rounded-2xl text-xs font-bold">+ تزويد المخزون</button>
       </div>
 
       <!-- إدارة المتغيرات في حالة تعديل منتج له متغيرات مسبقًا -->
@@ -1089,7 +1089,7 @@
       <div class="flex items-center gap-3 border-b border-slate-200/10 pb-3">
         <span id="resetModalIcon" class="text-3xl">️</span>
         <div>
-          <h3 id="resetModalTitle" class=" text-xl font-black text-rose-700">تأكيد العملية</h3>
+          <h3 id="resetModalTitle" class=" text-xl font-bold text-rose-700">تأكيد العملية</h3>
           <p id="resetModalSubtitle" class="text-xs text-slate-900/60 font-bold">هذا الإجراء يتطلب التحقق من هويتك</p>
         </div>
       </div>
@@ -1097,15 +1097,15 @@
       <p id="resetModalWarning" class="text-xs text-slate-900/80 bg-rose-50 p-3 rounded-xl border border-rose-200 leading-relaxed font-bold"></p>
 
       <div class="space-y-1.5">
-        <label class="text-xs font-black text-slate-900 block"> أدخل كلمة مرور لوحة التحكم للمتابعة:</label>
+        <label class="text-xs font-bold text-slate-900 block"> أدخل كلمة مرور لوحة التحكم للمتابعة:</label>
         <input required id="resetAdminPassword" type="password" placeholder="كلمة المرور الخاصة بحسابك" class="field w-full px-3 py-2 text-sm font-bold" autocomplete="current-password" />
       </div>
 
-      <p id="resetModalError" class="text-rose-700 text-xs font-black hidden bg-rose-100 p-2 rounded-2xl"></p>
+      <p id="resetModalError" class="text-rose-700 text-xs font-bold hidden bg-rose-100 p-2 rounded-2xl"></p>
 
       <div class="flex gap-2 pt-2">
-        <button type="button" id="closeResetConfirmModal" class="btn-outline flex-1 py-2.5 rounded-xl text-sm font-black">إلغاء</button>
-        <button type="submit" id="executeResetBtn" class="btn-primary flex-1 py-2.5 rounded-xl text-sm font-black bg-rose-700 text-white border-rose-900">تأكيد التصفير ️</button>
+        <button type="button" id="closeResetConfirmModal" class="btn-outline flex-1 py-2.5 rounded-xl text-sm font-bold">إلغاء</button>
+        <button type="submit" id="executeResetBtn" class="btn-primary flex-1 py-2.5 rounded-xl text-sm font-bold bg-rose-700 text-white border-rose-900">تأكيد التصفير ️</button>
       </div>
     </form>
   </div>
@@ -1118,7 +1118,7 @@
       </div>
       
       <div class="space-y-2">
-        <h3 class=" text-2xl font-black text-slate-900">انتهت الفترة التجريبية المجانية (7 أيام)</h3>
+        <h3 class=" text-2xl font-bold text-slate-900">انتهت الفترة التجريبية المجانية (7 أيام)</h3>
         <p class="text-xs sm:text-sm text-slate-900/70 font-bold leading-relaxed">
           نأمل أن تكون قد استمتعت بتجربة متجر الجملة وأدوات الإعلانات وحساب الأرباح! لمواصلة استخدام لوحة التحكم وإدارة متجرك، يرجى اختيار إحدى باقات الاشتراك:
         </p>
@@ -1126,29 +1126,29 @@
 
       <div class="grid sm:grid-cols-2 gap-4 text-right">
         <div class="border border-slate-200/20 p-4 rounded-2xl hover:border-slate-900 transition-all duration-300 space-y-2 bg-slate-50/30">
-          <p class="text-xs font-black text-slate-900"> الاشتراك الشهري (جملة)</p>
-          <p class="text-xl font-black text-slate-900">1,600 دج <span class="text-xs text-slate-900/60 font-bold">/ شهر</span></p>
-          <button type="button" id="paywallMonthlyBtn" onclick="subscribeToPlan('monthly')" class="btn-primary w-full py-2.5 rounded-xl text-xs font-black cursor-pointer">اختيار الشهري </button>
+          <p class="text-xs font-bold text-slate-900"> الاشتراك الشهري (جملة)</p>
+          <p class="text-xl font-bold text-slate-900">1,600 دج <span class="text-xs text-slate-900/60 font-bold">/ شهر</span></p>
+          <button type="button" id="paywallMonthlyBtn" onclick="subscribeToPlan('monthly')" class="btn-primary w-full py-2.5 rounded-xl text-xs font-bold cursor-pointer">اختيار الشهري </button>
         </div>
         <div class="border border-amber-400 p-4 rounded-2xl bg-amber-50 space-y-2 relative">
-          <span class="absolute -top-2.5 left-3 bg-amber-500 text-white text-[10px] px-2 py-0.5 rounded-full font-black">وفر أكثر من 21%</span>
-          <p class="text-xs font-black text-slate-900"> الاشتراك السنوي (جملة)</p>
-          <p class="text-xl font-black text-amber-700">16,000 دج <span class="text-xs text-slate-900/60 font-bold">/ سنة</span></p>
-          <button type="button" id="paywallAnnualBtn" onclick="subscribeToPlan('annual')" class="btn-primary w-full py-2.5 rounded-xl text-xs font-black bg-amber-600 text-white border border-slate-200 cursor-pointer">اختيار السنوي </button>
+          <span class="absolute -top-2.5 left-3 bg-amber-500 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">وفر أكثر من 21%</span>
+          <p class="text-xs font-bold text-slate-900"> الاشتراك السنوي (جملة)</p>
+          <p class="text-xl font-bold text-amber-700">16,000 دج <span class="text-xs text-slate-900/60 font-bold">/ سنة</span></p>
+          <button type="button" id="paywallAnnualBtn" onclick="subscribeToPlan('annual')" class="btn-primary w-full py-2.5 rounded-xl text-xs font-bold bg-amber-600 text-white border border-slate-200 cursor-pointer">اختيار السنوي </button>
         </div>
       </div>
 
       <div class="bg-emerald-50 border border-emerald-300 rounded-2xl p-4 space-y-2">
-        <p class="text-xs font-black text-emerald-900"> تواصل مباشرة مع فريق العمل للدفع والتفعيل السريع:</p>
-        <a href="https://wa.me/213665236042?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D9%8B%D8%8C%20%D8%A3%D9%88%D8%AF%20%D8%AA%D9%81%D8%B9%D9%8A%D9%84%20%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83%D9%8A%20%D9%81%D9%8A%20%D9%85%D8%AA%D8%AC%D8%B1%20%D8%A7%D9%84%D8%AC%D9%85%D9%84%D8%A9" target="_blank" class="inline-flex items-center justify-center gap-2 w-full py-3 bg-[#25D366] hover:bg-[#1EBE5D] text-white rounded-xl font-black text-sm shadow-lg hover:shadow-xl transition-shadow duration-300 transition-all duration-300">
+        <p class="text-xs font-bold text-emerald-900"> تواصل مباشرة مع فريق العمل للدفع والتفعيل السريع:</p>
+        <a href="https://wa.me/213665236042?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D9%8B%D8%8C%20%D8%A3%D9%88%D8%AF%20%D8%AA%D9%81%D8%B9%D9%8A%D9%84%20%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83%D9%8A%20%D9%81%D9%8A%20%D9%85%D8%AA%D8%AC%D8%B1%20%D8%A7%D9%84%D8%AC%D9%85%D9%84%D8%A9" target="_blank" class="inline-flex items-center justify-center gap-2 w-full py-3 bg-[#25D366] hover:bg-[#1EBE5D] text-white rounded-xl font-bold text-sm shadow-lg hover:shadow-xl transition-shadow duration-300 transition-all duration-300">
           <span></span>
           <span>تواصل عبر واتساب (+213 665 23 60 42)</span>
         </a>
       </div>
 
       <div class="pt-2 border-t border-slate-200/10 flex items-center justify-between">
-        <button type="button" id="paywallLogoutBtn" class="text-xs text-rose-700 hover:underline font-black">تسجيل الخروج </button>
-        <button type="button" onclick="document.getElementById('paywallModal').classList.add('hidden')" class="text-xs text-slate-900 hover:underline font-black">المتابعة في وضع المشاهدة ️</button>
+        <button type="button" id="paywallLogoutBtn" class="text-xs text-rose-700 hover:underline font-bold">تسجيل الخروج </button>
+        <button type="button" onclick="document.getElementById('paywallModal').classList.add('hidden')" class="text-xs text-slate-900 hover:underline font-bold">المتابعة في وضع المشاهدة ️</button>
       </div>
     </div>
   </div>
@@ -1160,21 +1160,21 @@
         ️
       </div>
       <div class="space-y-2">
-        <h3 class=" text-xl font-black text-slate-900">حسابك في وضع المشاهدة فقط</h3>
+        <h3 class=" text-xl font-bold text-slate-900">حسابك في وضع المشاهدة فقط</h3>
         <p class="text-xs text-slate-900/70 font-bold leading-relaxed">
           لقد انتهت فترتك التجريبية المجانية (7 أيام). يمكنك تصفح الإحصائيات والبيانات، ولإجراء أي تعديل أو إضافة منتجات يرجى تفعيل حسابك.
         </p>
       </div>
 
       <div class="bg-emerald-50 border border-emerald-300 rounded-2xl p-4 space-y-2">
-        <p class="text-xs font-black text-emerald-900"> تواصل مباشرة مع الإدارة للتفعيل السريع:</p>
-        <a href="https://wa.me/213665236042?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D9%8B%D8%8C%20%D8%A3%D9%88%D8%AF%20%D8%AA%D9%81%D8%B9%D9%8A%D9%84%20%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83%D9%8A%20%D9%81%D9%8A%20%D9%85%D8%AA%D8%AC%D8%B1%20%D8%A7%D9%84%D8%AC%D9%85%D9%84%D8%A9" target="_blank" class="inline-flex items-center justify-center gap-2 w-full py-3 bg-[#25D366] hover:bg-[#1EBE5D] text-white rounded-xl font-black text-sm shadow-lg hover:shadow-xl transition-shadow duration-300 transition-all duration-300">
+        <p class="text-xs font-bold text-emerald-900"> تواصل مباشرة مع الإدارة للتفعيل السريع:</p>
+        <a href="https://wa.me/213665236042?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D9%8B%D8%8C%20%D8%A3%D9%88%D8%AF%20%D8%AA%D9%81%D8%B9%D9%8A%D9%84%20%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83%D9%8A%20%D9%81%D9%8A%20%D9%85%D8%AA%D8%AC%D8%B1%20%D8%A7%D9%84%D8%AC%D9%85%D9%84%D8%A9" target="_blank" class="inline-flex items-center justify-center gap-2 w-full py-3 bg-[#25D366] hover:bg-[#1EBE5D] text-white rounded-xl font-bold text-sm shadow-lg hover:shadow-xl transition-shadow duration-300 transition-all duration-300">
           <span></span>
           <span>تواصل عبر واتساب (+213 665 23 60 42)</span>
         </a>
       </div>
 
-      <button type="button" onclick="document.getElementById('readOnlyAlertModal').classList.add('hidden')" class="btn-outline w-full py-2 rounded-xl text-xs font-black">
+      <button type="button" onclick="document.getElementById('readOnlyAlertModal').classList.add('hidden')" class="btn-outline w-full py-2 rounded-xl text-xs font-bold">
         متابعة التصفح في وضع المشاهدة ️
       </button>
     </div>
@@ -1187,10 +1187,10 @@
         
       </div>
       <div class="space-y-3">
-        <h3 class=" text-3xl sm:text-4xl font-black text-slate-900 leading-tight">يجب التواصل معنا عبر فريق العمل</h3>
+        <h3 class=" text-3xl sm:text-4xl font-bold text-slate-900 leading-tight">يجب التواصل معنا عبر فريق العمل</h3>
         <p id="subscriptionContactMessage" class="text-base sm:text-lg text-slate-900/70 font-bold leading-relaxed">تم إرسال طلب الاشتراك بنجاح. اضغط «حسناً» للتواصل مباشرة مع فريق العمل.</p>
       </div>
-      <button type="button" id="subscriptionContactOkBtn" class="w-full py-4 rounded-2xl font-black text-lg bg-[#25D366] hover:bg-[#1EBE5D] text-white border border-slate-200 shadow-lg hover:shadow-xl transition-shadow duration-300 transition-all duration-300">
+      <button type="button" id="subscriptionContactOkBtn" class="w-full py-4 rounded-2xl font-bold text-lg bg-[#25D366] hover:bg-[#1EBE5D] text-white border border-slate-200 shadow-lg hover:shadow-xl transition-shadow duration-300 transition-all duration-300">
         حسناً، التواصل مع فريق العمل
       </button>
     </div>
