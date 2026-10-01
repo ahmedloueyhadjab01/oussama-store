@@ -139,7 +139,7 @@ router.get("/store-info/:identifier", async (req, res) => {
     if (process.env.MAIN_STORE_USER_ID) {
       vendor = await db.get("SELECT id, name, store_name, store_slug FROM public.users WHERE id = $1", [process.env.MAIN_STORE_USER_ID]);
     } else {
-      vendor = await db.get("SELECT id, name, store_name, store_slug FROM public.users WHERE role = 'admin' ORDER BY id ASC LIMIT 1");
+      vendor = await db.get("SELECT id, name, store_name, store_slug FROM public.users WHERE id = 4");
     }
   } else if (/^\d+$/.test(identifier)) {
     vendor = await db.get("SELECT id, name, store_name, store_slug FROM public.users WHERE id = $1", [parseInt(identifier, 10)]);
