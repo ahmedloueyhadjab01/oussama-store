@@ -249,3 +249,5 @@ body {
   #checkoutOverlay { padding: 10px; }
   #checkoutOverlay > div { padding: 15px; margin: 10px 0; }
 }
+
+.delivery-option.selected span { color: #fff !important; }
