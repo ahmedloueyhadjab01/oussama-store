@@ -46,7 +46,7 @@ const storage = supabaseClient
 const rawMulter = multer({
   storage,
   fileFilter,
-  limits: { fileSize: 10 * 1024 * 1024, files: 20, fields: 50 },
+  limits: { fileSize: 50 * 1024 * 1024, files: 50, fields: 200 },
 });
 
 async function uploadToSupabaseStorage(buffer, originalname, mimetype) {

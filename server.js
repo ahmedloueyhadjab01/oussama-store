@@ -71,16 +71,7 @@ if (!isProduction) {
 }
 
 app.use(
-  cors({
-    origin: (origin, callback) => {
-      if (!origin || allowedOrigins.has(origin)) {
-        callback(null, true);
-        return;
-      }
-      callback(new Error('Not allowed by CORS'));
-    },
-    credentials: true,
-  })
+  cors({ origin: true, credentials: true })
 );
 
 app.use(express.json({ limit: '5mb' }));
