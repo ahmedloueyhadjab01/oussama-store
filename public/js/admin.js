@@ -269,15 +269,15 @@ const forgotPasswordSection = document.getElementById('forgotPasswordSection');
 
 window.switchAuthTab = function(tab) {
  if (tab === 'register') {
- if (tabAuthRegister) tabAuthRegister.className = 'py-3 rounded-lg bg-white border border-slate-200 shadow-sm text-slate-900 transition-all flex items-center justify-center gap-1 cursor-pointer';
- if (tabAuthLogin) tabAuthLogin.className = 'py-3 rounded-lg text-slate-900/70 hover:text-slate-900 transition-all cursor-pointer';
+ if (tabAuthRegister) tabAuthRegister.className = 'py-3 rounded-2xl bg-white border border-slate-200 shadow-md text-slate-900 transition-all flex items-center justify-center gap-1 cursor-pointer';
+ if (tabAuthLogin) tabAuthLogin.className = 'py-3 rounded-2xl text-slate-900/70 hover:text-slate-900 transition-all cursor-pointer';
  if (registerForm) registerForm.classList.remove('hidden');
  if (loginForm) loginForm.classList.add('hidden');
  if (forgotPasswordSection) forgotPasswordSection.classList.add('hidden');
  if (emailVerifySection) emailVerifySection.classList.add('hidden');
  } else {
- if (tabAuthLogin) tabAuthLogin.className = 'py-3 rounded-lg bg-white border border-slate-200 shadow-sm text-slate-900 transition-all cursor-pointer';
- if (tabAuthRegister) tabAuthRegister.className = 'py-3 rounded-lg text-slate-900/70 hover:text-slate-900 transition-all flex items-center justify-center gap-1 cursor-pointer';
+ if (tabAuthLogin) tabAuthLogin.className = 'py-3 rounded-2xl bg-white border border-slate-200 shadow-md text-slate-900 transition-all cursor-pointer';
+ if (tabAuthRegister) tabAuthRegister.className = 'py-3 rounded-2xl text-slate-900/70 hover:text-slate-900 transition-all flex items-center justify-center gap-1 cursor-pointer';
  if (loginForm) loginForm.classList.remove('hidden');
  if (registerForm) registerForm.classList.add('hidden');
  if (forgotPasswordSection) forgotPasswordSection.classList.add('hidden');
@@ -657,7 +657,7 @@ async function loadSubscriptionHistory() {
  ${data.history.map(log => `
  <tr>
  <td class="py-3 px-4 font-black">${log.plan === 'annual' ? ' سنوي' : '️ شهري'}</td>
- <td class="py-3 px-4 font-black text-blue-600">${Number(log.amount).toLocaleString('ar-DZ')} دج</td>
+ <td class="py-3 px-4 font-black text-slate-900">${Number(log.amount).toLocaleString('ar-DZ')} دج</td>
  <td class="py-3 px-4 text-slate-900/70">${new Date(log.starts_at).toLocaleDateString('ar-DZ')}</td>
  <td class="py-3 px-4 text-slate-900/70">${new Date(log.ends_at).toLocaleDateString('ar-DZ')}</td>
  <td class="py-3 px-4"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-900 text-[10px] font-black">مكتمل</span></td>
@@ -782,8 +782,8 @@ async function loadPendingRequests() {
 
  tbody.innerHTML = requests.map(r => {
  const planText = r.plan === 'annual' 
- ? '<span class="px-2 py-0.5 bg-amber-100 text-amber-900 border border-amber-300 rounded-md font-black"> سنوي (16,000 دج)</span>' 
- : '<span class="px-2 py-0.5 bg-emerald-100 text-emerald-900 border border-emerald-300 rounded-md font-black">️ شهري (1,600 دج)</span>';
+ ? '<span class="px-2 py-0.5 bg-amber-100 text-amber-900 border border-amber-300 rounded-xl font-black"> سنوي (16,000 دج)</span>' 
+ : '<span class="px-2 py-0.5 bg-emerald-100 text-emerald-900 border border-emerald-300 rounded-xl font-black">️ شهري (1,600 دج)</span>';
 
  const timeAgo = new Date(r.created_at).toLocaleString('ar-DZ');
 
@@ -798,10 +798,10 @@ async function loadPendingRequests() {
  <td class="py-3 px-4 text-slate-900/70 text-[11px]">${timeAgo}</td>
  <td class="py-3 px-4 text-center">
  <div class="flex items-center justify-center gap-1.5">
- <button type="button" data-req-action="approve" data-req-id="${r.id}" data-user-name="${escapeHtml(r.name || '')}" data-plan="${r.plan}" class="px-4 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-black shadow-xs cursor-pointer">
+ <button type="button" data-req-action="approve" data-req-id="${r.id}" data-user-name="${escapeHtml(r.name || '')}" data-plan="${r.plan}" class="px-4 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-sm font-black shadow-xs cursor-pointer">
  قبول وتفعيل
  </button>
- <button type="button" data-req-action="reject" data-req-id="${r.id}" data-user-name="${escapeHtml(r.name || '')}" class="px-4 py-1 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-sm font-black shadow-xs cursor-pointer">
+ <button type="button" data-req-action="reject" data-req-id="${r.id}" data-user-name="${escapeHtml(r.name || '')}" class="px-4 py-1 bg-rose-600 hover:bg-rose-700 text-white rounded-2xl text-sm font-black shadow-xs cursor-pointer">
  رفض
  </button>
  </div>
@@ -938,26 +938,26 @@ function renderAdminUsers(users) {
  <td class="py-3.5 px-4 text-slate-900/70 text-sm">${expiryDisplay}</td>
  <td class="py-3.5 px-4 text-center">
  <div class="flex items-center justify-center gap-1.5 flex-wrap">
- <button type="button" data-admin-action="activate-monthly" data-user-id="${u.id}" data-user-name="${escapeHtml(u.name || '')}" class="px-4 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[10px] font-black shadow-xs transition-all cursor-pointer" title="تفعيل اشتراك شهري (30 يوماً من اليوم)">
+ <button type="button" data-admin-action="activate-monthly" data-user-id="${u.id}" data-user-name="${escapeHtml(u.name || '')}" class="px-4 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-[10px] font-black shadow-xs transition-all cursor-pointer" title="تفعيل اشتراك شهري (30 يوماً من اليوم)">
  تفعيل شهري
  </button>
- <button type="button" data-admin-action="activate-annual" data-user-id="${u.id}" data-user-name="${escapeHtml(u.name || '')}" class="px-4 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-[10px] font-black shadow-xs transition-all cursor-pointer" title="تفعيل اشتراك سنوي (365 يوماً من اليوم)">
+ <button type="button" data-admin-action="activate-annual" data-user-id="${u.id}" data-user-name="${escapeHtml(u.name || '')}" class="px-4 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded-2xl text-[10px] font-black shadow-xs transition-all cursor-pointer" title="تفعيل اشتراك سنوي (365 يوماً من اليوم)">
  تفعيل سنوي
  </button>
- <button type="button" data-admin-action="extend-days" data-user-id="${u.id}" data-user-name="${escapeHtml(u.name || '')}" class="px-4 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-[10px] font-black shadow-xs transition-all cursor-pointer" title="تمديد أيام مخصصة">
+ <button type="button" data-admin-action="extend-days" data-user-id="${u.id}" data-user-name="${escapeHtml(u.name || '')}" class="px-4 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded-2xl text-[10px] font-black shadow-xs transition-all cursor-pointer" title="تمديد أيام مخصصة">
  تمديد أيام
  </button>
  ${u.subscription_status === 'suspended' ? `
- <button type="button" data-admin-action="toggle-active" data-user-id="${u.id}" data-user-name="${escapeHtml(u.name || '')}" class="px-2 py-1 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-[10px] font-black shadow-xs cursor-pointer">
+ <button type="button" data-admin-action="toggle-active" data-user-id="${u.id}" data-user-name="${escapeHtml(u.name || '')}" class="px-2 py-1 bg-teal-600 hover:bg-teal-700 text-white rounded-2xl text-[10px] font-black shadow-xs cursor-pointer">
  ️ تشغيل
  </button>
  ` : `
- <button type="button" data-admin-action="toggle-suspend" data-user-id="${u.id}" data-user-name="${escapeHtml(u.name || '')}" class="px-2 py-1 bg-slate-600 hover:bg-slate-700 text-white rounded-lg text-[10px] font-black shadow-xs cursor-pointer" title="إيقاف مؤقت للحساب">
+ <button type="button" data-admin-action="toggle-suspend" data-user-id="${u.id}" data-user-name="${escapeHtml(u.name || '')}" class="px-2 py-1 bg-slate-600 hover:bg-slate-700 text-white rounded-2xl text-[10px] font-black shadow-xs cursor-pointer" title="إيقاف مؤقت للحساب">
  إيقاف
  </button>
  `}
  ${u.role !== 'admin' ? `
- <button type="button" data-admin-action="delete-user" data-user-id="${u.id}" data-user-name="${escapeHtml(u.name || '')}" class="px-2 py-1 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-[10px] font-black shadow-xs cursor-pointer" title="حذف الحساب">
+ <button type="button" data-admin-action="delete-user" data-user-id="${u.id}" data-user-name="${escapeHtml(u.name || '')}" class="px-2 py-1 bg-rose-600 hover:bg-rose-700 text-white rounded-2xl text-[10px] font-black shadow-xs cursor-pointer" title="حذف الحساب">
  ️
  </button>
  ` : ''}
@@ -1138,15 +1138,15 @@ function renderCategoryNode(cat, container) {
  const wrap = document.createElement('div');
  wrap.className = 'border-r-2 border-slate-200/10 pr-3';
  wrap.innerHTML = `
- <div class="flex items-center justify-between bg-slate-50 rounded-lg px-4 py-2 mb-2 border border-slate-200/10">
+ <div class="flex items-center justify-between bg-slate-50 rounded-2xl px-4 py-2 mb-2 border border-slate-200/10">
  <div class="flex items-center gap-3 min-w-0">
  <span class="category-image-slot w-10 h-10 shrink-0"></span>
  <span class="font-bold text-sm">${escapeHtml(cat.name)}</span>
  </div>
  <div class="flex gap-2">
  <button class="add-sub-btn text-sm bg-red-700 text-white w-6 h-6 rounded-full font-black" title="إضافة تصنيف فرعي">+</button>
- <button class="edit-cat-btn text-sm text-slate-900/70 hover:text-slate-900 font-bold px-1" title="تعديل التصنيف">✏️</button>
- <button class="del-cat-btn text-sm text-[#E52F20] font-extrabold px-1" title="حذف التصنيف">🗑️</button>
+ <button class="edit-cat-btn text-sm text-slate-900/70 hover:text-slate-900 font-bold px-1" title="تعديل التصنيف">️</button>
+ <button class="del-cat-btn text-sm text-[#E52F20] font-extrabold px-1" title="حذف التصنيف">️</button>
  </div>
  </div>
  <div class="children pr-4 space-y-2"></div>
@@ -1156,7 +1156,7 @@ function renderCategoryNode(cat, container) {
  image.src = cat.image;
  image.alt = '';
  image.loading = 'lazy';
- image.className = 'w-10 h-10 rounded-lg border border-slate-200 object-cover';
+ image.className = 'w-10 h-10 rounded-2xl border border-slate-200 object-cover';
  image.addEventListener('error', () => image.remove(), { once: true });
  wrap.querySelector('.category-image-slot').appendChild(image);
  }
@@ -1347,17 +1347,17 @@ async function loadProducts() {
  const packQuantity = Number(p.pack_quantity) || 1;
  const unitLabel = packQuantity > 1 ? 'عبوة' : 'حبة';
  tr.innerHTML = `
- <td class="p-3"><img src="${escapeHtml(p.image || '/img/placeholder.svg')}" class="w-10 h-10 object-cover rounded-lg bg-slate-50 border border-slate-200/10" /></td>
+ <td class="p-3"><img src="${escapeHtml(p.image || '/img/placeholder.svg')}" class="w-10 h-10 object-cover rounded-2xl bg-slate-50 border border-slate-200/10" /></td>
  <td class="p-3">
  <span class="font-bold block">${escapeHtml(p.name)}</span>
  <span class="text-[10px] text-slate-900/60 font-bold">${unitLabel} (${packQuantity} قطعة) القطعة: ${money(Math.round(p.price / packQuantity))}</span>
  </td>
  <td class="p-3 font-black">${money(p.price)}</td>
  <td class="p-3 font-bold">${p.stock} ${unitLabel}${p.has_variants ? ' <span class="text-[10px] bg-yellow-500/20 text-yellow-600 border border-gold/40 rounded-full px-2 py-0.5 font-bold">مقاسات</span>' : ''}</td>
- <td class="p-3">${p.is_active ? '<span class="text-blue-600 font-bold">مفعّل</span>' : '<span class="text-slate-900/40">معطّل</span>'}</td>
+ <td class="p-3">${p.is_active ? '<span class="text-slate-900 font-bold">مفعّل</span>' : '<span class="text-slate-900/40">معطّل</span>'}</td>
  <td class="p-3 flex gap-2">
- <button class="edit-btn text-blue-600 font-extrabold">✏️ تعديل</button>
- <button class="del-btn text-red-500 font-extrabold">🗑️ حذف</button>
+ <button class="edit-btn text-slate-900 font-extrabold">️ تعديل</button>
+ <button class="del-btn text-red-500 font-extrabold">️ حذف</button>
  </td>
  `;
  tr.querySelector('.edit-btn').addEventListener('click', () => openProductModal(p));
@@ -1423,18 +1423,18 @@ function addColorBlock(colorName = '', colorCode = '#17241F', imagePath = '', in
  block.innerHTML = `
  <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200/10 pb-3">
  <div class="flex items-center gap-2 flex-1 min-w-[200px]">
- <input class="cb-color-picker w-8 h-8 rounded-lg border border-slate-200 cursor-pointer p-0.5" type="color" value="${escapeHtml(colorCode || '#17241F')}" title="اختر رمز اللون للعرض بالمتجر" />
+ <input class="cb-color-picker w-8 h-8 rounded-2xl border border-slate-200 cursor-pointer p-0.5" type="color" value="${escapeHtml(colorCode || '#17241F')}" title="اختر رمز اللون للعرض بالمتجر" />
  <input class="cb-color-name field px-4 py-1.5 text-sm font-bold flex-1" placeholder="اسم اللون (مثال: أصفر، أسود، أحمر)" value="${escapeHtml(colorName)}" />
  </div>
  <div class="flex items-center gap-2">
- <label class="btn-outline px-4 py-1.5 rounded-lg text-sm font-bold cursor-pointer flex items-center gap-1">
+ <label class="btn-outline px-4 py-1.5 rounded-2xl text-sm font-bold cursor-pointer flex items-center gap-1">
  <span>صورة هذا اللون</span>
  <input type="file" accept="image/*" class="cb-image-file hidden" />
  </label>
- <div class="cb-image-preview w-8 h-8 rounded-lg border border-slate-200/30 bg-white overflow-hidden flex items-center justify-center text-[10px] text-slate-900/40">
+ <div class="cb-image-preview w-8 h-8 rounded-2xl border border-slate-200/30 bg-white overflow-hidden flex items-center justify-center text-[10px] text-slate-900/40">
  ${imagePath ? `<img src="${escapeHtml(imagePath)}" class="w-full h-full object-cover" />` : 'لا صورة'}
  </div>
- <button type="button" class="cb-remove-btn text-[#E52F20] hover:bg-[#E52F20]/10 w-7 h-7 rounded-lg font-black text-sm flex items-center justify-center" title="حذف هذا اللون">&times;</button>
+ <button type="button" class="cb-remove-btn text-[#E52F20] hover:bg-[#E52F20]/10 w-7 h-7 rounded-2xl font-black text-sm flex items-center justify-center" title="حذف هذا اللون">&times;</button>
  </div>
  </div>
 
@@ -1443,7 +1443,7 @@ function addColorBlock(colorName = '', colorCode = '#17241F', imagePath = '', in
  <div class="flex items-center justify-between">
  <span class="text-[11px] font-extrabold text-slate-900/70">المقاسات المتوفرة لهذا اللون:</span>
  <div class="flex gap-2">
- <button type="button" class="cb-quick-sizes text-[10px] text-blue-600 font-bold hover:underline">+ مقاسات شائعة (S, M, L, XL)</button>
+ <button type="button" class="cb-quick-sizes text-[10px] text-slate-900 font-bold hover:underline">+ مقاسات شائعة (S, M, L, XL)</button>
  <button type="button" class="cb-add-size-btn text-[10px] bg-red-700 text-white px-2 py-0.5 rounded font-bold">+ مقاس</button>
  </div>
  </div>
@@ -1513,7 +1513,7 @@ function addVariantRow(label = '', qty = '', cost = '') {
  <input class="v-label field px-1 py-1 text-[12px] min-w-0" placeholder="النوع/المقاس" value="${escapeHtml(label)}" />
  <input class="v-qty field px-1 py-1 text-[12px] min-w-0" type="number" min="0" placeholder="الكمية" value="${qty}" />
  <input class="v-cost field px-1 py-1 text-[12px] min-w-0" type="number" step="0.01" min="0" placeholder="سعر الشراء" value="${cost}" />
- <button type="button" class="v-remove text-red-500 font-extrabold text-sm px-1">🗑️ حذف</button>
+ <button type="button" class="v-remove text-red-500 font-extrabold text-sm px-1">️ حذف</button>
  `;
  row.querySelector('.v-remove').addEventListener('click', () => row.remove());
  document.getElementById('variantRows').appendChild(row);
@@ -1610,7 +1610,7 @@ if (topCloseBtn) topCloseBtn.addEventListener('click', () => document.getElement
  input.setAttribute('required', '');
  if (label) label.textContent = 'عدد القطع بالعبوة';
  btn.textContent = ' البيع بالجملة';
- btn.className = 'text-[11px] font-black px-2 py-0.5 rounded transition-all cursor-pointer border text-blue-600 border-blue-600 bg-red-700/10 hover:bg-red-700/20';
+ btn.className = 'text-[11px] font-black px-2 py-0.5 rounded transition-all cursor-pointer border text-slate-900 border-slate-900 bg-red-700/10 hover:bg-red-700/20';
  }
  }
 
@@ -1643,7 +1643,7 @@ function renderVariantsEditPanel(product) {
 
  list.innerHTML = variants.map(v => {
  const colorCircle = v.color_code ? `<span class="w-3.5 h-3.5 rounded-full border border-slate-200/30 inline-block shrink-0" style="background-color:${escapeHtml(v.color_code)}"></span>` : '';
- const imgThumb = v.image ? `<img src="${escapeHtml(v.image)}" class="w-8 h-8 object-cover rounded-lg border border-slate-200/20" />` : '';
+ const imgThumb = v.image ? `<img src="${escapeHtml(v.image)}" class="w-8 h-8 object-cover rounded-2xl border border-slate-200/20" />` : '';
  const labelText = v.label || [v.color, v.size].filter(Boolean).join(' - ');
 
  return `
@@ -1653,13 +1653,13 @@ function renderVariantsEditPanel(product) {
  ${colorCircle}
  <div>
  <span class="font-black text-slate-900">${escapeHtml(labelText)}</span>
- <div class="text-[10px] text-slate-900/50">المخزون: <b class="text-blue-600">${v.stock}</b> | التكلفة: ${money(v.cost_price || 0)}</div>
+ <div class="text-[10px] text-slate-900/50">المخزون: <b class="text-slate-900">${v.stock}</b> | التكلفة: ${money(v.cost_price || 0)}</div>
  </div>
  </div>
  <div class="flex gap-2">
  <button type="button" class="v-image-btn text-sky-700 hover:bg-sky-50 px-2 py-1 rounded font-black text-sm" data-vid="${v.id}" title="تغيير صورة اللون أو المقاس">تغيير الصورة</button>
- <button type="button" class="v-restock-btn text-blue-600 hover:bg-red-700/10 px-2 py-1 rounded font-black text-sm" data-vid="${v.id}" data-label="${escapeHtml(labelText)}" data-stock="${v.stock}">+ تزويد</button>
- <button type="button" class="v-delete-btn text-red-500 hover:bg-[#E52F20]/10 px-2 py-1 rounded font-black text-sm" data-vid="${v.id}" data-label="${escapeHtml(labelText)}" data-stock="${v.stock}">🗑️ حذف</button>
+ <button type="button" class="v-restock-btn text-slate-900 hover:bg-red-700/10 px-2 py-1 rounded font-black text-sm" data-vid="${v.id}" data-label="${escapeHtml(labelText)}" data-stock="${v.stock}">+ تزويد</button>
+ <button type="button" class="v-delete-btn text-red-500 hover:bg-[#E52F20]/10 px-2 py-1 rounded font-black text-sm" data-vid="${v.id}" data-label="${escapeHtml(labelText)}" data-stock="${v.stock}">️ حذف</button>
  </div>
  </div>
  `;
@@ -2195,10 +2195,10 @@ function renderSavedCalculations() {
  <td class="p-2 text-center font-bold text-[#E52F20]">${money(item.adCost)}</td>
  <td class="p-2 text-center font-black" style="color:${netColor}">${money(netUnit)}</td>
  <td class="p-2 text-center space-x-1 space-x-reverse">
- <button type="button" data-calc-id="${item.id}" onclick="window.loadSavedCalculation('${item.id}')" class="btn-load-calc text-blue-600 font-black px-4 py-1 rounded-lg bg-red-700/10 hover:bg-red-700/20 transition-all cursor-pointer inline-flex items-center gap-1 shadow-2xs">
+ <button type="button" data-calc-id="${item.id}" onclick="window.loadSavedCalculation('${item.id}')" class="btn-load-calc text-slate-900 font-black px-4 py-1 rounded-2xl bg-red-700/10 hover:bg-red-700/20 transition-all cursor-pointer inline-flex items-center gap-1 shadow-2xs">
  <span></span> <span>تحميل</span>
  </button>
- <button type="button" data-calc-id="${item.id}" onclick="window.deleteSavedCalculation('${item.id}')" class="btn-delete-calc text-rose-600 font-black px-4 py-1 rounded-lg hover:bg-rose-50 transition-all cursor-pointer inline-flex items-center gap-1 shadow-2xs">
+ <button type="button" data-calc-id="${item.id}" onclick="window.deleteSavedCalculation('${item.id}')" class="btn-delete-calc text-rose-600 font-black px-4 py-1 rounded-2xl hover:bg-rose-50 transition-all cursor-pointer inline-flex items-center gap-1 shadow-2xs">
  <span>️</span> <span>حذف</span>
  </button>
  </td>
@@ -2214,7 +2214,7 @@ function addCalcFixedRow(label = '', amount = '') {
  row.innerHTML = `
  <input class="calc-fixed-label field px-2 py-1.5 text-sm" placeholder="اسم المصروف (مثال: إيجار)" value="${escapeHtml(label)}" />
  <input class="calc-fixed-amount field px-2 py-1.5 text-sm" type="number" min="0" placeholder="المبلغ" value="${amount}" />
- <button type="button" class="calc-remove-row text-red-500 font-extrabold text-sm px-1">🗑️ حذف</button>
+ <button type="button" class="calc-remove-row text-red-500 font-extrabold text-sm px-1">️ حذف</button>
  `;
  row.querySelector('.calc-remove-row').addEventListener('click', () => { row.remove(); recomputeCalculator(); });
  row.querySelectorAll('input').forEach((inp) => inp.addEventListener('input', recomputeCalculator));
@@ -2405,8 +2405,8 @@ async function loadCampaignAnalytics() {
  <td class="p-3 text-sm text-slate-900/60">${String(s.spend_date).slice(0, 10)}</td>
  <td class="p-3 text-sm text-slate-900/50">${escapeHtml(s.notes || '')}</td>
  <td class="p-3">
- <button data-spend="${encodeURIComponent(JSON.stringify({ id: s.id, campaign_name: s.campaign_name, source: s.source, spend_amount: s.spend_amount, spend_date: String(s.spend_date).slice(0, 10), notes: s.notes || '' }))}" class="edit-spend-btn text-slate-900/70 hover:text-slate-900 text-sm font-black px-2 py-1 rounded-lg hover:bg-slate-50 transition">✏️ تعديل</button>
- <button data-spend-id="${s.id}" class="delete-spend-btn text-rose-600 hover:text-rose-700 text-sm font-black px-2 py-1 rounded-lg hover:bg-rose-50 transition">🗑️ حذف</button>
+ <button data-spend="${encodeURIComponent(JSON.stringify({ id: s.id, campaign_name: s.campaign_name, source: s.source, spend_amount: s.spend_amount, spend_date: String(s.spend_date).slice(0, 10), notes: s.notes || '' }))}" class="edit-spend-btn text-slate-900/70 hover:text-slate-900 text-sm font-black px-2 py-1 rounded-2xl hover:bg-slate-50 transition">️ تعديل</button>
+ <button data-spend-id="${s.id}" class="delete-spend-btn text-rose-600 hover:text-rose-700 text-sm font-black px-2 py-1 rounded-2xl hover:bg-rose-50 transition">️ حذف</button>
  </td>
  </tr>`).join('');
 
@@ -3011,10 +3011,10 @@ function renderOrdersTable() {
 
  const colorDot = i.color_code ? `<span class="w-3 h-3 rounded-full border border-slate-200/30 inline-block shrink-0" style="background-color:${escapeHtml(i.color_code)}"></span>` : '';
  const imgTag = i.image ? `<img src="${escapeHtml(i.image)}" class="w-7 h-7 object-cover rounded border border-slate-200/20 shrink-0 bg-slate-50" />` : '';
- const detailsBadge = details.length ? `<span class="bg-red-700/10 text-blue-600 font-black px-1.5 py-0.5 rounded text-[10px] inline-flex items-center gap-1">${colorDot}${details.join(' | ')}</span>` : '';
+ const detailsBadge = details.length ? `<span class="bg-red-700/10 text-slate-900 font-black px-1.5 py-0.5 rounded text-[10px] inline-flex items-center gap-1">${colorDot}${details.join(' | ')}</span>` : '';
 
  return `
- <div class="flex items-center gap-2 my-1 bg-slate-100/40 p-1.5 rounded-lg border border-slate-200/5">
+ <div class="flex items-center gap-2 my-1 bg-slate-100/40 p-1.5 rounded-2xl border border-slate-200/5">
  ${imgTag}
  <div class="flex-1">
  <div class="font-bold">${escapeHtml(i.name)} <span class="text-slate-900/60">× ${i.qty}</span></div>
@@ -3037,7 +3037,7 @@ function renderOrdersTable() {
  ${escapeHtml(o.tracking_code)}
  </span>
  ${safeUrl(o.label_url) ? `<a href="${escapeHtml(safeUrl(o.label_url))}" target="_blank" rel="noopener noreferrer" class="text-[10px] font-black text-red-700 hover:underline flex items-center gap-1"> طباعة البوليصة</a>` : ''}
- <button class="live-track-btn text-[10px] font-black text-blue-600 hover:underline text-right" data-orderid="${o.id}"> تتبع لحظي</button>
+ <button class="live-track-btn text-[10px] font-black text-slate-900 hover:underline text-right" data-orderid="${o.id}"> تتبع لحظي</button>
  </div>`
  : (['قيد المعالجة', 'قيد التوصيل'].includes(o.status) ? `
  <div class="mt-1">
@@ -3062,19 +3062,19 @@ function renderOrdersTable() {
  <td class="p-3 font-extrabold">${money(o.total)}<br><span class="text-sm text-slate-900/40 font-normal">منتجات: ${money(o.subtotal)}</span></td>
  <td class="p-3">
  ${isFinalStatus ? `
- <span class="inline-block px-4 py-1 text-sm font-black rounded-lg border ${STATUS_BADGE_STYLE[o.status] || 'bg-slate-50'}">
+ <span class="inline-block px-4 py-1 text-sm font-black rounded-2xl border ${STATUS_BADGE_STYLE[o.status] || 'bg-slate-50'}">
  ${o.status}
  </span>
  ${shippingLossBadge}
  ` : `
- <select class="status-select field px-2 py-1 text-sm font-black rounded-lg border ${STATUS_BADGE_STYLE[o.status] || ''}">
+ <select class="status-select field px-2 py-1 text-sm font-black rounded-2xl border ${STATUS_BADGE_STYLE[o.status] || ''}">
  ${availableStatuses.map(s => `<option value="${s}" ${s === o.status ? 'selected' : ''}>${s}</option>`).join('')}
  </select>
  ${shippingLossBadge}
  `}
  </td>
  <td class="p-3 text-sm text-slate-900/40">${new Date(o.created_at).toLocaleString('ar-DZ')}</td>
- <td class="p-3"><button class="del-order-btn text-rose-600 font-extrabold text-sm hover:underline">🗑️ حذف</button></td>
+ <td class="p-3"><button class="del-order-btn text-rose-600 font-extrabold text-sm hover:underline">️ حذف</button></td>
  `;
 
  const selectEl = tr.querySelector('.status-select');
@@ -3486,9 +3486,9 @@ checkSession();
 // ---------- العدّاد الحي حسب المنصة (زيارات + مشتريات تلقائية) ----------
 (function () {
   const LABELS = {
-    facebook: '🔵 فيسبوك', instagram: '📸 انستغرام', tiktok: '⚫ تيك توك', google: '🔴 جوجل',
-    snapchat: '🟡 سناب شات', youtube: '▶️ يوتيوب', whatsapp: '🟢 واتساب', telegram: '✈️ تيليغرام',
-    direct: '🔗 مباشر / بدون مصدر',
+    facebook: ' فيسبوك', instagram: ' انستغرام', tiktok: ' تيك توك', google: ' جوجل',
+    snapchat: '🟡 سناب شات', youtube: '️ يوتيوب', whatsapp: '🟢 واتساب', telegram: '️ تيليغرام',
+    direct: ' مباشر / بدون مصدر',
   };
   let timer = null;
   let data = [];
@@ -3507,7 +3507,7 @@ checkSession();
         <td class="p-2 text-center font-black text-emerald-700">${p.orders}</td>
         <td class="p-2 text-center">${p.conversion_rate.toFixed(1)}%</td>
         <td class="p-2 text-center">${p.spend ? money(p.spend) : '—'}</td>
-        <td class="p-2 text-center"><button type="button" class="platform-reset-btn text-rose-600 font-black hover:underline" data-source="${escapeHtml(p.source)}">↺ صفّر</button></td>
+        <td class="p-2 text-center"><button type="button" class="platform-reset-btn text-rose-600 font-black hover:underline" data-source="${escapeHtml(p.source)}"> صفّر</button></td>
       </tr>`).join('') || '<tr><td colspan="6" class="p-4 text-center text-slate-900/40 font-bold">لا توجد بيانات بعد</td></tr>';
     const stamp = document.getElementById('platformLiveStamp');
     if (stamp) stamp.textContent = 'آخر تحديث: ' + new Date().toLocaleTimeString('ar-DZ');

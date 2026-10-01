@@ -69,7 +69,7 @@
       oldButton.textContent = 'استخدم البيانات السابقة';
       const newButton = document.createElement('button');
       newButton.type = 'button';
-      newButton.className = 'flex-1 rounded-xl bg-blue-600 px-4 py-3 font-black text-white hover:bg-blue-700';
+      newButton.className = 'flex-1 rounded-xl bg-slate-900 px-4 py-3 font-black text-white hover:bg-slate-800';
       newButton.textContent = 'استخدم البيانات الجديدة';
       actions.append(oldButton, newButton);
       panel.append(title, details, actions);

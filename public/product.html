@@ -18,11 +18,11 @@
   <script src="/js/track.js"></script>
 </head>
 <body class="font-sans bg-slate-50 text-gray-900 pb-20 md:pb-0">
-  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm">
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-md">
     <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
       <a href="/" class="text-2xl brand-logo font-black">Ovaro_28</a>
-      <button id="cartBtn" class="relative flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-sm hidden md:flex">
-        🛒 السلة <span id="cartCount" class="absolute -top-2 -left-2 bg-blue-600 text-slate-900 text-xs font-black w-5 h-5 rounded-full flex items-center justify-center border border-slate-200">0</span>
+      <button id="cartBtn" class="relative flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold bg-slate-900 text-white hover:bg-slate-800 transition-colors shadow-md hidden md:flex">
+         السلة <span id="cartCount" class="absolute -top-2 -left-2 bg-slate-900 text-slate-900 text-xs font-black w-5 h-5 rounded-full flex items-center justify-center border border-slate-200">0</span>
       </button>
     </div>
   </header>
@@ -30,7 +30,7 @@
   <main id="productDetail" class="max-w-4xl mx-auto px-4 py-8"></main>
 
   <footer class="border-t-2 border-slate-200 mt-10 py-8 text-center text-sm">
-    <p class="font-display text-2xl text-blue-600 mb-3 font-black">تابعنا على وسائل التواصل</p>
+    <p class="font-display text-2xl text-slate-900 mb-3 font-black">تابعنا على وسائل التواصل</p>
     <div id="socialIconsProductFooter" class="flex items-center justify-center gap-3 mb-4"></div>
     <p class="text-slate-900 font-bold">© 2026 Ovaro_28 - جميع الحقوق محفوظة</p>
   </footer>
@@ -79,13 +79,13 @@
           <div class="grid grid-cols-2 gap-2">
             <label class="delivery-option flex flex-col items-center py-3 px-2 text-center selected" data-type="home">
               <input type="radio" name="delivery_type" value="home" class="hidden" checked />
-              <span class="text-lg">🏠</span>
+              <span class="text-lg"></span>
               <span class="text-xs font-black mt-1 text-slate-900">للمنزل</span>
               <span class="delivery-price text-xs font-black mt-1">—</span>
             </label>
             <label class="delivery-option flex flex-col items-center py-3 px-2 text-center" data-type="desk">
               <input type="radio" name="delivery_type" value="desk" class="hidden" />
-              <span class="text-lg">🏤</span>
+              <span class="text-lg"></span>
               <span class="text-xs font-black mt-1 text-slate-900">مكتب البريد</span>
               <span class="delivery-price text-xs font-black mt-1">—</span>
             </label>
@@ -107,10 +107,10 @@
     </div>
   </div>
 
-  <div id="successToast" class="hidden fixed bottom-6 right-6 bg-blue-500 text-white px-5 py-3 rounded-xl shadow-lg z-[60] font-bold border-2 border-forest-dark"></div>
+  <div id="successToast" class="hidden fixed bottom-6 right-6 bg-slate-800 text-white px-5 py-3 rounded-xl shadow-lg z-[60] font-bold border-2 border-forest-dark"></div>
 
   <!-- المُكبِّر (Lightbox) لصور المنتج -->
-  <div id="lightbox" class="hidden fixed inset-0 bg-blue-600/90 z-[70] items-center justify-center">
+  <div id="lightbox" class="hidden fixed inset-0 bg-slate-900/90 z-[70] items-center justify-center">
     <button id="lightboxClose" class="absolute top-4 left-4 text-white text-3xl leading-none z-10">&times;</button>
     <button id="lightboxPrev" class="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 text-white text-4xl z-10 px-2 select-none">&#8249;</button>
     <img id="lightboxImg" src="/img/placeholder.svg" class="max-h-[92vh] max-w-[96vw] w-auto h-auto object-contain select-none" />
@@ -187,15 +187,15 @@
         row.className = 'flex items-center gap-3 border-b-2 border-slate-200/20 pb-3';
         const totalPieces = (item.pack_quantity || 1) * item.qty;
         row.innerHTML = `
-          <img src="${escapeHtml(safeImageUrl(item.image))}" class="w-14 h-14 object-cover rounded-lg bg-slate-50-deep border border-slate-200 shadow-2xs" />
+          <img src="${escapeHtml(safeImageUrl(item.image))}" class="w-14 h-14 object-cover rounded-2xl bg-slate-50-deep border border-slate-200 shadow-2xs" />
           <div class="flex-1">
-            <p class="text-sm font-black text-slate-900 line-clamp-1">${escapeHtml(item.name)}${item.variant_label ? ` <span class="text-xs text-blue-600 font-black">(${escapeHtml(item.variant_label)})</span>` : ''}</p>
+            <p class="text-sm font-black text-slate-900 line-clamp-1">${escapeHtml(item.name)}${item.variant_label ? ` <span class="text-xs text-slate-900 font-black">(${escapeHtml(item.variant_label)})</span>` : ''}</p>
             <p class="text-xs text-slate-900 font-bold">${money(item.price)} <span class="text-[10px] text-slate-900/60 font-normal">/ عبوة</span></p>
-            <p class="text-[11px] text-blue-600 font-black">المجموع: ${totalPieces} قطعة (${item.qty} عبوة)</p>
+            <p class="text-[11px] text-slate-900 font-black">المجموع: ${totalPieces} قطعة (${item.qty} عبوة)</p>
             <div class="flex items-center gap-2 mt-1">
-              <button class="qty-btn dec btn-outline rounded-lg w-6 h-6 text-sm font-black flex items-center justify-center">-</button>
+              <button class="qty-btn dec btn-outline rounded-2xl w-6 h-6 text-sm font-black flex items-center justify-center">-</button>
               <span class="text-sm font-black text-slate-900">${item.qty} عبوة</span>
-              <button class="qty-btn inc btn-outline rounded-lg w-6 h-6 text-sm font-black flex items-center justify-center">+</button>
+              <button class="qty-btn inc btn-outline rounded-2xl w-6 h-6 text-sm font-black flex items-center justify-center">+</button>
             </div>
           </div>
           <button class="remove-btn text-red-500 text-xs font-black hover:underline">حذف</button>
@@ -317,7 +317,7 @@
 
     function openCheckout() {
       if (!Cart.get().length) {
-        showToast('السلة فارغة، يرجى إضافة منتج أولاً ⚠️');
+        showToast('السلة فارغة، يرجى إضافة منتج أولاً ️');
         return;
       }
       closeCart();
@@ -406,7 +406,7 @@
         form.reset();
         communeSelect.disabled = true;
         communeSelect.innerHTML = '<option value="">البلدية...</option>';
-        showToast(`تم تسجيل طلبك بنجاح 🎉 رقم الطلب: ${data.order_id}`);
+        showToast(`تم تسجيل طلبك بنجاح  رقم الطلب: ${data.order_id}`);
       } catch (err) {
         errorEl.textContent = err.message;
         errorEl.classList.remove('hidden');
@@ -530,10 +530,10 @@
       el.innerHTML = `
         <div class="grid md:grid-cols-2 gap-8">
           <div>
-            <div id="mainImageWrap" class="aspect-square bg-gray-200 animate-pulse rounded-2xl overflow-hidden border border-slate-200 relative cursor-zoom-in group shadow-sm">
+            <div id="mainImageWrap" class="aspect-square bg-gray-200 animate-pulse rounded-2xl overflow-hidden border border-slate-200 relative cursor-zoom-in group shadow-md">
               <img id="mainProductImage" src="${escapeHtml(GALLERY_IMAGES[0] || '/img/placeholder.svg')}" class="w-full h-full object-contain p-2 transition-opacity duration-700 opacity-0 ${product.stock <= 0 ? 'grayscale' : ''}"  />
               ${product.stock <= 0 ? '<span class="absolute top-3 right-3 bg-ink text-white text-xs font-extrabold px-3 py-1.5 rounded-full shadow">نفد المخزون</span>' : ''}
-              <span class="absolute bottom-2 left-2 bg-ink/75 backdrop-blur-sm text-white text-[11px] font-bold px-2.5 py-1 rounded-full pointer-events-none">🔍 اضغط للتكبير</span>
+              <span class="absolute bottom-2 left-2 bg-ink/75 backdrop-blur-sm text-white text-[11px] font-bold px-2.5 py-1 rounded-full pointer-events-none"> اضغط للتكبير</span>
             </div>
             ${thumbsHtml}
           </div>
@@ -547,12 +547,12 @@
               <div class="flex items-center justify-between">
                 <span id="displayPrice" class="price-ticket lg inline-flex font-black">${money(product.price)}</span>
                 ${isWholesale
-                  ? `<span class="text-xs bg-blue-500 text-white font-black px-3 py-1 rounded-full">عبوة (${packQty} قطعة)</span>`
+                  ? `<span class="text-xs bg-slate-800 text-white font-black px-3 py-1 rounded-full">عبوة (${packQty} قطعة)</span>`
                   : `<span class="text-xs bg-amber-500 text-white font-black px-3 py-1 rounded-full">قطعة واحدة</span>`
                 }
               </div>
               ${isWholesale
-                ? `<p class="text-xs font-bold text-slate-900/70">سعر القطعة داخل العبوة: <span class="text-blue-600 font-black">${money(Math.round(product.price / packQty))}</span></p>`
+                ? `<p class="text-xs font-bold text-slate-900/70">سعر القطعة داخل العبوة: <span class="text-slate-900 font-black">${money(Math.round(product.price / packQty))}</span></p>`
                 : ''
               }
             </div>`;
@@ -572,33 +572,33 @@
               <div class="flex items-center justify-between gap-3 bg-white border border-slate-200/20 p-3 rounded-xl">
                 <div class="flex items-center gap-2">
                   <span class="text-xs font-black text-slate-900">${isWholesale ? 'عدد العبوات:' : 'الكمية:'}</span>
-                  <div class="flex items-center gap-1.5 bg-slate-50-deep border border-slate-200 rounded-lg px-2 py-0.5 shadow-2xs">
-                    <button id="qtyDecBtn" class="w-7 h-7 rounded-md font-black text-base flex items-center justify-center hover:bg-slate-50 transition-colors">-</button>
+                  <div class="flex items-center gap-1.5 bg-slate-50-deep border border-slate-200 rounded-2xl px-2 py-0.5 shadow-2xs">
+                    <button id="qtyDecBtn" class="w-7 h-7 rounded-xl font-black text-base flex items-center justify-center hover:bg-slate-50 transition-colors">-</button>
                     <input id="productQtyInput" type="number" min="1" value="1" class="w-10 text-center font-black text-sm text-slate-900 outline-none bg-transparent" />
-                    <button id="qtyIncBtn" class="w-7 h-7 rounded-md font-black text-base flex items-center justify-center hover:bg-slate-50 transition-colors">+</button>
+                    <button id="qtyIncBtn" class="w-7 h-7 rounded-xl font-black text-base flex items-center justify-center hover:bg-slate-50 transition-colors">+</button>
                   </div>
                 </div>
                 ${isWholesale ? `
                 <div class="text-left">
                   <span class="text-[11px] text-slate-900/60 font-bold block">إجمالي القطع في العبوة</span>
-                  <span id="calculatedTotalPieces" class="text-sm font-black text-blue-600">${packQty} قطعة</span>
+                  <span id="calculatedTotalPieces" class="text-sm font-black text-slate-900">${packQty} قطعة</span>
                 </div>` : `<div id="calculatedTotalPieces" class="hidden"></div>`}
               </div>
 
               <div class="flex flex-wrap items-center gap-3">
-                <button id="buyNowBtn" class="btn-primary flex-1 py-3.5 px-6 rounded-xl font-black text-base shadow-md flex items-center justify-center gap-2 transition-all active:scale-[0.98] bg-blue-500 text-white" ${product.stock <= 0 ? 'disabled style="opacity:.5;cursor:not-allowed"' : ''}>
-                  <span>⚡</span>
-                  <span>${product.stock <= 0 ? 'غير متوفر حاليًا' : (isWholesale ? 'اطلب الآن (عبوة كاملة)' : 'اطلب الآن ⚡')}</span>
+                <button id="buyNowBtn" class="btn-primary flex-1 py-3.5 px-6 rounded-xl font-black text-base shadow-lg hover:shadow-xl transition-shadow duration-300 flex items-center justify-center gap-2 transition-all active:scale-[0.98] bg-slate-800 text-white" ${product.stock <= 0 ? 'disabled style="opacity:.5;cursor:not-allowed"' : ''}>
+                  <span></span>
+                  <span>${product.stock <= 0 ? 'غير متوفر حاليًا' : (isWholesale ? 'اطلب الآن (عبوة كاملة)' : 'اطلب الآن ')}</span>
                 </button>
-                <button id="addBtn" class="btn-outline flex-1 py-3.5 px-6 rounded-xl font-black text-base shadow-md flex items-center justify-center gap-2 transition-all active:scale-[0.98]" ${product.stock <= 0 ? 'disabled style="opacity:.5;cursor:not-allowed"' : ''}>
-                  <span>🛒</span>
+                <button id="addBtn" class="btn-outline flex-1 py-3.5 px-6 rounded-xl font-black text-base shadow-lg hover:shadow-xl transition-shadow duration-300 flex items-center justify-center gap-2 transition-all active:scale-[0.98]" ${product.stock <= 0 ? 'disabled style="opacity:.5;cursor:not-allowed"' : ''}>
+                  <span></span>
                   <span id="addBtnText">${product.stock <= 0 ? 'غير متوفر' : (isWholesale ? 'أضف العبوة للسلة' : 'أضف للسلة')}</span>
                 </button>
               </div>`;
               })()}
 
               <div id="productSocialIcons" class="flex gap-2 pt-1"></div>
-              <p id="variantHint" class="text-xs text-rose-700 font-black mt-2 hidden flex items-center gap-1">⚠️ <span id="variantHintText">الرجاء اختيار المواصفات المطلوبة</span></p>
+              <p id="variantHint" class="text-xs text-rose-700 font-black mt-2 hidden flex items-center gap-1">️ <span id="variantHintText">الرجاء اختيار المواصفات المطلوبة</span></p>
             </div>
           </div>
         </div>
@@ -638,7 +638,7 @@
             PRODUCT_QTY = val + 1;
             updatePiecesCount();
           } else {
-            showToast(`الكمية المتوفرة بالمخزون ${maxStock} ${unitLabel} فقط ⚠️`);
+            showToast(`الكمية المتوفرة بالمخزون ${maxStock} ${unitLabel} فقط ️`);
           }
         });
         qtyInput.addEventListener('change', () => {
@@ -647,7 +647,7 @@
           if (val < 1) val = 1;
           if (val > maxStock) {
             val = maxStock;
-            showToast(`الكمية المتوفرة بالمخزون ${maxStock} ${unitLabel} فقط ⚠️`);
+            showToast(`الكمية المتوفرة بالمخزون ${maxStock} ${unitLabel} فقط ️`);
           }
           qtyInput.value = val;
           PRODUCT_QTY = val;
@@ -684,14 +684,14 @@
           }
 
           if (SELECTED_VARIANT.stock <= 0) {
-            showToast(`عذرًا، هذا الخيار (${SELECTED_VARIANT.label || SELECTED_VARIANT.color}) نفد من المخزون ⚠️`);
+            showToast(`عذرًا، هذا الخيار (${SELECTED_VARIANT.label || SELECTED_VARIANT.color}) نفد من المخزون ️`);
             return false;
           }
 
           const inCart = Cart.get().find((i) => i.id === product.id && i.variant_id === SELECTED_VARIANT.id);
           const currentQty = inCart ? inCart.qty : 0;
           if (currentQty + quantityToAdd > SELECTED_VARIANT.stock) {
-            showToast(`الكمية المتوفرة من "${SELECTED_VARIANT.label || SELECTED_VARIANT.color}" هي ${SELECTED_VARIANT.stock} فقط ⚠️`);
+            showToast(`الكمية المتوفرة من "${SELECTED_VARIANT.label || SELECTED_VARIANT.color}" هي ${SELECTED_VARIANT.stock} فقط ️`);
             return false;
           }
 
@@ -702,7 +702,7 @@
           const inCart = Cart.get().find((i) => i.id === product.id && !i.variant_id);
           const currentQty = inCart ? inCart.qty : 0;
           if (currentQty + quantityToAdd > product.stock) {
-            showToast(`الكمية المتوفرة من هذا المنتج ${product.stock} فقط ⚠️`);
+            showToast(`الكمية المتوفرة من هذا المنتج ${product.stock} فقط ️`);
             return false;
           }
           Cart.add(product, quantityToAdd);
@@ -711,7 +711,7 @@
         if (isDirectCheckout) {
           openCheckout();
         } else {
-          showToast('تمت إضافة المنتج إلى السلة بنجاح ✅');
+          showToast('تمت إضافة المنتج إلى السلة بنجاح ');
           openCart();
         }
         return true;
@@ -809,17 +809,17 @@
           }
 
           const catNav = document.getElementById('productCategoryNav');
-          catNav.innerHTML = filteredCats.map((c, i) => `<button class="p-cat-btn px-4 py-1.5 rounded-full text-sm font-bold transition-colors whitespace-nowrap ${i === 0 ? 'bg-slate-800 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900'}" data-cat="${c.id}">${escapeHtml(c.name)}</button>`).join('');
+          catNav.innerHTML = filteredCats.map((c, i) => `<button class="p-cat-btn px-4 py-1.5 rounded-full text-sm font-bold transition-colors whitespace-nowrap ${i === 0 ? 'bg-slate-800 text-white shadow-md' : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900'}" data-cat="${c.id}">${escapeHtml(c.name)}</button>`).join('');
           
           catNav.querySelectorAll('.p-cat-btn').forEach(btn => {
             btn.addEventListener('click', async () => {
               // Update active state
               catNav.querySelectorAll('.p-cat-btn').forEach(b => {
-                b.classList.remove('bg-slate-800', 'text-white', 'shadow-sm');
+                b.classList.remove('bg-slate-800', 'text-white', 'shadow-md');
                 b.classList.add('bg-slate-100', 'text-slate-600', 'hover:bg-slate-200', 'hover:text-slate-900');
               });
               btn.classList.remove('bg-slate-100', 'text-slate-600', 'hover:bg-slate-200', 'hover:text-slate-900');
-              btn.classList.add('bg-slate-800', 'text-white', 'shadow-sm');
+              btn.classList.add('bg-slate-800', 'text-white', 'shadow-md');
               
               // Load products for category
               const cid = btn.dataset.cat;
@@ -901,24 +901,24 @@
       }
 
       return `
-        <div class="related-product-card bg-white rounded-2xl shadow-sm hover:shadow-xl border border-gray-100 transition-all duration-300 overflow-hidden flex flex-col group cursor-pointer" data-product-id="${escapeHtml(p.id)}" data-product-url="${escapeHtml(prodUrl)}">
+        <div class="related-product-card bg-white rounded-2xl shadow-md hover:shadow-xl border border-gray-100 transition-all duration-300 overflow-hidden flex flex-col group cursor-pointer" data-product-id="${escapeHtml(p.id)}" data-product-url="${escapeHtml(prodUrl)}">
           <div class="relative aspect-[4/5] bg-gray-100 overflow-hidden cursor-pointer">
             <img src="${escapeHtml(mainImg)}" class="product-img w-full h-full object-cover transition-all duration-700 ${outOfStock ? 'grayscale' : 'group-hover:scale-110'}" />
-            ${outOfStock ? '<span class="absolute top-2 right-2 bg-red-500 text-white text-[10px] font-black px-2 py-1 rounded shadow-sm">نفذت</span>' : ''}
+            ${outOfStock ? '<span class="absolute top-2 right-2 bg-red-500 text-white text-[10px] font-black px-2 py-1 rounded shadow-md">نفذت</span>' : ''}
             <div class="absolute inset-0 bg-blue-900/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           </div>
           <div class="p-4 flex flex-col gap-2 flex-1">
             <div class="flex items-start justify-between gap-2">
-              <h3 class="font-black text-sm text-gray-900 line-clamp-2 leading-snug cursor-pointer hover:text-blue-600 transition-colors">${escapeHtml(p.name)}</h3>
-              ${p.compare_price > p.price ? `<span class="bg-blue-50 text-blue-600 text-[9px] font-black px-1.5 py-0.5 rounded-full shrink-0">-${Math.round((1 - p.price/p.compare_price)*100)}%</span>` : ''}
+              <h3 class="font-black text-sm text-gray-900 line-clamp-2 leading-snug cursor-pointer hover:text-slate-900 transition-colors">${escapeHtml(p.name)}</h3>
+              ${p.compare_price > p.price ? `<span class="bg-blue-50 text-slate-900 text-[9px] font-black px-1.5 py-0.5 rounded-full shrink-0">-${Math.round((1 - p.price/p.compare_price)*100)}%</span>` : ''}
             </div>
             ${colorDotsHtml ? `<div class="flex items-center gap-1.5 mt-0.5">${colorDotsHtml}</div>` : ''}
             <div class="mt-auto pt-2 flex items-center justify-between">
               <div class="flex flex-col">
-                <span class="text-lg font-black text-blue-600">${money(p.price)}</span>
+                <span class="text-lg font-black text-slate-900">${money(p.price)}</span>
                 ${p.compare_price > p.price ? `<span class="text-[10px] text-gray-400 font-bold line-through">${money(p.compare_price)}</span>` : ''}
               </div>
-              <button class="${outOfStock ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700 shadow-md hover:shadow-lg hover:-translate-y-0.5'} add-to-cart w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300">
+              <button class="${outOfStock ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-slate-900 text-white hover:bg-slate-800 shadow-lg hover:shadow-xl transition-shadow duration-300 hover:shadow-lg hover:-translate-y-0.5'} add-to-cart w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300">
                 ${outOfStock ? '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>' : '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>'}
               </button>
             </div>
@@ -1027,11 +1027,11 @@
         container.querySelectorAll('.variant-btn:not([disabled])').forEach((btn) => {
           btn.addEventListener('click', () => {
             container.querySelectorAll('.variant-btn').forEach((b) => {
-              b.classList.remove('border-forest', 'bg-blue-500', 'text-white', 'shadow-md');
+              b.classList.remove('border-forest', 'bg-slate-800', 'text-white', 'shadow-lg hover:shadow-xl transition-shadow duration-300');
               b.classList.add('border-slate-200', 'bg-white', 'text-slate-900');
             });
             btn.classList.remove('border-slate-200', 'bg-white', 'text-slate-900');
-            btn.classList.add('border-forest', 'bg-blue-500', 'text-white', 'shadow-md');
+            btn.classList.add('border-forest', 'bg-slate-800', 'text-white', 'shadow-lg hover:shadow-xl transition-shadow duration-300');
 
             const variant = variants.find((v) => String(v.id) === btn.dataset.vid);
             SELECTED_VARIANT = variant;
@@ -1064,7 +1064,7 @@
         btn.classList.toggle('border-forest', isActive);
         btn.classList.toggle('ring-2', isActive);
         btn.classList.toggle('ring-forest/30', isActive);
-        btn.classList.toggle('bg-blue-500/10', isActive);
+        btn.classList.toggle('bg-slate-800/10', isActive);
       });
 
       if (colorObj.image) {
@@ -1102,7 +1102,7 @@
         btn.className = `size-btn min-w-[44px] h-10 px-3.5 rounded-xl border-2 text-xs font-black transition-all flex items-center justify-center ${
           isOutOfStock
             ? 'opacity-40 cursor-not-allowed border-slate-200/20 bg-ink/5 text-slate-900/40'
-            : 'border-slate-200/20 bg-white text-slate-900 hover:border-slate-200 shadow-sm'
+            : 'border-slate-200/20 bg-white text-slate-900 hover:border-slate-200 shadow-md'
         }`;
         btn.dataset.vid = v.id;
         btn.dataset.size = sizeText;
@@ -1131,11 +1131,11 @@
       document.getElementById('selectedSizeName').textContent = SELECTED_SIZE;
 
       document.querySelectorAll('#sizeButtons .size-btn').forEach((b) => {
-        b.classList.remove('border-forest', 'bg-blue-500', 'text-white', 'shadow-md');
+        b.classList.remove('border-forest', 'bg-slate-800', 'text-white', 'shadow-lg hover:shadow-xl transition-shadow duration-300');
         b.classList.add('border-slate-200/20', 'bg-white', 'text-slate-900');
       });
       btnEl.classList.remove('border-slate-200/20', 'bg-white', 'text-slate-900');
-      btnEl.classList.add('border-forest', 'bg-blue-500', 'text-white', 'shadow-md');
+      btnEl.classList.add('border-forest', 'bg-slate-800', 'text-white', 'shadow-lg hover:shadow-xl transition-shadow duration-300');
 
       const stockEl = document.getElementById('stockAvailability');
       if (stockEl) {
@@ -1155,14 +1155,14 @@
   
   <!-- شريط التنقل السفلي للهاتف -->
   <nav class="md:hidden bottom-nav fixed bottom-0 left-0 w-full z-40 flex justify-around items-center h-16 shadow-[0_-4px_10px_-1px_rgba(0,0,0,0.05)] bg-white/95 backdrop-blur-md border-t border-slate-200" style="padding-bottom: env(safe-area-inset-bottom);">
-    <a href="/" class="flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-blue-600 transition-all relative group">
+    <a href="/" class="flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-slate-900 transition-all relative group">
       <svg class="w-6 h-6 mb-1 transition-transform group-hover:-translate-y-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
       <span class="text-[10px] font-bold opacity-0 group-hover:opacity-100 absolute bottom-1 transition-opacity">الرئيسية</span>
     </a>
-    <button id="mobileNavCart" class="flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-blue-600 transition-all relative group">
+    <button id="mobileNavCart" class="flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-slate-900 transition-all relative group">
       <svg class="w-6 h-6 mb-1 transition-transform group-hover:-translate-y-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
       <span class="text-[10px] font-bold opacity-0 group-hover:opacity-100 absolute bottom-1 transition-opacity">السلة</span>
-      <span id="bottomCartCount" class="absolute top-2 right-4 bg-red-500 text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center border-2 border-white shadow-sm">0</span>
+      <span id="bottomCartCount" class="absolute top-2 right-4 bg-red-500 text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center border-2 border-white shadow-md">0</span>
     </button>
   </nav>
 
