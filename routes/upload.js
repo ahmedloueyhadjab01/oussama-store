@@ -52,31 +52,33 @@ const rawMulter = multer({
 });
 
 async function uploadToSupabaseStorage(buffer, originalname, mimetype) {
-  const ext = path.extname(originalname).toLowerCase();
-  const safeName = `${Date.now()}_${crypto.randomBytes(8).toString('hex')}${ext}`;
-  const bucketName = process.env.SUPABASE_STORAGE_BUCKET || 'uploads';
-
-  try {
-    // محاولة إنشاء الـ bucket إذا لم تكن موجودة
-    await supabaseClient.storage.createBucket(bucketName, { public: true }).catch(() => {});
-  } catch (e) {}
-
-  const { data, error } = await supabaseClient.storage
-    .from(bucketName)
-    .upload(safeName, buffer, {
-      contentType: mimetype,
-      upsert: true,
-    });
-
-  if (error) {
-    throw new Error(`خطأ أثناء رفع الملف إلى Supabase Storage: ${error.message}`);
+  const ext = require("path").extname(originalname).toLowerCase();
+  const safeName = Date.now() + "_" + require("crypto").randomBytes(8).toString("hex") + ext;
+  const bucketName = process.env.SUPABASE_STORAGE_BUCKET || "uploads";
+  let fallbackLocal = false;
+  
+  if (supabaseClient) {
+    try { await supabaseClient.storage.createBucket(bucketName, { public: true }).catch(()=>{}); } catch(e){}
+    const { data, error } = await supabaseClient.storage.from(bucketName).upload(safeName, buffer, { contentType: mimetype, upsert: true });
+    if (error) {
+      console.warn("Supabase upload failed, falling back to local:", error.message);
+      fallbackLocal = true;
+    } else {
+      const { data: pUrl } = supabaseClient.storage.from(bucketName).getPublicUrl(safeName);
+      return { url: pUrl.publicUrl, filename: safeName };
+    }
+  } else {
+    fallbackLocal = true;
   }
-
-  const { data: publicUrlData } = supabaseClient.storage.from(bucketName).getPublicUrl(safeName);
-  return {
-    url: publicUrlData.publicUrl,
-    filename: safeName,
-  };
+  
+  if (fallbackLocal) {
+    const fs = require("fs");
+    const path = require("path");
+    const upDir = path.join(__dirname, "..", "public", "uploads");
+    if (!fs.existsSync(upDir)) fs.mkdirSync(upDir, { recursive: true });
+    fs.writeFileSync(path.join(upDir, safeName), buffer);
+    return { url: "/uploads/" + safeName, filename: safeName };
+  }
 }
 
 // ميدلوير مخصص لرفع الملفات مفردة أو متعددة مع معالجة Supabase التلقائية
