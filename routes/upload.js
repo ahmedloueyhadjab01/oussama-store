@@ -24,11 +24,13 @@ if (process.env.SUPABASE_URL && (process.env.SUPABASE_SERVICE_ROLE_KEY || proces
 }
 
 function fileFilter(req, file, cb) {
-  const extension = path.extname(file.originalname).toLowerCase();
-  if (!ALLOWED_EXTENSIONS.has(extension) || !file.mimetype.startsWith('image/')) {
-    return cb(new Error('نوع الملف غير مسموح. يُسمح فقط بصور JPEG, PNG, WEBP, GIF'));
+  if (!file || !file.originalname) return cb(null, false);
+  const extension = require('path').extname(file.originalname).toLowerCase();
+  const allowed = ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.jfif', '.heic', '.heif', '.mp4', '.mov', '.avi'];
+  if (allowed.includes(extension) || file.mimetype.startsWith('image/') || file.mimetype.startsWith('video/')) {
+    return cb(null, true);
   }
-  cb(null, true);
+  return cb(new Error('نوع الملف غير مدعوم. يرجى رفع صور فقط.'));
 }
 
 // استخدام الذاكرة إذا كانت هناك سحابة Supabase، أو القرص المحلي كخيار بديل
