@@ -1,4 +1,4 @@
-﻿const express = require('express');
+const express = require('express');
 const bcrypt = require('bcryptjs');
 const db = require('../db');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
@@ -50,7 +50,7 @@ router.put('/social', requireAuth, async (req, res) => {
 });
 
 // ØªØ§Ø¬Ø±: Ø¥Ø¹Ø§Ø¯Ø© ØªØ¹ÙŠÙŠÙ† Ø§Ù„Ø¥Ø­ØµØ§Ø¦ÙŠØ§Øª (Ø­Ø°Ù Ø§Ù„Ø·Ù„Ø¨Ø§Øª Ø§Ù„Ù…Ø¤Ø±Ø´ÙØ© + ØµÙØ± Ø§Ù„Ø£Ø±Ø´ÙŠÙ Ø§Ù„Ù…Ø§Ù„ÙŠ) - Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„ØªØ§Ø¬Ø± ÙÙ‚Ø·
-﻿﻿﻿function getTargetUserId(user) {
+function getTargetUserId(user) {
   if (user.role !== 'admin' || !process.env.MAIN_STORE_USER_ID) return user.id;
   const mainId = parseInt(process.env.MAIN_STORE_USER_ID, 10);
   return isNaN(mainId) ? user.id : mainId;
