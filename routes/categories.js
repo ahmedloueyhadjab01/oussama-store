@@ -26,8 +26,17 @@ router.get('/', async (req, res) => {
   if (store_id) {
     vendorId = parseInt(store_id, 10);
   } else if (store_slug) {
-    const vendor = await db.get('SELECT id FROM users WHERE store_slug = $1', [store_slug]);
+    const vendor = await db.get('SELECT id FROM users WHERE store_slug = 1', [store_slug]);
     if (vendor) vendorId = vendor.id;
+  } else {
+    const token = (req.cookies && req.cookies.token) || (req.get('authorization') && req.get('authorization').replace('Bearer ', ''));
+    if (token) {
+      try {
+        const jwt = require('jsonwebtoken');
+        const payload = jwt.verify(token, process.env.JWT_SECRET);
+        if (payload.role !== 'admin') vendorId = payload.id;
+      } catch (e) {}
+    }
   }
 
   let categories;
