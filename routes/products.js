@@ -6,6 +6,12 @@ const { requireAuth, requireActiveSubscription, checkResourceOwnership } = requi
 const upload = require('./upload');
 
 const router = express.Router();
+function getTargetUserId(user) {
+  if (user.role !== "admin" || !process.env.MAIN_STORE_USER_ID) return user.id;
+  const mainId = parseInt(process.env.MAIN_STORE_USER_ID, 10);
+  return isNaN(mainId) ? user.id : mainId;
+}
+
 
 function normalizeColorCode(value) {
   const colorCode = String(value ?? '').trim();
@@ -146,7 +152,7 @@ router.get('/admin/all', requireAuth, async (req, res) => {
   if (req.user.role === 'admin') {
     products = await db.all('SELECT * FROM products ORDER BY created_at DESC');
   } else {
-    products = await db.all('SELECT * FROM products WHERE user_id = $1 ORDER BY created_at DESC', [req.user.id]);
+    products = await db.all('SELECT * FROM products WHERE user_id = $1 ORDER BY created_at DESC', [getTargetUserId(req.user)]);
   }
   const serialized = await Promise.all(products.map(serialize));
   res.json(serialized);
@@ -191,7 +197,7 @@ router.post(
 
     if (category_id) {
       const cat = await db.get('SELECT user_id FROM categories WHERE id = $1', [category_id]);
-      if (cat && cat.user_id !== null && cat.user_id !== req.user.id && req.user.role !== 'admin') {
+      if (cat && cat.user_id !== null && cat.user_id !== getTargetUserId(req.user) && req.user.role !== 'admin') {
         return res.status(403).json({ error: 'هذا التصنيف لا ينتمي لمتجرك.' });
       }
     }
@@ -250,7 +256,7 @@ router.post(
            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
            RETURNING id`,
           [
-            req.user.id,
+            getTargetUserId(req.user),
             name.trim(),
             slug,
             description,

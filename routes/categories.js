@@ -6,6 +6,12 @@ const { requireAuth, checkResourceOwnership } = require('../middleware/auth');
 const upload = require('./upload');
 
 const router = express.Router();
+function getTargetUserId(user) {
+  if (user.role !== "admin" || !process.env.MAIN_STORE_USER_ID) return user.id;
+  const mainId = parseInt(process.env.MAIN_STORE_USER_ID, 10);
+  return isNaN(mainId) ? user.id : mainId;
+}
+
 
 function buildTree(categories, parentId = null) {
   return categories
@@ -54,7 +60,7 @@ router.get('/flat', requireAuth, async (req, res) => {
   if (req.user.role === 'admin') {
     categories = await db.all('SELECT * FROM categories ORDER BY name');
   } else {
-    categories = await db.all('SELECT * FROM categories WHERE user_id = $1 ORDER BY name', [req.user.id]);
+    categories = await db.all('SELECT * FROM categories WHERE user_id = $1 ORDER BY name', [getTargetUserId(req.user)]);
   }
   res.json(categories);
 });
@@ -86,14 +92,14 @@ router.post(
       const parent = await db.get('SELECT id, user_id FROM categories WHERE id = $1', [parent_id]);
       if (!parent) return res.status(400).json({ error: 'التصنيف الأب غير موجود' });
       // التحقق أن التصنيف الأب ينتمي لنفس التاجر
-      if (parent.user_id !== null && parent.user_id !== req.user.id && req.user.role !== 'admin') {
+      if (parent.user_id !== null && parent.user_id !== getTargetUserId(req.user) && req.user.role !== 'admin') {
         return res.status(403).json({ error: 'التصنيف الأب لا ينتمي لمتجرك.' });
       }
     }
 
     const result = await db.query(
       'INSERT INTO categories (user_id, name, image, slug, parent_id) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-      [req.user.id, name.trim(), image, slug, parent_id || null]
+      [getTargetUserId(req.user), name.trim(), image, slug, parent_id || null]
     );
 
     res.status(201).json(result.rows[0]);
