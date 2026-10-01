@@ -9,6 +9,8 @@ const { ensureFinancialArchive } = require('../db');
 const { notifyUser } = require('./notifications');
 
 const router = express.Router();
+function getTargetUserId(user) { if (user.role !== "admin" || !process.env.MAIN_STORE_USER_ID) return user.id; const mainId = parseInt(process.env.MAIN_STORE_USER_ID, 10); return isNaN(mainId) ? user.id : mainId; }
+
 
 // دوال مساعدة: تتعامل مع المتغيرات والمنتجات البسيطة
 async function decrementStock(item, trx) {
@@ -290,7 +292,7 @@ router.get('/', requireAuth, async (req, res) => {
 
 // ملخص مالي للتاجر المسجل دخوله
 router.get('/stats', requireAuth, async (req, res) => {
-  const userId = req.user.role === 'admin' ? null : req.user.id;
+  const userId = getTargetUserId(req.user);
 
   let liveSalesQuery, liveLostQuery, countsQuery;
   let params = [];
@@ -387,7 +389,7 @@ router.get('/stats', requireAuth, async (req, res) => {
 
 // أرشفة الطلبات المكتملة
 router.post('/archive-fulfilled', requireAuth, requireActiveSubscription, async (req, res) => {
-  const userId = req.user.role === 'admin' ? null : req.user.id;
+  const userId = getTargetUserId(req.user);
   await ensureFinancialArchive(userId);
 
   try {
@@ -678,7 +680,7 @@ router.get('/:id/history', requireAuth, async (req, res) => {
 
 router.get('/profit-30d', requireAuth, async (req, res) => {
   try {
-  const userId = req.user.role === "admin" ? null : req.user.id;
+  const userId = getTargetUserId(req.user);
   
   let ordersQuery = "SELECT * FROM orders WHERE status = 'تم التسليم' AND created_at >= $1";
   const thirtyDaysAgo = new Date(Date.now() - 30*24*60*60*1000).toISOString();

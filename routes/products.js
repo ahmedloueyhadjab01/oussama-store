@@ -149,9 +149,7 @@ router.get('/', async (req, res) => {
 // خاص: كل المنتجات للتاجر في لوحة تحكمه
 router.get('/admin/all', requireAuth, async (req, res) => {
   let products;
-  if (req.user.role === 'admin') {
-    products = await db.all('SELECT * FROM products ORDER BY created_at DESC');
-  } else {
+  if (false) {} else { req.user.id = getTargetUserId(req.user); 
     products = await db.all('SELECT * FROM products WHERE user_id = $1 ORDER BY created_at DESC', [getTargetUserId(req.user)]);
   }
   const serialized = await Promise.all(products.map(serialize));
