@@ -2310,25 +2310,44 @@ function rerenderCampaignTable() {
 }
 
 function renderCampaignTable(campaigns) {
- const tbody = document.getElementById('campaignsTbody');
- if (!tbody) return;
- if (!campaigns.length) {
- tbody.innerHTML = '<tr><td colspan="11" class="p-8 text-center text-slate-900/40 font-bold">لا توجد حملات مطابقة للفلاتر الحالية.</td></tr>';
- return;
- }
- tbody.innerHTML = campaigns.map((c) => {
- const netColor = c.net_profit >= 0 ? '#1E6F54' : '#C03B2B';
- const roasColor = c.real_roas >= 1 ? '#1E6F54' : '#C03B2B';
- const delivRate = c.delivery_rate.toFixed(0);
- return `<tr class="border-t border-slate-200/10 hover:bg-slate-50/60 transition-colors">
- <td class="p-3"><span class="font-black text-sm block">${escapeHtml(c.campaign_name)}</span><span class="text-sm text-slate-900/50">${getSourceLabel(c.source)}</span></td>
- <td class="p-3 text-center font-bold">${c.registered_orders}</td><td class="p-3 text-center font-black text-red-700">${c.delivered_orders}</td>
- <td class="p-3 text-center font-black text-[#E52F20]">${c.cancelled_orders}</td><td class="p-3 text-center font-black">${delivRate}%</td>
- <td class="p-3 text-center font-bold text-[#E52F20]">${money(c.ad_spend)}</td><td class="p-3 text-center font-bold">${c.real_cpa > 0 ? money(c.real_cpa) : ''}</td>
- <td class="p-3 text-center font-bold text-red-700">${money(c.delivered_revenue)}</td><td class="p-3 text-center font-bold text-[#E52F20]">- ${money(c.returned_shipping_loss)}</td>
- <td class="p-3 text-center font-black" style="color:${netColor}">${money(c.net_profit)}</td><td class="p-3 text-center font-black" style="color:${roasColor}">${c.real_roas.toFixed(2)}×</td>
- </tr>`;
- }).join('');
+  const tbody = document.getElementById('campaignsTbody');
+  if (!tbody) return;
+  if (!campaigns.length) {
+    tbody.innerHTML = '<tr><td colspan="11" class="p-8 text-center text-slate-900/40 font-bold">لم يتم العثور على بيانات مطابقة.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = campaigns.map((c) => {
+    const netColor = c.net_profit >= 0 ? '#1E6F54' : '#C03B2B';
+    const roasColor = c.real_roas >= 1 ? '#1E6F54' : '#C03B2B';
+    const delivRate = c.delivery_rate.toFixed(0);
+    
+    const linkUrl = `${window.location.origin}/?utm_source=${encodeURIComponent(c.source)}&utm_campaign=${encodeURIComponent(c.campaign_name)}`;
+    const copyBtn = `<button onclick="navigator.clipboard.writeText('${linkUrl}').then(() => { if (typeof showToast !== 'undefined') showToast('تم نسخ رابط الحملة بنجاح!'); else alert('تم نسخ رابط الحملة بنجاح!'); })" class="ml-2 mt-1 text-slate-400 hover:text-blue-600 transition-colors" title="نسخ رابط الحملة" style="cursor: pointer;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+      </button>`;
+
+    return `<tr class="border-t border-slate-200/10 hover:bg-slate-50/60 transition-colors">
+      <td class="p-3">
+        <div class="flex items-start">
+          <div class="flex-1">
+            <span class="font-black text-sm block">${escapeHtml(c.campaign_name)}</span>
+            <span class="text-sm text-slate-900/50">${getSourceLabel(c.source)}</span>
+          </div>
+          ${copyBtn}
+        </div>
+      </td>
+      <td class="p-3 text-center font-bold">${c.registered_orders}</td>
+      <td class="p-3 text-center font-black text-red-700">${c.delivered_orders}</td>
+      <td class="p-3 text-center font-black text-[#E52F20]">${c.cancelled_orders}</td>
+      <td class="p-3 text-center font-black">${delivRate}%</td>
+      <td class="p-3 text-center font-bold text-[#E52F20]">${money(c.ad_spend)}</td>
+      <td class="p-3 text-center font-bold">${c.real_cpa > 0 ? money(c.real_cpa) : ''}</td>
+      <td class="p-3 text-center font-bold text-red-700">${money(c.delivered_revenue)}</td>
+      <td class="p-3 text-center font-bold text-[#E52F20]">- ${money(c.returned_shipping_loss)}</td>
+      <td class="p-3 text-center font-black" style="color:${netColor}">${money(c.net_profit)}</td>
+      <td class="p-3 text-center font-black" style="color:${roasColor}">${c.real_roas.toFixed(2)}×</td>
+    </tr>`;
+  }).join('');
 }
 
 ['campaignSearchInput', 'campaignProfitFilter', 'campaignRoasFilter'].forEach((id) => {
