@@ -136,7 +136,11 @@ router.get("/store-info/:identifier", async (req, res) => {
   let vendor;
   if (identifier === '1' || identifier === 'default') {
     // Single-tenant mode
-    vendor = await db.get("SELECT id, name, store_name, store_slug FROM public.users WHERE id = 4");
+    if (process.env.MAIN_STORE_USER_ID) {
+      vendor = await db.get("SELECT id, name, store_name, store_slug FROM public.users WHERE id = $1", [process.env.MAIN_STORE_USER_ID]);
+    } else {
+      vendor = await db.get("SELECT id, name, store_name, store_slug FROM public.users WHERE id = 2");
+    }
   } else if (/^\d+$/.test(identifier)) {
     vendor = await db.get("SELECT id, name, store_name, store_slug FROM public.users WHERE id = $1", [parseInt(identifier, 10)]);
   } else {
