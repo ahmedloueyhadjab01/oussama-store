@@ -1,4 +1,4 @@
-const express = require('express');
+﻿const express = require('express');
 const bcrypt = require('bcryptjs');
 const db = require('../db');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
@@ -8,7 +8,7 @@ const router = express.Router();
 
 const socialKeys = ['social_whatsapp', 'social_instagram', 'social_facebook', 'social_tiktok', 'social_telegram'];
 
-// عام: جلب روابط التواصل الاجتماعي لمتجر معيّن (?store_id=X)
+// Ø¹Ø§Ù…: Ø¬Ù„Ø¨ Ø±ÙˆØ§Ø¨Ø· Ø§Ù„ØªÙˆØ§ØµÙ„ Ø§Ù„Ø§Ø¬ØªÙ…Ø§Ø¹ÙŠ Ù„Ù…ØªØ¬Ø± Ù…Ø¹ÙŠÙ‘Ù† (?store_id=X)
 router.get('/social', async (req, res) => {
   const storeId = req.query.store_id ? parseInt(req.query.store_id, 10) : null;
 
@@ -18,7 +18,7 @@ router.get('/social', async (req, res) => {
     if (storeId) {
       row = await db.get('SELECT value FROM settings WHERE user_id = $1 AND key = $2', [storeId, key]);
     }
-    // fallback إلى الإعدادات العامة (user_id = NULL)
+    // fallback Ø¥Ù„Ù‰ Ø§Ù„Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª Ø§Ù„Ø¹Ø§Ù…Ø© (user_id = NULL)
     if (!row) {
       row = await db.get('SELECT value FROM settings WHERE user_id IS NULL AND key = $1', [key]);
     }
@@ -27,7 +27,7 @@ router.get('/social', async (req, res) => {
   res.json(result);
 });
 
-// تاجر: تحديث روابط التواصل الاجتماعي (خاصة بالتاجر)
+// ØªØ§Ø¬Ø±: ØªØ­Ø¯ÙŠØ« Ø±ÙˆØ§Ø¨Ø· Ø§Ù„ØªÙˆØ§ØµÙ„ Ø§Ù„Ø§Ø¬ØªÙ…Ø§Ø¹ÙŠ (Ø®Ø§ØµØ© Ø¨Ø§Ù„ØªØ§Ø¬Ø±)
 router.put('/social', requireAuth, async (req, res) => {
   try {
     await db.transaction(async (trx) => {
@@ -45,17 +45,23 @@ router.put('/social', requireAuth, async (req, res) => {
     });
     res.json({ success: true });
   } catch (err) {
-    res.status(500).json({ error: 'تعذر حفظ الإعدادات: ' + err.message });
+    res.status(500).json({ error: 'ØªØ¹Ø°Ø± Ø­ÙØ¸ Ø§Ù„Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª: ' + err.message });
   }
 });
 
-// تاجر: إعادة تعيين الإحصائيات (حذف الطلبات المؤرشفة + صفر الأرشيف المالي) - بيانات التاجر فقط
+// ØªØ§Ø¬Ø±: Ø¥Ø¹Ø§Ø¯Ø© ØªØ¹ÙŠÙŠÙ† Ø§Ù„Ø¥Ø­ØµØ§Ø¦ÙŠØ§Øª (Ø­Ø°Ù Ø§Ù„Ø·Ù„Ø¨Ø§Øª Ø§Ù„Ù…Ø¤Ø±Ø´ÙØ© + ØµÙØ± Ø§Ù„Ø£Ø±Ø´ÙŠÙ Ø§Ù„Ù…Ø§Ù„ÙŠ) - Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„ØªØ§Ø¬Ø± ÙÙ‚Ø·
+﻿function getTargetUserId(user) {
+  if (user.role !== 'admin' || !process.env.MAIN_STORE_USER_ID) return user.id;
+  const mainId = parseInt(process.env.MAIN_STORE_USER_ID, 10);
+  return isNaN(mainId) ? user.id : mainId;
+}
+
 router.post('/reset-stats', requireAuth, async (req, res) => {
-  const userId = req.user.id;
+  const targetUserId = getTargetUserId(req.user);
   const { password } = req.body;
-  if (!password) return res.status(400).json({ error: 'كلمة المرور مطلوبة للتأكيد' });
+  if (!password) return res.status(400).json({ error: 'كلمة المرور مطلوبة' });
 
-  const user = await db.get('SELECT password_hash FROM users WHERE id = $1', [req.user.id]);
+  const user = await db.get('SELECT password_hash FROM users WHERE id = ', [req.user.id]);
   if (!user) return res.status(404).json({ error: 'المستخدم غير موجود' });
 
   const match = await bcrypt.compare(password, user.password_hash);
@@ -63,35 +69,27 @@ router.post('/reset-stats', requireAuth, async (req, res) => {
 
   try {
     await db.transaction(async (trx) => {
-      const activeOrders = await trx.all("SELECT items FROM orders WHERE user_id = $1 AND status IN ('قيد المعالجة', 'قيد التوصيل')", [req.user.id]);
-      for (const order of activeOrders) {
-        const items = typeof order.items === 'string' ? JSON.parse(order.items || '[]') : (order.items || []);
-        for (const item of items) {
-          if (item.variant_id) {
-            await trx.query('UPDATE product_variants SET stock = stock + $1 WHERE id = $2', [item.qty, item.variant_id]);
-          } else {
-            await trx.query('UPDATE products SET stock = stock + $1 WHERE id = $2', [item.qty, item.id]);
-          }
-        }
-      }
-      await trx.query('DELETE FROM orders WHERE user_id = $1', [req.user.id]);
-      await trx.query('DELETE FROM campaign_ad_spend WHERE user_id = $1', [req.user.id]);
-      await ensureFinancialArchive(req.user.id, trx.client);
-      await trx.query('UPDATE financial_archive SET archived_sales = 0, archived_cogs = 0, archived_shipping_cost = 0 WHERE user_id = $1', [req.user.id]);
+      await trx.query('DELETE FROM order_items WHERE order_id IN (SELECT id FROM orders WHERE user_id = )', [targetUserId]);
+      await trx.query('DELETE FROM order_status_history WHERE order_id IN (SELECT id FROM orders WHERE user_id = )', [targetUserId]);
+      await trx.query('DELETE FROM orders WHERE user_id = ', [targetUserId]);
+      await trx.query('DELETE FROM campaign_ad_spend WHERE user_id = ', [targetUserId]);
+      await trx.query('DELETE FROM ad_visits WHERE user_id = ', [targetUserId]);
+
+      await ensureFinancialArchive(targetUserId, trx.client);
+      await trx.query('UPDATE financial_archive SET archived_sales = 0, archived_cogs = 0, archived_shipping_cost = 0 WHERE user_id = ', [targetUserId]);
     });
-    res.json({ success: true, message: 'تم مسح الإحصائيات والطلبات بنجاح.' });
+    res.json({ success: true, message: 'تم تصفير الأرقام بنجاح.' });
   } catch (err) {
-    res.status(500).json({ error: 'تعذرت إعادة التعيين: ' + err.message });
+    res.status(500).json({ error: 'خطأ: ' + err.message });
   }
 });
 
-// تاجر: إعادة تعيين المتجر بالكامل (حذف بيانات التاجر فقط - لا تمس بيانات تجار آخرين)
 router.post('/reset-store', requireAuth, async (req, res) => {
-  const userId = req.user.id;
+  const targetUserId = getTargetUserId(req.user);
   const { password } = req.body;
-  if (!password) return res.status(400).json({ error: 'كلمة المرور مطلوبة للتأكيد' });
+  if (!password) return res.status(400).json({ error: 'كلمة المرور مطلوبة' });
 
-  const user = await db.get('SELECT password_hash FROM users WHERE id = $1', [req.user.id]);
+  const user = await db.get('SELECT password_hash FROM users WHERE id = ', [req.user.id]);
   if (!user) return res.status(404).json({ error: 'المستخدم غير موجود' });
 
   const match = await bcrypt.compare(password, user.password_hash);
@@ -99,36 +97,23 @@ router.post('/reset-store', requireAuth, async (req, res) => {
 
   try {
     await db.transaction(async (trx) => {
-      const activeOrders = await trx.all("SELECT items FROM orders WHERE user_id = $1 AND status IN ('قيد المعالجة', 'قيد التوصيل')", [req.user.id]);
-      for (const order of activeOrders) {
-        const items = typeof order.items === 'string' ? JSON.parse(order.items || '[]') : (order.items || []);
-        for (const item of items) {
-          if (item.variant_id) {
-            await trx.query('UPDATE product_variants SET stock = stock + $1 WHERE id = $2', [item.qty, item.variant_id]);
-          } else {
-            await trx.query('UPDATE products SET stock = stock + $1 WHERE id = $2', [item.qty, item.id]);
-          }
-        }
-      }
-      await trx.query('DELETE FROM orders WHERE user_id = $1', [req.user.id]);
-      await trx.query('DELETE FROM campaign_ad_spend WHERE user_id = $1', [req.user.id]);
-      await trx.query('DELETE FROM stock_restocks WHERE product_id IN (SELECT id FROM products WHERE user_id = $1)', [req.user.id]);
-      await trx.query('DELETE FROM variant_restocks WHERE variant_id IN (SELECT pv.id FROM product_variants pv JOIN products p ON pv.product_id = p.id WHERE p.user_id = $1)', [req.user.id]);
-      await trx.query('DELETE FROM product_variants WHERE product_id IN (SELECT id FROM products WHERE user_id = $1)', [req.user.id]);
-      await trx.query('DELETE FROM products WHERE user_id = $1', [req.user.id]);
-      await trx.query('DELETE FROM categories WHERE user_id = $1', [req.user.id]);
-      await trx.query('DELETE FROM settings WHERE user_id = $1', [req.user.id]);
-      await ensureFinancialArchive(req.user.id, trx.client);
-      await trx.query('UPDATE financial_archive SET archived_sales = 0, archived_cogs = 0, archived_shipping_cost = 0 WHERE user_id = $1', [req.user.id]);
+      await trx.query('DELETE FROM order_items WHERE order_id IN (SELECT id FROM orders WHERE user_id = )', [targetUserId]);
+      await trx.query('DELETE FROM order_status_history WHERE order_id IN (SELECT id FROM orders WHERE user_id = )', [targetUserId]);
+      await trx.query('DELETE FROM orders WHERE user_id = ', [targetUserId]);
+      await trx.query('DELETE FROM campaign_ad_spend WHERE user_id = ', [targetUserId]);
+      await trx.query('DELETE FROM ad_visits WHERE user_id = ', [targetUserId]);
+
+      await ensureFinancialArchive(targetUserId, trx.client);
+      await trx.query('UPDATE financial_archive SET archived_sales = 0, archived_cogs = 0, archived_shipping_cost = 0 WHERE user_id = ', [targetUserId]);
     });
-    res.json({ success: true, message: 'تمت إعادة تعيين متجرك بالكامل مع الاحتفاظ بأسعار التوصيل ✅' });
+    res.json({ success: true, message: 'تم تصفير المتجر والأرباح بنجاح مع الاحتفاظ بالمنتجات والتصنيفات.' });
   } catch (err) {
-    res.status(500).json({ error: 'تعذرت إعادة التعيين: ' + err.message });
+    res.status(500).json({ error: 'خطأ: ' + err.message });
   }
 });
 
 
-// حفظ بيانات المتجر
+// ... 
 router.put("/", requireAuth, async (req, res) => {
   const { store_name, store_description, contact_email, currency, language } = req.body;
   const contact_phone = req.body.contact_phone ?? req.body.phone;
@@ -177,3 +162,4 @@ router.put("/profile", requireAuth, async (req, res) => {
 });
 
 module.exports = router;
+
