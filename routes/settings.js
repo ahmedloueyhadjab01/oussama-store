@@ -61,7 +61,7 @@ router.post('/reset-stats', requireAuth, async (req, res) => {
   const { password } = req.body;
   if (!password) return res.status(400).json({ error: 'كلمة المرور مطلوبة' });
 
-  const user = await db.get('SELECT password_hash FROM users WHERE id = ', [req.user.id]);
+  const user = await db.get('SELECT password_hash FROM users WHERE id = $1', [req.user.id]);
   if (!user) return res.status(404).json({ error: 'المستخدم غير موجود' });
 
   const match = await bcrypt.compare(password, user.password_hash);
@@ -69,13 +69,13 @@ router.post('/reset-stats', requireAuth, async (req, res) => {
 
   try {
     await db.transaction(async (trx) => {
-      await trx.query('DELETE FROM order_status_history WHERE order_id IN (SELECT id FROM orders WHERE user_id = )', [targetUserId]);
-      await trx.query('DELETE FROM orders WHERE user_id = ', [targetUserId]);
-      await trx.query('DELETE FROM campaign_ad_spend WHERE user_id = ', [targetUserId]);
-      await trx.query('DELETE FROM ad_visits WHERE user_id = ', [targetUserId]);
+      await trx.query('DELETE FROM order_status_history WHERE order_id IN (SELECT id FROM orders WHERE user_id = $1)', [targetUserId]);
+      await trx.query('DELETE FROM orders WHERE user_id = $1', [targetUserId]);
+      await trx.query('DELETE FROM campaign_ad_spend WHERE user_id = $1', [targetUserId]);
+      await trx.query('DELETE FROM ad_visits WHERE user_id = $1', [targetUserId]);
 
       await ensureFinancialArchive(targetUserId, trx.client);
-      await trx.query('UPDATE financial_archive SET archived_sales = 0, archived_cogs = 0, archived_shipping_cost = 0 WHERE user_id = ', [targetUserId]);
+      await trx.query('UPDATE financial_archive SET archived_sales = 0, archived_cogs = 0, archived_shipping_cost = 0 WHERE user_id = $1', [targetUserId]);
     });
     res.json({ success: true, message: 'تم تصفير الأرقام بنجاح.' });
   } catch (err) {
@@ -88,7 +88,7 @@ router.post('/reset-store', requireAuth, async (req, res) => {
   const { password } = req.body;
   if (!password) return res.status(400).json({ error: 'كلمة المرور مطلوبة' });
 
-  const user = await db.get('SELECT password_hash FROM users WHERE id = ', [req.user.id]);
+  const user = await db.get('SELECT password_hash FROM users WHERE id = $1', [req.user.id]);
   if (!user) return res.status(404).json({ error: 'المستخدم غير موجود' });
 
   const match = await bcrypt.compare(password, user.password_hash);
@@ -97,27 +97,27 @@ router.post('/reset-store', requireAuth, async (req, res) => {
   try {
     await db.transaction(async (trx) => {
       // 1. Delete Orders and Stats
-      await trx.query('DELETE FROM order_status_history WHERE order_id IN (SELECT id FROM orders WHERE user_id = )', [targetUserId]);
-      await trx.query('DELETE FROM orders WHERE user_id = ', [targetUserId]);
+      await trx.query('DELETE FROM order_status_history WHERE order_id IN (SELECT id FROM orders WHERE user_id = $1)', [targetUserId]);
+      await trx.query('DELETE FROM orders WHERE user_id = $1', [targetUserId]);
       
       // 2. Delete Ads and Finance
-      await trx.query('DELETE FROM campaign_ad_spend WHERE user_id = ', [targetUserId]);
-      await trx.query('DELETE FROM ad_visits WHERE user_id = ', [targetUserId]);
+      await trx.query('DELETE FROM campaign_ad_spend WHERE user_id = $1', [targetUserId]);
+      await trx.query('DELETE FROM ad_visits WHERE user_id = $1', [targetUserId]);
       await ensureFinancialArchive(targetUserId, trx.client);
-      await trx.query('UPDATE financial_archive SET archived_sales = 0, archived_cogs = 0, archived_shipping_cost = 0 WHERE user_id = ', [targetUserId]);
+      await trx.query('UPDATE financial_archive SET archived_sales = 0, archived_cogs = 0, archived_shipping_cost = 0 WHERE user_id = $1', [targetUserId]);
 
       // 3. Delete Products and Inventory
-      await trx.query('DELETE FROM stock_restocks WHERE product_id IN (SELECT id FROM products WHERE user_id = )', [targetUserId]);
-      await trx.query('DELETE FROM variant_restocks WHERE variant_id IN (SELECT pv.id FROM product_variants pv JOIN products p ON pv.product_id = p.id WHERE p.user_id = )', [targetUserId]);
-      await trx.query('DELETE FROM product_variants WHERE product_id IN (SELECT id FROM products WHERE user_id = )', [targetUserId]);
-      await trx.query('DELETE FROM products WHERE user_id = ', [targetUserId]);
+      await trx.query('DELETE FROM stock_restocks WHERE product_id IN (SELECT id FROM products WHERE user_id = $1)', [targetUserId]);
+      await trx.query('DELETE FROM variant_restocks WHERE variant_id IN (SELECT pv.id FROM product_variants pv JOIN products p ON pv.product_id = p.id WHERE p.user_id = $1)', [targetUserId]);
+      await trx.query('DELETE FROM product_variants WHERE product_id IN (SELECT id FROM products WHERE user_id = $1)', [targetUserId]);
+      await trx.query('DELETE FROM products WHERE user_id = $1', [targetUserId]);
 
       // 4. Delete Categories safely
-      await trx.query('DELETE FROM categories WHERE user_id =  AND parent_id IS NOT NULL', [targetUserId]);
-      await trx.query('DELETE FROM categories WHERE user_id = ', [targetUserId]);
+      await trx.query('DELETE FROM categories WHERE user_id = $1 AND parent_id IS NOT NULL', [targetUserId]);
+      await trx.query('DELETE FROM categories WHERE user_id = $1', [targetUserId]);
       
       // 5. Delete settings
-      await trx.query('DELETE FROM settings WHERE user_id = ', [targetUserId]);
+      await trx.query('DELETE FROM settings WHERE user_id = $1', [targetUserId]);
     });
     res.json({ success: true, message: 'تم تصفير المتجر بالكامل بنجاح.' });
   } catch (err) {
