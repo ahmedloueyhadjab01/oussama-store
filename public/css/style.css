@@ -1,0 +1,251 @@
+/* ===== نظام التصميم: هوية "السوق" - Souk Identity ===== */
+:root {
+  --sand: #FAF3E6;
+  --sand-deep: #F0E4CC;
+  --ink: #0C1512;        /* لون خط غامق وعالي التباين والوضوح التام */
+  --forest: #1E6F54;
+  --forest-dark: #123F30;
+  --terracotta: #2F6690;
+  --terracotta-dark: #1B4863;
+  --gold: #C9A227;
+  --card: #FFFFFF;
+}
+
+/* ===== القسم البطولي (Hero) ===== */
+.hero-banner {
+  background: linear-gradient(135deg, var(--forest) 0%, var(--forest-dark) 55%, var(--terracotta-dark) 100%);
+  border-bottom: 3px solid var(--ink);
+}
+.hero-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: .12;
+  background-image: radial-gradient(circle, #fff 1.5px, transparent 1.5px);
+  background-size: 22px 22px;
+  pointer-events: none;
+}
+.hero-banner::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0; height: 4px;
+  background: repeating-linear-gradient(90deg, var(--gold) 0 10px, var(--sand) 10px 20px);
+}
+
+/* ===== شارة الخصم ===== */
+.discount-badge {
+  background: var(--gold);
+  color: var(--ink);
+  font-weight: 900;
+  font-size: .68rem;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 2px solid var(--ink);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+}
+
+body {
+  background-color: var(--sand);
+  color: var(--ink);
+  font-weight: 500;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+.font-display {
+  font-family: 'Lalezar', 'Cairo', sans-serif;
+  letter-spacing: .5px;
+  font-weight: 800;
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ===== شريط علوي بنمط منسوج ===== */
+.brand-header {
+  background: var(--sand);
+  border-bottom: 3px solid var(--ink);
+  position: relative;
+}
+.brand-header::after {
+  content: '';
+  position: absolute;
+  bottom: -3px; left: 0; right: 0; height: 3px;
+  background: repeating-linear-gradient(90deg, var(--gold) 0 10px, var(--terracotta) 10px 20px);
+}
+
+.brand-logo {
+  font-family: 'Lalezar', sans-serif;
+  color: var(--forest-dark);
+}
+
+/* ===== أزرار ===== */
+.btn-primary {
+  background: var(--forest);
+  color: #fff;
+  border: 2px solid var(--forest-dark);
+  transition: transform .12s ease, background .15s ease;
+}
+.btn-primary:hover { background: var(--forest-dark); transform: translateY(-1px); }
+.btn-primary:active { transform: translateY(0); }
+
+.btn-outline {
+  background: transparent;
+  border: 2px solid var(--ink);
+  color: var(--ink);
+}
+.btn-outline:hover { background: var(--ink); color: var(--sand); }
+
+/* ===== شريط التصنيفات ===== */
+.cat-btn {
+  border: 2px solid var(--ink);
+  background: var(--card);
+  color: var(--ink);
+  font-weight: 700;
+  transition: all .18s ease;
+}
+.cat-btn.active-cat {
+  background-color: var(--terracotta) !important;
+  color: #fff !important;
+  border-color: var(--terracotta-dark) !important;
+  transform: translateY(-1px);
+}
+.cat-btn.dimmed {
+  opacity: 0.5;
+}
+.cat-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 0 var(--ink);
+}
+.subcat-btn {
+  border: 2px dashed var(--gold);
+  background: #fff;
+  color: var(--ink);
+  font-weight: 700;
+  font-size: .75rem;
+  padding: 5px 14px;
+  border-radius: 999px;
+  white-space: nowrap;
+  transition: all .18s ease;
+}
+.subcat-btn.active-cat {
+  background: var(--gold) !important;
+  border-style: solid;
+  color: var(--ink) !important;
+}
+
+/* ===== بطاقة المنتج ===== */
+.product-card {
+  background: var(--card);
+  border: 2px solid var(--ink);
+  border-radius: 18px;
+  transition: transform .15s ease, box-shadow .15s ease;
+  position: relative;
+}
+.product-card:hover {
+  transform: translateY(-4px) rotate(-.3deg);
+  box-shadow: 6px 6px 0 var(--ink);
+}
+
+/* ===== عنصر التوقيع: بطاقة السعر بشكل "تذكرة سوق" ===== */
+.price-ticket {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--terracotta);
+  color: #fff;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: 999px;
+  position: relative;
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 2px 0 var(--terracotta-dark);
+}
+.price-ticket::before,
+.price-ticket::after {
+  content: '';
+  position: absolute;
+  width: 8px; height: 8px;
+  background: var(--sand);
+  border-radius: 50%;
+  top: 50%; transform: translateY(-50%);
+}
+.price-ticket::before { left: -4px; }
+.price-ticket::after { right: -4px; }
+
+.price-ticket.lg { padding: 8px 20px; font-size: 1.25rem; }
+.price-ticket.outline {
+  background: transparent;
+  color: var(--ink);
+  border: 2px dashed var(--ink);
+  box-shadow: none;
+}
+.price-ticket.outline::before,
+.price-ticket.outline::after { display: none; }
+
+/* ===== سلة التسوق ===== */
+#cartDrawer.open { transform: translateX(0); }
+#cartDrawer { border-left: 3px solid var(--ink); }
+
+/* ===== نماذج ===== */
+.field {
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+  background: var(--card);
+}
+.field:focus { outline: none; border-color: var(--forest); }
+
+/* ===== شارات التوصيل ===== */
+.delivery-option {
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: background .12s ease, transform .1s ease;
+}
+.delivery-option.selected {
+  background: var(--forest);
+  color: #fff;
+  border-color: var(--forest-dark);
+}
+.delivery-option:hover { transform: translateY(-1px); }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px);} to { opacity: 1; transform: translateY(0);} }
+.fade-in { animation: fadeIn .25s ease; }
+
+/* ===== لوحة التحكم ===== */
+.admin-tab-btn.active-tab { color: var(--forest-dark); border-color: var(--forest) !important; }
+
+/* تحسينات المتجر على الشاشات الصغيرة، مع إبقاء تخطيط الكمبيوتر دون تغيير */
+@media (max-width: 640px) {
+  .brand-header > div:first-child {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .brand-logo { font-size: 1.55rem; }
+  #cartBtn { padding: 8px 11px; font-size: .72rem; }
+  #cartCount { width: 18px; height: 18px; font-size: .65rem; top: -6px; left: -5px; }
+
+  .hero-banner .max-w-7xl { padding: 24px 12px 28px; }
+  .hero-banner h1 { font-size: 1.65rem; line-height: 1.35; }
+  .hero-banner p { font-size: .72rem; }
+
+  nav.max-w-7xl, main.max-w-7xl { padding-left: 10px; padding-right: 10px; }
+  nav.max-w-7xl { padding-top: 10px; }
+  main.max-w-7xl { padding-top: 16px; padding-bottom: 20px; }
+  #productsGrid { gap: 8px; }
+  .product-card { border-width: 1.5px; border-radius: 12px; }
+  .product-card > div { padding: 9px; gap: 6px; }
+  .product-card .price-ticket { padding: 3px 7px; font-size: .72rem; }
+  .product-card .add-to-cart { padding: 8px 4px; font-size: .68rem; line-height: 1.25; }
+  .product-card .discount-badge { font-size: .58rem; padding: 2px 6px; }
+  .product-card .text-sm { font-size: .72rem; line-height: 1.45; }
+  .product-card .text-\[11px\] { font-size: .58rem; }
+  .product-card .text-\[10px\] { font-size: .56rem; }
+
+  #cartDrawer { max-width: min(92vw, 360px); }
+  #cartDrawer > div { padding: 12px; }
+  #checkoutOverlay { padding: 10px; }
+  #checkoutOverlay > div { padding: 15px; margin: 10px 0; }
+}

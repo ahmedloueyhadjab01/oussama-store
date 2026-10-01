@@ -1,0 +1,258 @@
+const fs = require('fs');
+
+const indexHtml = `<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>OVARO | أوفارو</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: 'IBM Plex Sans Arabic', sans-serif; background-color: #fafafa; color: #171717; }
+    .glass-nav { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); border-bottom: 1px solid #e5e5e5; }
+    .bottom-nav { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); border-top: 1px solid #e5e5e5; padding-bottom: env(safe-area-inset-bottom); }
+    .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; color: #737373; transition: all 0.2s; position: relative; }
+    .nav-item:hover, .nav-item.active { color: #171717; }
+    .nav-icon { width: 22px; height: 22px; margin-bottom: 4px; transition: transform 0.2s; }
+    .nav-item:hover .nav-icon { transform: translateY(-2px); }
+    .nav-label { font-size: 10px; font-weight: 500; opacity: 0; transform: translateY(5px); transition: all 0.2s; position: absolute; bottom: 6px; }
+    .nav-item:hover .nav-label, .nav-item:focus .nav-label, .nav-item:active .nav-label { opacity: 1; transform: translateY(0); }
+    .nav-item:hover .nav-icon, .nav-item:focus .nav-icon, .nav-item:active .nav-icon { transform: translateY(-10px); }
+    
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #d4d4d4; }
+    ::-webkit-scrollbar-thumb:hover { background: #a3a3a3; }
+    
+    .checkout-modal { background: rgba(255,255,255,0.98); backdrop-filter: blur(10px); }
+    .input-field { width: 100%; padding: 0.8rem 1rem; font-size: 0.95rem; border-radius: 0.375rem; border: 1px solid #e5e5e5; background: #ffffff; color: #171717; outline: none; transition: border-color 0.2s; }
+    .input-field:focus { border-color: #171717; }
+    .btn-primary { background-color: #171717; color: #ffffff; border-radius: 0.375rem; transition: background-color 0.2s; }
+    .btn-primary:hover { background-color: #262626; }
+  </style>
+</head>
+<body class="pb-20 md:pb-0">
+
+  <!-- Top Announcement Bar -->
+  <div id="socialIconsTopBar" class="flex justify-center gap-6 py-2.5 bg-neutral-900 text-white text-xs tracking-wide"></div>
+
+  <!-- Header -->
+  <header class="sticky top-0 z-40 glass-nav">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between gap-6">
+      
+      <!-- Logo -->
+      <a href="/" class="flex items-center gap-3">
+        <img src="/img/logo-ovaro.png" alt="OVARO" class="w-10 h-10 object-contain rounded-full" />
+        <span class="text-2xl font-bold tracking-[0.2em] text-neutral-900 uppercase">Ovaro</span>
+      </a>
+
+      <!-- Desktop Search -->
+      <form id="searchFormDesktop" class="hidden md:flex flex-1 max-w-lg relative items-center">
+        <input id="searchInput" type="search" placeholder="ابحث عن منتج..." autocomplete="off" class="w-full pr-4 pl-12 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 rounded-md border border-neutral-200 bg-neutral-50 focus:bg-white focus:border-neutral-900 outline-none transition-all" />
+        <button id="searchBtn" type="button" class="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-900 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+        </button>
+      </form>
+
+      <!-- Cart Button -->
+      <button id="cartBtn" class="relative items-center gap-2 px-5 py-2.5 rounded-md text-sm font-medium btn-primary hidden md:flex shadow-sm">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+        <span>السلة</span>
+        <span id="cartCount" class="absolute -top-2 -right-2 bg-neutral-100 text-neutral-900 text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border border-neutral-200">0</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Search Bar -->
+  <div class="md:hidden px-4 py-3 bg-white border-b border-neutral-100">
+    <form id="searchFormMobile" class="relative">
+      <input id="searchInputMobile" type="search" placeholder="ابحث عن منتج..." autocomplete="off" class="w-full pr-4 pl-10 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 rounded-md border border-neutral-200 bg-neutral-50 focus:bg-white focus:border-neutral-900 outline-none" />
+      <button id="searchBtnMobile" type="button" class="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+      </button>
+    </form>
+  </div>
+
+  <main class="max-w-7xl mx-auto px-4 py-8">
+    
+    <!-- Hero Banner -->
+    <div class="mb-12 rounded-lg bg-neutral-900 text-white overflow-hidden relative min-h-[250px] flex items-center">
+      <div class="absolute inset-0 opacity-20 bg-[url('https://images.pexels.com/photos/3735641/pexels-photo-3735641.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')] bg-cover bg-center mix-blend-overlay"></div>
+      <div class="relative z-10 p-8 md:p-12 max-w-2xl">
+        <span class="text-sm tracking-widest uppercase text-neutral-300 mb-2 block">تشكيلة الموسم</span>
+        <h1 class="text-3xl md:text-5xl font-bold leading-tight mb-4 text-white">الأناقة الكلاسيكية<br>بلمسة عصرية</h1>
+        <p class="text-neutral-400 mb-8 max-w-md leading-relaxed text-sm md:text-base">اكتشف أحدث تشكيلات الملابس الرجالية المصممة بعناية لتمنحك مظهراً استثنائياً في كل مناسبة.</p>
+        <button onclick="window.scrollTo({top: document.getElementById('productsSection').offsetTop - 100, behavior: 'smooth'})" class="bg-white text-neutral-900 px-8 py-3 rounded-md font-medium text-sm hover:bg-neutral-100 transition-colors">
+          تسوق المجموعة
+        </button>
+      </div>
+    </div>
+
+    <!-- Category Navigation -->
+    <div class="mb-10 overflow-x-auto hide-scrollbar">
+      <div id="categoryNav" class="flex items-center gap-3 min-w-max pb-2">
+        <button class="cat-btn active-cat px-5 py-2 rounded-md text-sm font-medium transition-colors bg-neutral-900 text-white" data-cat="">الكل</button>
+      </div>
+    </div>
+
+    <!-- Products Grid -->
+    <div id="productsSection" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6" id="productsGrid">
+      <!-- Products loaded dynamically -->
+    </div>
+  </main>
+
+  <!-- About Us Section -->
+  <section class="bg-white border-t border-neutral-100 py-16 mt-12">
+    <div class="max-w-4xl mx-auto px-4 text-center">
+      <img src="/img/logo-ovaro.png" alt="OVARO" class="w-16 h-16 mx-auto mb-6 rounded-full" />
+      <h2 class="text-2xl font-bold tracking-widest uppercase text-neutral-900 mb-4">OVARO</h2>
+      <p class="text-neutral-500 leading-relaxed text-sm md:text-base max-w-2xl mx-auto">
+        أوفارو هي وجهتك الأولى للأزياء الرجالية الراقية. نحن نؤمن بأن الأناقة ليست مجرد ملابس نرتديها، بل هي تعبير عن الشخصية والأسلوب. نسعى دائماً لتقديم أفضل الخامات والتصاميم التي تواكب أحدث خطوط الموضة العالمية لتمنحك إطلالة فريدة ومميزة.
+      </p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-neutral-200 pt-16 pb-8 bg-neutral-50 text-center md:text-right">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-12">
+        <!-- Brand Info -->
+        <div class="flex flex-col items-center md:items-start">
+          <div class="flex items-center gap-3 mb-4">
+            <img src="/img/logo-ovaro.png" alt="OVARO" class="w-10 h-10 rounded-full" />
+            <span class="text-xl font-bold tracking-[0.2em] text-neutral-900 uppercase">Ovaro</span>
+          </div>
+          <p class="text-neutral-500 text-sm leading-relaxed max-w-xs">نقدم لك أفضل الأزياء الرجالية بجودة عالية وتصاميم تواكب الموضة.</p>
+        </div>
+        
+        <!-- Quick Links -->
+        <div class="flex flex-col items-center md:items-start">
+          <h3 class="text-neutral-900 font-bold mb-4">روابط سريعة</h3>
+          <ul class="space-y-2 text-sm text-neutral-500">
+            <li><a href="/" class="hover:text-neutral-900 transition-colors">الرئيسية</a></li>
+            <li><a href="#" class="hover:text-neutral-900 transition-colors">من نحن</a></li>
+            <li><a href="#" class="hover:text-neutral-900 transition-colors">سياسة الاسترجاع</a></li>
+            <li><a href="#" class="hover:text-neutral-900 transition-colors">اتصل بنا</a></li>
+          </ul>
+        </div>
+        
+        <!-- Contact -->
+        <div class="flex flex-col items-center md:items-start">
+          <h3 class="text-neutral-900 font-bold mb-4">تواصل معنا</h3>
+          <div id="socialIconsFooter" class="flex gap-4 mb-4"></div>
+          <p class="text-neutral-500 text-sm">info@ovaro.com</p>
+        </div>
+      </div>
+      <div class="border-t border-neutral-200 pt-8 text-center">
+        <p class="text-neutral-400 text-xs tracking-wider uppercase">&copy; <span id="currentYear"></span> OVARO MEN'S WEAR. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Mobile Bottom Nav -->
+  <nav class="md:hidden fixed bottom-0 w-full bottom-nav z-40 flex justify-around items-center h-16 px-2">
+    <a href="/" class="nav-item active">
+      <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+      <span class="nav-label">الرئيسية</span>
+    </a>
+    <button id="cartBtnMobile" class="nav-item">
+      <div class="relative">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+        <span id="cartCountMobile" class="absolute -top-1 -right-2 bg-neutral-900 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">0</span>
+      </div>
+      <span class="nav-label">السلة</span>
+    </button>
+  </nav>
+
+  <!-- Cart Drawer -->
+  <div id="cartDrawer" class="fixed inset-y-0 left-0 w-full md:w-96 bg-white shadow-2xl transform -translate-x-full transition-transform duration-300 z-50 flex flex-col">
+    <div class="p-5 border-b border-neutral-100 flex justify-between items-center bg-white">
+      <h2 class="text-lg font-bold text-neutral-900">سلة التسوق</h2>
+      <button id="closeCartBtn" class="text-neutral-400 hover:text-neutral-900 transition-colors p-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+    </div>
+    <div id="cartItems" class="flex-1 overflow-y-auto p-5 space-y-4 bg-neutral-50/50"></div>
+    <div class="p-5 border-t border-neutral-100 bg-white">
+      <div class="flex justify-between items-center mb-4">
+        <span class="text-neutral-500 text-sm">المجموع</span>
+        <span id="cartTotal" class="text-xl font-bold text-neutral-900">0 د.ج</span>
+      </div>
+      <button id="checkoutBtn" class="w-full btn-primary py-3.5 text-sm font-medium flex items-center justify-center gap-2">
+        إتمام الطلب
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+      </button>
+    </div>
+  </div>
+  <div id="cartOverlay" class="fixed inset-0 bg-neutral-900/40 backdrop-blur-sm z-40 hidden opacity-0 transition-opacity duration-300"></div>
+
+  <!-- Checkout Modal -->
+  <div id="checkoutModal" class="fixed inset-0 z-50 hidden items-end justify-center sm:items-center p-4">
+    <div class="absolute inset-0 bg-neutral-900/40 backdrop-blur-sm checkout-overlay"></div>
+    <div class="relative bg-white rounded-t-2xl sm:rounded-xl w-full max-w-lg overflow-hidden shadow-2xl transform translate-y-full transition-transform duration-300 flex flex-col max-h-[90vh]">
+      <div class="p-5 border-b border-neutral-100 flex justify-between items-center bg-white sticky top-0 z-10">
+        <h2 class="text-lg font-bold text-neutral-900">تأكيد الطلب</h2>
+        <button class="close-checkout text-neutral-400 hover:text-neutral-900 p-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+      <div class="p-6 overflow-y-auto">
+        <form id="checkoutForm" class="space-y-4">
+          <div>
+            <label class="block text-xs font-medium text-neutral-500 mb-1.5">الاسم الكامل *</label>
+            <input type="text" id="customerName" required class="input-field" placeholder="الاسم واللقب" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-neutral-500 mb-1.5">رقم الهاتف *</label>
+            <input type="tel" id="customerPhone" required class="input-field text-left" dir="ltr" placeholder="0550 00 00 00" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-neutral-500 mb-1.5">الولاية *</label>
+            <select id="customerWilaya" required class="input-field"><option value="">جاري التحميل...</option></select>
+          </div>
+          <div id="communeContainer" class="hidden">
+            <label class="block text-xs font-medium text-neutral-500 mb-1.5">البلدية *</label>
+            <select id="customerCommune" required class="input-field"><option value="">اختر البلدية...</option></select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-neutral-500 mb-1.5">عنوان التوصيل *</label>
+            <textarea id="customerAddress" required rows="2" class="input-field resize-none" placeholder="الشارع، الحي، ورقم المنزل..."></textarea>
+          </div>
+          <div class="pt-4 border-t border-neutral-100">
+            <div class="flex justify-between text-sm text-neutral-600 mb-2">
+              <span>قيمة المنتجات</span>
+              <span id="summarySubtotal" class="font-medium">0 د.ج</span>
+            </div>
+            <div class="flex justify-between text-sm text-neutral-600 mb-4">
+              <span>تكلفة التوصيل</span>
+              <span id="summaryDelivery" class="font-medium">0 د.ج</span>
+            </div>
+            <div class="flex justify-between text-base font-bold text-neutral-900 pt-3 border-t border-neutral-100">
+              <span>المجموع النهائي</span>
+              <span id="summaryTotal">0 د.ج</span>
+            </div>
+          </div>
+          <button type="submit" id="confirmOrderBtn" class="w-full btn-primary py-3.5 text-sm font-medium mt-4">
+            تأكيد الطلب
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div id="toastContainer" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2 w-full max-w-sm px-4 pointer-events-none"></div>
+
+  <script src="/js/locations.js"></script>
+  <script src="/js/cart.js"></script>
+  <script src="/js/social.js"></script>
+  <script src="/js/store.js"></script>
+</body>
+</html>
+`;
+
+fs.writeFileSync('public/index.html', indexHtml, 'utf8');
+console.log('index.html updated successfully.');

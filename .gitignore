@@ -1,0 +1,15 @@
+node_modules/
+.env
+.env.*
+!.env.example
+store.db
+store.db-shm
+store.db-wal
+backups/
+public/uploads/*
+!public/uploads/.gitkeep
+npm-debug.log*
+eco-store.sqlite*
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
