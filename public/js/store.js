@@ -47,7 +47,7 @@ async function initStoreInfo() {
   if (!identifier) return;
 
   try {
-    const res = await fetch(`/api/auth/store-info/${encodeURIComponent(identifier)}`);
+    const res = await fetch(`/api/auth/store-info/?t=${encodeURIComponent(identifier)}`);
     if (!res.ok) {
       STORE_LOOKUP_FAILED = true;
       return;
