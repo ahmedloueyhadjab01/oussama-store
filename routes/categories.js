@@ -58,7 +58,7 @@ router.get('/', async (req, res) => {
 router.get('/flat', requireAuth, async (req, res) => {
   let categories;
   if (req.user.role === 'admin') {
-    categories = await db.all('SELECT * FROM categories ORDER BY name');
+    categories = await db.all('SELECT * FROM categories WHERE user_id = $1 ORDER BY name', [getTargetUserId(req.user)]);
   } else {
     categories = await db.all('SELECT * FROM categories WHERE user_id = $1 ORDER BY name', [getTargetUserId(req.user)]);
   }
