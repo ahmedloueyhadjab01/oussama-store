@@ -163,6 +163,7 @@ router.post("/logout", (req, res) => {
 
 router.put("/change-password", requireAuth, async (req, res) => {
   const { old_password: currentPassword, new_password: newPassword } = req.body;
+  if (!currentPassword || !newPassword) return res.status(400).json({ error: "الرجاء إدخال كلمة المرور الحالية والجديدة" });
   try {
     const user = await db.get("SELECT password_hash FROM public.users WHERE id = $1", [req.user.id]);
     if (!user) return res.status(404).json({ error: "المستخدم غير موجود" });

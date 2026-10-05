@@ -137,4 +137,37 @@ class ShippingService {
   }
 }
 
+
+  static async trackParcel(orderId, requestUserId, isAdmin = false) {
+    let order;
+    if (isAdmin) {
+      order = await db.get('SELECT * FROM orders WHERE id = $1', [orderId]);
+    } else {
+      order = await db.get('SELECT * FROM orders WHERE id = $1 AND user_id = $2', [orderId, requestUserId]);
+    }
+    if (!order) throw new Error('الطلبية غير موجودة');
+    if (!order.tracking_number) throw new Error('لا يوجد رقم تتبع لهذه الطلبية');
+
+    const vendorId = order.user_id;
+    const config = await this.getVendorConfig(vendorId);
+
+    if (!config || config.provider !== 'yalidine' || !config.api_key) {
+      throw new Error('التتبع التلقائي غير مدعوم أو غير مهيأ لهذا المتجر');
+    }
+
+    const res = await fetch(`https://api.yalidine.app/v1/histories?tracking=${order.tracking_number}`, {
+      headers: {
+        'X-API-ID': config.api_key,
+        'X-API-TOKEN': config.api_token,
+      },
+    });
+
+    const resData = await res.json();
+    if (!res.ok || !resData.data || !resData.data.length) {
+      throw new Error('لم يتم العثور على معلومات التتبع');
+    }
+
+    return { history: resData.data };
+  }
+
 module.exports = ShippingService;

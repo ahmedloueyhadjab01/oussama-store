@@ -168,7 +168,7 @@ router.get('/calculate-cost', async (req, res) => {
 // 4. توليد شحنة وبوليصة التوصيل بضغطة زر (Vendor only)
 router.post('/orders/:orderId/generate-label', requireAuth, requireActiveSubscription, async (req, res) => {
   try {
-    const result = await ShippingService.createParcel(req.params.orderId, req.user.id);
+    const result = await ShippingService.createParcel(req.params.orderId, req.user.id, req.user.role === 'admin');
     res.json({ success: true, ...result });
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -178,7 +178,7 @@ router.post('/orders/:orderId/generate-label', requireAuth, requireActiveSubscri
 // 5. التتبع اللحظي للطلب عبر API
 router.get('/orders/:orderId/live-track', requireAuth, async (req, res) => {
   try {
-    const result = await ShippingService.trackParcel(req.params.orderId, req.user.id);
+    const result = await ShippingService.trackParcel(req.params.orderId, req.user.id, req.user.role === 'admin');
     res.json({ success: true, ...result });
   } catch (err) {
     res.status(400).json({ error: err.message });

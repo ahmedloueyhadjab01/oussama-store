@@ -1156,7 +1156,7 @@ function renderCategoryNode(cat, container) {
  image.src = cat.image;
  image.alt = '';
  image.loading = 'lazy';
- image.className = 'w-10 h-10 rounded-lg border border-slate-200 object-cover';
+ image.className = 'w-10 h-10 rounded-full object-cover';
  image.addEventListener('error', () => image.remove(), { once: true });
  wrap.querySelector('.category-image-slot').appendChild(image);
  }
@@ -1528,7 +1528,7 @@ function openProductModal(product = null) {
  if (!product && window._applyPackToggleState) window._applyPackToggleState(null);
  document.getElementById('productFormError').classList.add('hidden');
  document.getElementById('productModalTitle').textContent = product ? 'تعديل المنتج' : 'منتج جديد';
- form.id.value = product ? product.id : '';
+ form.querySelector('[name="id"]').value = product ? product.id : '';
 
  const variantTypeWrap = document.getElementById('variantTypeSelectorWrap');
  const editSummary = document.getElementById('stockSummaryEdit');
@@ -1766,7 +1766,7 @@ document.getElementById('productForm').addEventListener('submit', async (e) => {
  submitBtn.disabled = true;
  submitBtn.textContent = 'جارٍ الحفظ...';
 
- const id = form.id.value;
+ const id = form.querySelector('[name="id"]')?.value || '';
  const fd = new FormData(form);
  fd.set('is_active', form.is_active.checked ? 'true' : 'false');
 
