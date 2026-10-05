@@ -548,6 +548,15 @@ async function initDb() {
 
   await pool.query(schemaSql);
 
+  try {
+    if (process.env.DATABASE_URL && process.env.DATABASE_URL.startsWith('postgres')) {
+      await pool.query('ALTER TABLE vendor_shipping_configs ADD COLUMN IF NOT EXISTS manual_provider_name VARCHAR(255);');
+    } else {
+      await pool.query('ALTER TABLE vendor_shipping_configs ADD COLUMN manual_provider_name VARCHAR(255);');
+    }
+  } catch (err) {}
+
+
   // إضافة الأعمدة الجديدة للمنتجات إذا كانت قاعدة البيانات موجودة بالفعل
   try {
     await pool.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS video_file TEXT DEFAULT ''`);
