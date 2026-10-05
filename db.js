@@ -549,7 +549,7 @@ async function initDb() {
   await pool.query(schemaSql);
 
   try {
-    if (process.env.DATABASE_URL && process.env.DATABASE_URL.startsWith('postgres')) {
+    if (databaseMode === 'postgres') {
       await pool.query('ALTER TABLE vendor_shipping_configs ADD COLUMN IF NOT EXISTS manual_provider_name VARCHAR(255);');
     } else {
       await pool.query('ALTER TABLE vendor_shipping_configs ADD COLUMN manual_provider_name VARCHAR(255);');

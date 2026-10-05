@@ -22,3 +22,9 @@
 
 5) .gitignore
    - استثناء eco-store.sqlite* حتى لا تُرفع قاعدة بياناتك الحقيقية مع الكود.
+
+---- تنظيف نهائي ----
+- admin.js: حذف كود الاشتراكات/التحقق/استعادة كلمة المرور/إدارة المستخدمين الميت وزر النسخ الاحتياطي (158KB -> 126KB)
+- package.json: multer ^2.0.2
+- db.js: إضافة العمود manual_provider_name تعتمد على databaseMode بدل DATABASE_URL
+- ملاحظة: شغّل npm install (وليس npm ci) لتحديث package-lock.json
