@@ -1,9 +1,6 @@
 const db = require('../db');
 
 class ShippingService {
-  /**
-   * جلب إعدادات الشحن لتاجر معين
-   */
   static async getVendorConfig(vendorId) {
     if (!vendorId) return null;
     let config = await db.get('SELECT * FROM vendor_shipping_configs WHERE user_id = $1', [vendorId]);
@@ -30,9 +27,6 @@ class ShippingService {
     return config;
   }
 
-  /**
-   * حساب تكلفة الشحن للزبون بناءً على إعدادات التاجر
-   */
   static async calculateShippingCost(vendorId, toWilayaCode, deliveryType = 'home', cartSubtotal = 0) {
     const config = await this.getVendorConfig(vendorId);
     if (!config) {
@@ -72,13 +66,19 @@ class ShippingService {
     return { price: isNaN(fallbackPrice) ? 600 : fallbackPrice, is_free: false, provider: config.provider };
   }
 
-  static async createParcel(orderId, vendorId) {
-    const order = await db.get('SELECT * FROM orders WHERE id = $1 AND user_id = $2', [orderId, vendorId]);
-    if (!order) throw new Error('الطلب غير موجود أو لا ينتمي لمتجرك');
+  static async createParcel(orderId, requestUserId, isAdmin = false) {
+    let order;
+    if (isAdmin) {
+      order = await db.get('SELECT * FROM orders WHERE id = $1', [orderId]);
+    } else {
+      order = await db.get('SELECT * FROM orders WHERE id = $1 AND user_id = $2', [orderId, requestUserId]);
+    }
+    if (!order) throw new Error('الطلبية غير موجودة');
 
+    const vendorId = order.user_id;
     const config = await this.getVendorConfig(vendorId);
-        if (!config || config.provider === 'manual' || !config.api_key) {
-      // Return a local manual label URL
+
+    if (!config || config.provider === 'manual' || !config.api_key) {
       return { label_url: `/api/shipping/orders/${orderId}/manual-label` };
     }
 
@@ -86,22 +86,20 @@ class ShippingService {
       const items = typeof order.items === 'string' ? JSON.parse(order.items || '[]') : (order.items || []);
       const productDescription = items.map((i) => `${i.name} (x${i.qty})`).join(' + ');
 
-      const payload = [
-        {
-          order_id: `ORD-${order.id}`,
-          firstname: order.customer_name,
-          familyname: '',
-          contact_phone: order.phone,
-          address: `${order.commune || ''} - ${order.address || ''}`,
-          to_wilaya_name: order.wilaya_name,
-          to_commune_name: order.commune,
-          product_list: productDescription.substring(0, 200),
-          price: parseFloat(order.total),
-          freeshipping: parseFloat(order.delivery_price) === 0 ? 1 : 0,
-          is_stopdesk: order.delivery_type === 'desk' ? 1 : 0,
-          has_exchange: 0,
-        },
-      ];
+      const payload = [{
+        order_id: `ORD-${order.id}`,
+        firstname: order.customer_name,
+        familyname: '',
+        contact_phone: order.phone,
+        address: `${order.commune || ''} - ${order.address || ''}`,
+        to_wilaya_name: order.wilaya_name,
+        to_commune_name: order.commune,
+        product_list: productDescription.substring(0, 200),
+        price: parseFloat(order.total),
+        freeshipping: parseFloat(order.delivery_price) === 0 ? 1 : 0,
+        is_stopdesk: order.delivery_type === 'desk' ? 1 : 0,
+        has_exchange: 0,
+      }];
 
       const res = await fetch('https://api.yalidine.app/v1/parcels', {
         method: 'POST',
@@ -117,26 +115,18 @@ class ShippingService {
       const parcelData = resData[`ORD-${order.id}`];
 
       if (!parcelData || !parcelData.tracking) {
-        throw new Error(resData.message || (parcelData && parcelData.error) || 'فشل تسجيل الطرد لدى شركة التوصيل');
+        throw new Error(resData.message || (parcelData && parcelData.error) || 'فشل في توليد البوليصة من مزود الشحن');
       }
 
       const trackingCode = parcelData.tracking;
       const labelUrl = parcelData.label || `https://api.yalidine.app/v1/parcels/${trackingCode}/label`;
 
-      await db.query(
-        `UPDATE orders
-           SET tracking_status = $1, return_reason = $2
-           WHERE id = $3`,
-        [lastStatus, reason, order.id]
-      );
-
-      return { last_status: lastStatus, reason, internal_status: internalStatus };
+      await db.query(`UPDATE orders SET tracking_number = $1 WHERE id = $2`, [trackingCode, order.id]);
+      return { tracking_number: trackingCode, label_url: labelUrl };
     }
 
-    return { last_status: order.tracking_status || order.status, reason: order.return_reason || '', internal_status: order.status };
+    throw new Error('مزود الشحن غير مدعوم');
   }
-}
-
 
   static async trackParcel(orderId, requestUserId, isAdmin = false) {
     let order;
@@ -169,5 +159,6 @@ class ShippingService {
 
     return { history: resData.data };
   }
+}
 
 module.exports = ShippingService;

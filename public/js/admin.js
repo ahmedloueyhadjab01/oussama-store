@@ -602,15 +602,7 @@ document.getElementById('subscriptionContactOkBtn')?.addEventListener('click', (
  }
 });
 
-window.subscribeToPlan = async function(planId) {
- const planName = planId === 'annual' ? 'الاشتراك السنوي' : 'الاشتراك الشهري';
- const whatsappWindow = window.open('about:blank', '_blank');
- try {
- const res = await fetch('/api/subscription/subscribe', {
- method: 'POST',
- headers: { 'Content-Type': 'application/json' },
- body: JSON.stringify({ plan: planId }),
- });
+
  const data = await res.json();
  if (!res.ok) throw new Error(data.error);
 
