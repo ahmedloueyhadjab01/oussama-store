@@ -220,7 +220,7 @@ function updateSubscriptionUI(user) {
  statusBadge.textContent = isExpired ? 'مشاهدة فقط' : (isTrial ? 'فترة تجريبية' : 'اشتراك مفعل');
  }
 
- loadSubscriptionHistory();
+ 
 }
 
 // دالة منع العمليات التعديلية وفتح نافذة الواتساب
@@ -603,7 +603,7 @@ function initDashboard() {
  renderSavedCalculations();
  recomputeCalculator();
  } else if (btn.dataset.tab === 'subscription') {
- loadSubscriptionHistory();
+ 
  } else if (btn.dataset.tab === 'admin-users') {
  loadAdminUsersList();
  }
