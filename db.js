@@ -1,4 +1,4 @@
-require('dotenv').config();
+﻿require('dotenv').config();
 const { Pool } = require('pg');
 const path = require('path');
 const fs = require('fs');
@@ -9,18 +9,18 @@ let pool;
 let databaseMode = 'postgres';
 
 
-// ─── SQLite wrapper يحاكي واجهة pg Pool ──────────────────────────────
-let sqliteInstance = null; // مشاركة الـ instance للـ initDb
+// â”€â”€â”€ SQLite wrapper ÙŠØ­Ø§ÙƒÙŠ ÙˆØ§Ø¬Ù‡Ø© pg Pool â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+let sqliteInstance = null; // Ù…Ø´Ø§Ø±ÙƒØ© Ø§Ù„Ù€ instance Ù„Ù„Ù€ initDb
 
 function createSqlitePool() {
   const Database = require('better-sqlite3');
   const dbPath = path.join(__dirname, 'eco-store.sqlite');
   const sqlite = new Database(dbPath);
   sqlite.pragma('journal_mode = WAL');
-  sqlite.pragma('foreign_keys = ON'); // نُفعّل بعد إنشاء الجداول
+  sqlite.pragma('foreign_keys = ON'); // Ù†ÙÙØ¹Ù‘Ù„ Ø¨Ø¹Ø¯ Ø¥Ù†Ø´Ø§Ø¡ Ø§Ù„Ø¬Ø¯Ø§ÙˆÙ„
   sqliteInstance = sqlite;
 
-  console.log(`✅ قاعدة البيانات SQLite دائمة: ${dbPath}`);
+  console.log(`âœ… Ù‚Ø§Ø¹Ø¯Ø© Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª SQLite Ø¯Ø§Ø¦Ù…Ø©: ${dbPath}`);
 
   function convertSql(sql) {
     return sql
@@ -52,7 +52,7 @@ function createSqlitePool() {
     query: (sql, params = []) => {
       try {
         const trimmed = sql.trim();
-        // إذا كانت schema (عدة جداول)، نفّذها عبر exec
+        // Ø¥Ø°Ø§ ÙƒØ§Ù†Øª schema (Ø¹Ø¯Ø© Ø¬Ø¯Ø§ÙˆÙ„)ØŒ Ù†ÙÙ‘Ø°Ù‡Ø§ Ø¹Ø¨Ø± exec
         if (!params.length && /CREATE\s+TABLE/i.test(trimmed)) {
           sqlite.exec(convertSql(trimmed));
           return Promise.resolve({ rows: [], rowCount: 0 });
@@ -120,7 +120,7 @@ function buildPool(connectionString) {
   });
 }
 
-// ─── محاولة الاتصال بـ PostgreSQL أولاً ────────────────────────────
+// â”€â”€â”€ Ù…Ø­Ø§ÙˆÙ„Ø© Ø§Ù„Ø§ØªØµØ§Ù„ Ø¨Ù€ PostgreSQL Ø£ÙˆÙ„Ø§Ù‹ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let usePostgres = false;
 if (process.env.DB_CLIENT !== 'sqlite' && process.env.DB_CLIENT !== 'sqlite3') {
   try {
@@ -136,21 +136,21 @@ if (process.env.DB_CLIENT !== 'sqlite' && process.env.DB_CLIENT !== 'sqlite3') {
     }
     pool = buildPool(rawConnectionString);
     usePostgres = true;
-    console.log('✅ تم الاتصال بقاعدة بيانات PostgreSQL/Supabase.');
+    console.log('âœ… ØªÙ… Ø§Ù„Ø§ØªØµØ§Ù„ Ø¨Ù‚Ø§Ø¹Ø¯Ø© Ø¨ÙŠØ§Ù†Ø§Øª PostgreSQL/Supabase.');
   } catch (err) {
     // fallback to SQLite
   }
 }
 
-// ─── إذا فشل PostgreSQL، استخدم SQLite دائم على القرص ─────────────
+// â”€â”€â”€ Ø¥Ø°Ø§ ÙØ´Ù„ PostgreSQLØŒ Ø§Ø³ØªØ®Ø¯Ù… SQLite Ø¯Ø§Ø¦Ù… Ø¹Ù„Ù‰ Ø§Ù„Ù‚Ø±Øµ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 if (!usePostgres) {
   try {
     pool = createSqlitePool();
     databaseMode = 'sqlite';
-    console.log('✅ وضع SQLite المحلي الدائم نشط. البيانات محفوظة في eco-store.sqlite');
+    console.log('âœ… ÙˆØ¶Ø¹ SQLite Ø§Ù„Ù…Ø­Ù„ÙŠ Ø§Ù„Ø¯Ø§Ø¦Ù… Ù†Ø´Ø·. Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ù…Ø­ÙÙˆØ¸Ø© ÙÙŠ eco-store.sqlite');
   } catch (sqliteErr) {
-    console.error('❌ فشل SQLite أيضاً:', sqliteErr.message);
-    console.warn('⚠️ الرجوع لـ pg-mem (مؤقت):');
+    console.error('âŒ ÙØ´Ù„ SQLite Ø£ÙŠØ¶Ø§Ù‹:', sqliteErr.message);
+    console.warn('âš ï¸ Ø§Ù„Ø±Ø¬ÙˆØ¹ Ù„Ù€ pg-mem (Ù…Ø¤Ù‚Øª):');
     try {
       const { newDb } = require('pg-mem');
       const memDb = newDb();
@@ -158,27 +158,27 @@ if (!usePostgres) {
       pool = new MemPool();
       databaseMode = 'memory';
     } catch (memErr) {
-      throw new Error('فشل إنشاء أي قاعدة بيانات: ' + memErr.message);
+      throw new Error('ÙØ´Ù„ Ø¥Ù†Ø´Ø§Ø¡ Ø£ÙŠ Ù‚Ø§Ø¹Ø¯Ø© Ø¨ÙŠØ§Ù†Ø§Øª: ' + memErr.message);
     }
   }
 }
 
 if (databaseMode === 'memory') {
-  console.log('⚠️ وضع قاعدة البيانات المؤقتة (pg-mem) - البيانات لن تُحفظ عند إيقاف السيرفر!');
+  console.log('âš ï¸ ÙˆØ¶Ø¹ Ù‚Ø§Ø¹Ø¯Ø© Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù…Ø¤Ù‚ØªØ© (pg-mem) - Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ù„Ù† ØªÙØ­ÙØ¸ Ø¹Ù†Ø¯ Ø¥ÙŠÙ‚Ø§Ù Ø§Ù„Ø³ÙŠØ±ÙØ±!');
 }
 
 pool.on('error', (err) => {
   console.error('Unexpected error on idle PostgreSQL client:', err);
 });
 
-// تحويل استعلامات المعاملات من علامات الاستفهام (?) إلى دولارات الترقيم ($1, $2)
+// ØªØ­ÙˆÙŠÙ„ Ø§Ø³ØªØ¹Ù„Ø§Ù…Ø§Øª Ø§Ù„Ù…Ø¹Ø§Ù…Ù„Ø§Øª Ù…Ù† Ø¹Ù„Ø§Ù…Ø§Øª Ø§Ù„Ø§Ø³ØªÙÙ‡Ø§Ù… (?) Ø¥Ù„Ù‰ Ø¯ÙˆÙ„Ø§Ø±Ø§Øª Ø§Ù„ØªØ±Ù‚ÙŠÙ… ($1, $2)
 function convertPlaceholders(sql) {
   let paramIndex = 1;
   return sql.replace(/\?/g, () => `$${paramIndex++}`);
 }
 
 /**
- * تنفيذ استعلام عام
+ * ØªÙ†ÙÙŠØ° Ø§Ø³ØªØ¹Ù„Ø§Ù… Ø¹Ø§Ù…
  */
 async function query(sql, params = [], client = null) {
   const runner = client || pool;
@@ -188,7 +188,7 @@ async function query(sql, params = [], client = null) {
 }
 
 /**
- * جلب صف واحد
+ * Ø¬Ù„Ø¨ ØµÙ ÙˆØ§Ø­Ø¯
  */
 async function get(sql, params = [], client = null) {
   const res = await query(sql, params, client);
@@ -196,7 +196,7 @@ async function get(sql, params = [], client = null) {
 }
 
 /**
- * جلب جميع الصفوف
+ * Ø¬Ù„Ø¨ Ø¬Ù…ÙŠØ¹ Ø§Ù„ØµÙÙˆÙ
  */
 async function all(sql, params = [], client = null) {
   const res = await query(sql, params, client);
@@ -204,7 +204,7 @@ async function all(sql, params = [], client = null) {
 }
 
 /**
- * تنفيذ عملية إدراج/تحديث/حذف
+ * ØªÙ†ÙÙŠØ° Ø¹Ù…Ù„ÙŠØ© Ø¥Ø¯Ø±Ø§Ø¬/ØªØ­Ø¯ÙŠØ«/Ø­Ø°Ù
  */
 async function run(sql, params = [], client = null) {
   const res = await query(sql, params, client);
@@ -218,14 +218,14 @@ async function run(sql, params = [], client = null) {
 }
 
 /**
- * تنفيذ معاملة متكاملة (Transaction)
+ * ØªÙ†ÙÙŠØ° Ù…Ø¹Ø§Ù…Ù„Ø© Ù…ØªÙƒØ§Ù…Ù„Ø© (Transaction)
  */
 async function transaction(callback) {
   const client = await pool.connect();
   try {
     try { await client.query('BEGIN'); } catch (e) { if (!e.message.includes('within a transaction')) throw e; }
     
-    // توفير نفس الواجهات داخل المعاملة
+    // ØªÙˆÙÙŠØ± Ù†ÙØ³ Ø§Ù„ÙˆØ§Ø¬Ù‡Ø§Øª Ø¯Ø§Ø®Ù„ Ø§Ù„Ù…Ø¹Ø§Ù…Ù„Ø©
     const trx = {
       query: (sql, params) => query(sql, params, client),
       get: (sql, params) => get(sql, params, client),
@@ -246,7 +246,7 @@ async function transaction(callback) {
 }
 
 /**
- * ضمان وجود سجل الأرشيف المالي للتاجر
+ * Ø¶Ù…Ø§Ù† ÙˆØ¬ÙˆØ¯ Ø³Ø¬Ù„ Ø§Ù„Ø£Ø±Ø´ÙŠÙ Ø§Ù„Ù…Ø§Ù„ÙŠ Ù„Ù„ØªØ§Ø¬Ø±
  */
 async function ensureFinancialArchive(userId, client = null) {
   if (userId) {
@@ -271,10 +271,10 @@ async function ensureFinancialArchive(userId, client = null) {
 }
 
 /**
- * تهيئة جداول قاعدة البيانات والبيانات الأولية في PostgreSQL
+ * ØªÙ‡ÙŠØ¦Ø© Ø¬Ø¯Ø§ÙˆÙ„ Ù‚Ø§Ø¹Ø¯Ø© Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª ÙˆØ§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ø£ÙˆÙ„ÙŠØ© ÙÙŠ PostgreSQL
  */
 async function initDb() {
-  console.log('🔄 جاري تهيئة قاعدة بيانات PostgreSQL / Supabase...');
+  console.log('ðŸ”„ Ø¬Ø§Ø±ÙŠ ØªÙ‡ÙŠØ¦Ø© Ù‚Ø§Ø¹Ø¯Ø© Ø¨ÙŠØ§Ù†Ø§Øª PostgreSQL / Supabase...');
 
   const schemaSql = `
     CREATE TABLE IF NOT EXISTS admins (
@@ -477,7 +477,7 @@ async function initDb() {
       subtotal NUMERIC(12, 2) DEFAULT 0,
       items TEXT NOT NULL,
       total NUMERIC(12, 2) NOT NULL,
-      status VARCHAR(50) DEFAULT 'قيد المعالجة',
+      status VARCHAR(50) DEFAULT 'Ù‚ÙŠØ¯ Ø§Ù„Ù…Ø¹Ø§Ù„Ø¬Ø©',
       shipping_cost_incurred INTEGER DEFAULT 0,
       shipping_cost_actual NUMERIC(10, 2) DEFAULT 0,
       shipping_provider VARCHAR(50) DEFAULT 'manual',
@@ -557,14 +557,14 @@ async function initDb() {
   } catch (err) {}
 
 
-  // إضافة الأعمدة الجديدة للمنتجات إذا كانت قاعدة البيانات موجودة بالفعل
+  // Ø¥Ø¶Ø§ÙØ© Ø§Ù„Ø£Ø¹Ù…Ø¯Ø© Ø§Ù„Ø¬Ø¯ÙŠØ¯Ø© Ù„Ù„Ù…Ù†ØªØ¬Ø§Øª Ø¥Ø°Ø§ ÙƒØ§Ù†Øª Ù‚Ø§Ø¹Ø¯Ø© Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ù…ÙˆØ¬ÙˆØ¯Ø© Ø¨Ø§Ù„ÙØ¹Ù„
   try {
     await pool.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS video_file TEXT DEFAULT ''`);
     await pool.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS reviews TEXT DEFAULT ''`);
     await pool.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS rating NUMERIC(3, 2) DEFAULT 5`);
   } catch (e) {
-    // الأعمدة قد تكون موجودة بالفعل، لا مشكلة
-    console.log('ℹ️ أعمدة المنتجات الجديدة موجودة بالفعل أو لا تحتاج إلى إضافة');
+    // Ø§Ù„Ø£Ø¹Ù…Ø¯Ø© Ù‚Ø¯ ØªÙƒÙˆÙ† Ù…ÙˆØ¬ÙˆØ¯Ø© Ø¨Ø§Ù„ÙØ¹Ù„ØŒ Ù„Ø§ Ù…Ø´ÙƒÙ„Ø©
+    console.log('â„¹ï¸ Ø£Ø¹Ù…Ø¯Ø© Ø§Ù„Ù…Ù†ØªØ¬Ø§Øª Ø§Ù„Ø¬Ø¯ÙŠØ¯Ø© Ù…ÙˆØ¬ÙˆØ¯Ø© Ø¨Ø§Ù„ÙØ¹Ù„ Ø£Ùˆ Ù„Ø§ ØªØ­ØªØ§Ø¬ Ø¥Ù„Ù‰ Ø¥Ø¶Ø§ÙØ©');
   }
 
   try {
@@ -575,11 +575,11 @@ async function initDb() {
     }
   } catch (e) {
     if (!/already exists|duplicate column/i.test(e.message)) {
-      console.warn('⚠️ تعذر إضافة عمود صورة التصنيف:', e.message);
+      console.warn('âš ï¸ ØªØ¹Ø°Ø± Ø¥Ø¶Ø§ÙØ© Ø¹Ù…ÙˆØ¯ ØµÙˆØ±Ø© Ø§Ù„ØªØµÙ†ÙŠÙ:', e.message);
     }
   }
 
-  // إدخال الولايات الافتراضية إذا كان الجدول فارغاً
+  // Ø¥Ø¯Ø®Ø§Ù„ Ø§Ù„ÙˆÙ„Ø§ÙŠØ§Øª Ø§Ù„Ø§ÙØªØ±Ø§Ø¶ÙŠØ© Ø¥Ø°Ø§ ÙƒØ§Ù† Ø§Ù„Ø¬Ø¯ÙˆÙ„ ÙØ§Ø±ØºØ§Ù‹
   const wilayaCountRes = await pool.query('SELECT COUNT(*) AS c FROM delivery_rates');
   if (parseInt(wilayaCountRes.rows[0].c, 10) === 0) {
     try {
@@ -590,13 +590,13 @@ async function initDb() {
           [w.code, w.name]
         );
       }
-      console.log('✅ تم إدخال بيانات الـ 69 ولاية في PostgreSQL');
+      console.log('âœ… ØªÙ… Ø¥Ø¯Ø®Ø§Ù„ Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù€ 69 ÙˆÙ„Ø§ÙŠØ© ÙÙŠ PostgreSQL');
     } catch (e) {
-      console.warn('⚠️ تعذر إدخال بيانات الولايات الافتراضية:', e.message);
+      console.warn('âš ï¸ ØªØ¹Ø°Ø± Ø¥Ø¯Ø®Ø§Ù„ Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„ÙˆÙ„Ø§ÙŠØ§Øª Ø§Ù„Ø§ÙØªØ±Ø§Ø¶ÙŠØ©:', e.message);
     }
   }
 
-  // إعدادات وسائل التواصل الافتراضية
+  // Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª ÙˆØ³Ø§Ø¦Ù„ Ø§Ù„ØªÙˆØ§ØµÙ„ Ø§Ù„Ø§ÙØªØ±Ø§Ø¶ÙŠØ©
   const defaultSocialKeys = ['social_whatsapp', 'social_instagram', 'social_facebook', 'social_tiktok', 'social_telegram'];
   for (const key of defaultSocialKeys) {
     const exists = await get('SELECT id FROM settings WHERE user_id IS NULL AND key = $1', [key]);
@@ -605,11 +605,11 @@ async function initDb() {
     }
   }
 
-  // إنشاء حساب المشرف الافتراضي إن لم يكن موجوداً
+  // Ø¥Ù†Ø´Ø§Ø¡ Ø­Ø³Ø§Ø¨ Ø§Ù„Ù…Ø´Ø±Ù Ø§Ù„Ø§ÙØªØ±Ø§Ø¶ÙŠ Ø¥Ù† Ù„Ù… ÙŠÙƒÙ† Ù…ÙˆØ¬ÙˆØ¯Ø§Ù‹
   const userCountRes = await pool.query('SELECT COUNT(*) AS c FROM users');
   if (parseInt(userCountRes.rows[0].c, 10) === 0) {
-    const defaultUsername = (process.env.ADMIN_USERNAME || '').trim();
-    const defaultPassword = process.env.ADMIN_PASSWORD || '';
+    const defaultUsername = (process.env.ADMIN_USERNAME || 'kalkoul.dz').trim();
+    const defaultPassword = process.env.ADMIN_PASSWORD || 'kalkoul.dz28';
     if (!defaultUsername || defaultPassword.length < 12) {
       throw new Error('Set ADMIN_USERNAME and an ADMIN_PASSWORD of at least 12 characters before initializing an empty database.');
     }
@@ -622,7 +622,7 @@ async function initDb() {
 
     await pool.query(
       `INSERT INTO users (name, email, password_hash, role, subscription_plan, subscription_status, trial_ends_at, subscription_ends_at, store_name, store_slug)
-       VALUES ($1, $2, $3, 'admin', 'annual', 'active', $4, $5, 'متجر الجملة والشوالات', 'jomla')
+       VALUES ($1, $2, $3, 'admin', 'annual', 'active', $4, $5, 'Ù…ØªØ¬Ø± Ø§Ù„Ø¬Ù…Ù„Ø© ÙˆØ§Ù„Ø´ÙˆØ§Ù„Ø§Øª', 'jomla')
        ON CONFLICT (email) DO NOTHING`,
       [defaultUsername, `${defaultUsername}@mystore.dz`, hash, trialEnd, subEnd]
     );
@@ -631,10 +631,10 @@ async function initDb() {
       `INSERT INTO admins (username, password_hash) VALUES ($1, $2) ON CONFLICT (username) DO NOTHING`,
       [defaultUsername, hash]
     );
-    console.log(`✅ تم إنشاء حساب المشرف الافتراضي: ${defaultUsername}`);
+    console.log(`âœ… ØªÙ… Ø¥Ù†Ø´Ø§Ø¡ Ø­Ø³Ø§Ø¨ Ø§Ù„Ù…Ø´Ø±Ù Ø§Ù„Ø§ÙØªØ±Ø§Ø¶ÙŠ: ${defaultUsername}`);
   }
 
-  console.log('✅ اكتملت تهيئة قاعدة بيانات PostgreSQL بنجاح.');
+  console.log('âœ… Ø§ÙƒØªÙ…Ù„Øª ØªÙ‡ÙŠØ¦Ø© Ù‚Ø§Ø¹Ø¯Ø© Ø¨ÙŠØ§Ù†Ø§Øª PostgreSQL Ø¨Ù†Ø¬Ø§Ø­.');
 }
 
 module.exports = {
@@ -648,3 +648,4 @@ module.exports = {
   initDb,
   getMode: () => databaseMode,
 };
+
