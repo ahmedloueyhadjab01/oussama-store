@@ -454,8 +454,7 @@ async function initDb() {
       updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
     );
 
-    ALTER TABLE vendor_shipping_configs ADD COLUMN IF NOT EXISTS manual_provider_name VARCHAR(255);
-      CREATE TABLE IF NOT EXISTS vendor_custom_delivery_rates (
+    CREATE TABLE IF NOT EXISTS vendor_custom_delivery_rates (
       id SERIAL PRIMARY KEY,
       user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
       wilaya_code INTEGER NOT NULL,

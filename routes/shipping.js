@@ -189,14 +189,20 @@ router.get('/orders/:orderId/live-track', requireAuth, async (req, res) => {
 // 6. Manual Local Label Print
 router.get('/orders/:orderId/manual-label', requireAuth, async (req, res) => {
   try {
-    const order = await db.get('SELECT * FROM orders WHERE id = $1 AND user_id = $2', [req.params.orderId, req.user.id]);
+    let order;
+    if (req.user.role === 'admin') {
+      order = await db.get('SELECT * FROM orders WHERE id = $1', [req.params.orderId]);
+    } else {
+      order = await db.get('SELECT * FROM orders WHERE id = $1 AND user_id = $2', [req.params.orderId, req.user.id]);
+    }
     if (!order) return res.status(404).send('الطلبية غير موجودة');
 
+    const storeOwnerId = order.user_id;
     const ShippingService = require('../services/shippingService');
-    const config = await ShippingService.getVendorConfig(req.user.id);
+    const config = await ShippingService.getVendorConfig(storeOwnerId);
     
     // Get store name
-    const vendor = await db.get('SELECT store_name, phone FROM users WHERE id = $1', [req.user.id]);
+    const vendor = await db.get('SELECT store_name, phone FROM users WHERE id = $1', [storeOwnerId]);
 
     let providerName = (config && config.manual_provider_name) ? config.manual_provider_name : 'شركة التوصيل';
     let storeName = vendor ? (vendor.store_name || 'متجري') : 'متجري';
