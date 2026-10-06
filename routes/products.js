@@ -1,3 +1,4 @@
+const { getTargetUserId } = require('../utils/store');
 const express = require('express');
 const slugify = require('slugify');
 const { body, validationResult } = require('express-validator');
@@ -6,11 +7,7 @@ const { requireAuth, requireActiveSubscription, checkResourceOwnership } = requi
 const upload = require('./upload');
 
 const router = express.Router();
-function getTargetUserId(user) {
-  if (user.role !== "admin" || !process.env.MAIN_STORE_USER_ID) return user.id;
-  const mainId = parseInt(process.env.MAIN_STORE_USER_ID, 10);
-  return isNaN(mainId) ? user.id : mainId;
-}
+
 
 
 function normalizeColorCode(value) {
@@ -149,9 +146,8 @@ router.get('/', async (req, res) => {
 // خاص: كل المنتجات للتاجر في لوحة تحكمه
 router.get('/admin/all', requireAuth, async (req, res) => {
   let products;
-  if (false) {} else { req.user.id = getTargetUserId(req.user); 
-    products = await db.all('SELECT * FROM products WHERE user_id = $1 ORDER BY created_at DESC', [getTargetUserId(req.user)]);
-  }
+  const userId = getTargetUserId(req.user);
+    products = await db.all('SELECT * FROM products WHERE user_id = $1 ORDER BY created_at DESC', [userId]);
   const serialized = await Promise.all(products.map(serialize));
   res.json(serialized);
 });
@@ -606,7 +602,7 @@ router.delete('/:id', requireAuth, requireActiveSubscription, async (req, res) =
   if (product.image) imagesToDelete.push(product.image);
   if (product.images && product.images.length > 0) {
     if (typeof product.images === 'string') {
-      try { imagesToDelete.push(...JSON.parse(product.images)); } catch(e){}
+      try { imagesToDelete.push(...JSON.parse(product.images)); } catch (e) { console.error('Ignored Error:', e.message); }
     } else {
       imagesToDelete.push(...product.images);
     }

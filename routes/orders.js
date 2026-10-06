@@ -1,3 +1,5 @@
+const { getTargetUserId } = require('../utils/store');
+const { parseItems } = require('../utils/orderItems');
 const express = require('express');
 const { body, validationResult } = require('express-validator');
 const rateLimit = require('express-rate-limit');
@@ -9,7 +11,7 @@ const { ensureFinancialArchive } = require('../db');
 const { notifyUser } = require('./notifications');
 
 const router = express.Router();
-function getTargetUserId(user) { if (user.role !== "admin" || !process.env.MAIN_STORE_USER_ID) return user.id; const mainId = parseInt(process.env.MAIN_STORE_USER_ID, 10); return isNaN(mainId) ? user.id : mainId; }
+
 
 
 // دوال مساعدة: تتعامل مع المتغيرات والمنتجات البسيطة
@@ -48,7 +50,7 @@ async function currentStockOf(item, trx = db) {
 }
 
 function orderCostOfGoods(order) {
-  const items = typeof order.items === 'string' ? JSON.parse(order.items || '[]') : (order.items || []);
+  const items = parseItems(order.items);
   return items.reduce((sum, item) => sum + (Number(item.cost_price) || 0) * (Number(item.qty) || 0), 0);
 }
 
@@ -260,7 +262,7 @@ router.post(
       });
 
       if (outcome.notify_args) {
-        try { await notifyUser(...outcome.notify_args); } catch (e) {}
+        try { await notifyUser(...outcome.notify_args); } catch (e) { console.error('Ignored Error:', e.message); }
         delete outcome.notify_args;
       }
       res.status(201).json({ success: true, ...outcome });
@@ -496,12 +498,12 @@ router.put('/:id/status', requireAuth, requireActiveSubscription, async (req, re
       const inactiveStatuses = ['ملغي', 'مرتجع', 'تعذر التوصيل'];
 
       if (activeStatuses.includes(oldStatus) && inactiveStatuses.includes(status)) {
-        const items = typeof order.items === 'string' ? JSON.parse(order.items || '[]') : (order.items || []);
+        const items = parseItems(order.items);
         for (const item of items) {
           await incrementStock(item, trx);
         }
       } else if (inactiveStatuses.includes(oldStatus) && activeStatuses.includes(status)) {
-        const items = typeof order.items === 'string' ? JSON.parse(order.items || '[]') : (order.items || []);
+        const items = parseItems(order.items);
         for (const item of items) {
           const success = await decrementStock(item, trx);
           if (!success) throw new Error("لا يوجد مخزون كافٍ للمنتج: " + item.name);
@@ -533,7 +535,7 @@ router.put('/:id/edit', requireAuth, requireActiveSubscription, async (req, res)
 
   try {
     await db.transaction(async (trx) => {
-      let finalItems = typeof order.items === 'string' ? JSON.parse(order.items || '[]') : (order.items || []);
+      let finalItems = parseItems(order.items);
       let finalSubtotal = parseFloat(order.subtotal);
       let finalDeliveryPrice = delivery_price !== undefined ? parseFloat(delivery_price) : parseFloat(order.delivery_price);
 
@@ -654,7 +656,7 @@ router.delete('/:id', requireAuth, requireActiveSubscription, async (req, res) =
   try {
     await db.transaction(async (trx) => {
       if (['قيد المعالجة', 'قيد التوصيل', 'تم التسليم'].includes(order.status)) {
-        const items = typeof order.items === 'string' ? JSON.parse(order.items || '[]') : (order.items || []);
+        const items = parseItems(order.items);
         for (const item of items) {
           await incrementStock(item, trx);
         }
@@ -699,20 +701,21 @@ router.get('/product-reports', requireAuth, async (req, res) => {
     
     const orders = await db.all(ordersQuery, params);
     
+    // We will group by day
     const timeline = {};
     let totalRevenue = 0;
     let totalCogs = 0;
     let totalUnits = 0;
-    let totalShippingLosses = 0;
+    let totalShippingLosses = 0; // For returned orders
     let totalDelivered = 0;
     let totalReturned = 0;
     
     for (const o of orders) {
       const isDelivered = o.status === 'تم التوصيل';
-      const isReturned = ['مسترجع', 'ملغاة', 'في الانتظار'].includes(o.status) && o.shipping_cost_incurred == 1;
+      const isReturned = ['مسترجع', 'ملغاة', 'في الانتظار'].includes(o.status) && o.shipping_cost_incurred == 1; // Simplified return logic
       
       let items = [];
-      try { items = JSON.parse(o.items || "[]"); } catch(e){}
+      try { items = JSON.parse(o.items || "[]"); } catch (e) { console.error('Ignored Error:', e.message); }
       
       let orderHasProduct = false;
       let productQty = 0;
@@ -741,10 +744,12 @@ router.get('/product-reports', requireAuth, async (req, res) => {
         } else if (isReturned) {
           totalReturned++;
           const lostShipping = Number(o.shipping_cost_actual || o.delivery_price) || 0;
+          // If we filter by product, we approximate shipping loss share
           const share = (items.length > 0) ? (productQty / items.reduce((acc, i) => acc + (Number(i.qty)||0), 0)) : 1;
           totalShippingLosses += (lostShipping * share);
         }
         
+        // Timeline grouping (YYYY-MM-DD)
         const dateKey = (o.created_at || '').substring(0, 10);
         if (dateKey) {
           if (!timeline[dateKey]) timeline[dateKey] = { revenue: 0, cogs: 0, lost: 0, profit: 0 };
@@ -761,6 +766,7 @@ router.get('/product-reports', requireAuth, async (req, res) => {
       }
     }
     
+    // Sort timeline
     const sortedDates = Object.keys(timeline).sort();
     const chartData = {
       labels: sortedDates,
@@ -816,7 +822,7 @@ router.get('/profit-30d', requireAuth, async (req, res) => {
     let items = [];
     try {
       items = JSON.parse(o.items || "[]");
-    } catch (e) {}
+    } catch (e) { console.error('Ignored Error:', e.message); }
 
     for (const item of items) {
       const qty = Number(item.qty) || 0;

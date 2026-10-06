@@ -1,3 +1,4 @@
+const { getTargetUserId } = require('../utils/store');
 const express = require('express');
 const slugify = require('slugify');
 const { body, validationResult } = require('express-validator');
@@ -6,11 +7,7 @@ const { requireAuth, checkResourceOwnership } = require('../middleware/auth');
 const upload = require('./upload');
 
 const router = express.Router();
-function getTargetUserId(user) {
-  if (user.role !== "admin" || !process.env.MAIN_STORE_USER_ID) return user.id;
-  const mainId = parseInt(process.env.MAIN_STORE_USER_ID, 10);
-  return isNaN(mainId) ? user.id : mainId;
-}
+
 
 
 function buildTree(categories, parentId = null) {
@@ -41,7 +38,7 @@ router.get('/', async (req, res) => {
         const jwt = require('jsonwebtoken');
         const payload = jwt.verify(token, process.env.JWT_SECRET);
         if (payload.role !== 'admin') vendorId = payload.id;
-      } catch (e) {}
+      } catch (e) { console.error('Ignored Error:', e.message); }
     }
   }
 

@@ -1,3 +1,4 @@
+const { parseItems } = require('../utils/orderItems');
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
@@ -208,7 +209,7 @@ router.get('/orders/:orderId/manual-label', requireAuth, async (req, res) => {
     let storeName = vendor ? (vendor.store_name || 'متجري') : 'متجري';
     let storePhone = vendor ? (vendor.phone || '') : '';
     
-    const items = typeof order.items === 'string' ? JSON.parse(order.items || '[]') : (order.items || []);
+    const items = parseItems(order.items);
 
     const html = `
     <!DOCTYPE html>

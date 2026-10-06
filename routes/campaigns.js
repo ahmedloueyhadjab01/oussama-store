@@ -1,3 +1,4 @@
+const { parseItems } = require('../utils/orderItems');
 const express = require('express');
 const { body, validationResult } = require('express-validator');
 const db = require('../db');
@@ -97,7 +98,7 @@ router.get('/analytics', requireAuth, async (req, res) => {
         statusBreakdown.delivered += 1;
 
         try {
-          const items = typeof order.items === 'string' ? JSON.parse(order.items || '[]') : (order.items || []);
+          const items = parseItems(order.items);
           for (const item of items) {
             entry.delivered_cogs += (parseFloat(item.cost_price) || 0) * (parseInt(item.qty, 10) || 1);
             const pName = item.name || 'منتج';
@@ -114,7 +115,7 @@ router.get('/analytics', requireAuth, async (req, res) => {
         }
 
         try {
-          const items = typeof order.items === 'string' ? JSON.parse(order.items || '[]') : (order.items || []);
+          const items = parseItems(order.items);
           for (const item of items) {
             const pName = item.name || 'منتج';
             cancelledProductsMap.set(pName, (cancelledProductsMap.get(pName) || 0) + (parseInt(item.qty, 10) || 1));
@@ -128,7 +129,7 @@ router.get('/analytics', requireAuth, async (req, res) => {
         }
 
         try {
-          const items = typeof order.items === 'string' ? JSON.parse(order.items || '[]') : (order.items || []);
+          const items = parseItems(order.items);
           for (const item of items) {
             const pName = item.name || 'منتج';
             cancelledProductsMap.set(pName, (cancelledProductsMap.get(pName) || 0) + (parseInt(item.qty, 10) || 1));
@@ -193,7 +194,7 @@ router.get('/analytics', requireAuth, async (req, res) => {
           item.sales += parseFloat(order.subtotal);
           let cogs = 0;
           try {
-            const items = typeof order.items === 'string' ? JSON.parse(order.items || '[]') : (order.items || []);
+            const items = parseItems(order.items);
             for (const it of items) cogs += (parseFloat(it.cost_price) || 0) * (parseInt(it.qty, 10) || 1);
           } catch {}
           item.profit += (parseFloat(order.subtotal) - cogs);

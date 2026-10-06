@@ -8,7 +8,7 @@ const ALLOWED_EXTENSIONS = new Set(['.jpg', '.jpeg', '.png', '.webp', '.gif']);
 const uploadsDir = path.join(__dirname, '..', 'public', 'uploads');
 try {
   fs.mkdirSync(uploadsDir, { recursive: true });
-} catch (e) {}
+} catch (e) { console.error('Ignored Error:', e.message); }
 
 let supabaseClient = null;
 if (process.env.SUPABASE_URL && (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY)) {
@@ -58,7 +58,7 @@ async function uploadToSupabaseStorage(buffer, originalname, mimetype) {
   let fallbackLocal = false;
   
   if (supabaseClient) {
-    try { await supabaseClient.storage.createBucket(bucketName, { public: true }).catch(()=>{}); } catch(e){}
+    try { await supabaseClient.storage.createBucket(bucketName, { public: true }).catch(()=>{}); } catch (e) { console.error('Ignored Error:', e.message); }
     const { data, error } = await supabaseClient.storage.from(bucketName).upload(safeName, buffer, { contentType: mimetype, upsert: true });
     if (error) {
       console.warn("Supabase upload failed, falling back to local:", error.message);
