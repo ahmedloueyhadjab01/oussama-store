@@ -2818,8 +2818,10 @@ document.getElementById('vendorShippingForm')?.addEventListener('submit', async 
 document.querySelectorAll('.admin-tab-btn').forEach(btn => {
  btn.addEventListener('click', () => {
  if (btn.dataset.tab === 'shipping-settings') {
- loadVendorShippingSettings();
- }
+      loadVendorShippingSettings();
+    } else if (btn.dataset.tab === 'reports') {
+      loadProductReport();
+    }
  });
 });
 
@@ -2941,3 +2943,72 @@ checkSession();
     if (src) await reset(src);
   };
 })();
+
+
+// ---------- Advanced Reports ----------
+let productReportChartInstance = null;
+
+async function loadProductReport() {
+  try {
+    const productSelect = document.getElementById('reportProductSelect');
+    const periodSelect = document.getElementById('reportPeriodSelect');
+    
+    if (productSelect.options.length <= 1 && ALL_PRODUCTS && ALL_PRODUCTS.length > 0) {
+      ALL_PRODUCTS.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p.id;
+        opt.textContent = p.name;
+        productSelect.appendChild(opt);
+      });
+    }
+
+    const productId = productSelect.value;
+    const months = periodSelect.value;
+
+    const res = await fetch(`/api/orders/product-reports?product_id=${productId}&months=${months}`);
+    if (!res.ok) throw new Error('Failed to fetch reports');
+    const data = await res.json();
+    
+    document.getElementById('reportNetProfit').textContent = money(data.stats.net_profit) + ' د.ج';
+    document.getElementById('reportUnitsSold').textContent = data.stats.units_sold;
+    document.getElementById('reportShippingLoss').textContent = money(data.stats.shipping_losses) + ' د.ج';
+    document.getElementById('reportOrderRatio').textContent = `${data.stats.delivered_count} / ${data.stats.returned_count}`;
+
+    const ctx = document.getElementById('productReportChart');
+    if (!ctx) return;
+    
+    if (productReportChartInstance) {
+      productReportChartInstance.destroy();
+    }
+    
+    productReportChartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: data.chartData.labels,
+        datasets: [{
+          label: 'صافي الأرباح (د.ج)',
+          data: data.chartData.profits,
+          borderColor: '#1E6F54',
+          backgroundColor: 'rgba(30, 111, 84, 0.1)',
+          borderWidth: 2,
+          fill: true,
+          tension: 0.3
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    });
+
+  } catch (err) {
+    console.error(err);
+    showToast('خطأ في تحميل التقارير', true);
+  }
+}
+
+document.getElementById('reportProductSelect')?.addEventListener('change', loadProductReport);
+document.getElementById('reportPeriodSelect')?.addEventListener('change', loadProductReport);

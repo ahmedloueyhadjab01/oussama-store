@@ -93,7 +93,8 @@
         <button data-tab="categories" class="admin-tab-btn px-4 py-2 text-sm font-bold border-b border-transparent whitespace-nowrap">التصنيفات</button>
         <button data-tab="orders" class="admin-tab-btn px-4 py-2 text-sm font-bold border-b border-transparent whitespace-nowrap">الطلبات</button>
         <button data-tab="profit" class="admin-tab-btn px-4 py-2 text-sm font-bold border-b border-transparent whitespace-nowrap">الأرباح (30 يوم)</button>
-        <button data-tab="campaigns" class="admin-tab-btn px-4 py-2 text-sm font-black border-b border-transparent whitespace-nowrap text-blue-600-dark">📊 أداء الإعلانات & ROI</button>
+        <button data-tab="reports" class="admin-tab-btn px-4 py-2 text-sm font-bold border-b border-transparent whitespace-nowrap text-purple-700">التقارير</button>
+          <button data-tab="campaigns" class="admin-tab-btn px-4 py-2 text-sm font-black border-b border-transparent whitespace-nowrap text-blue-600-dark">📊 أداء الإعلانات & ROI</button>
         <button data-tab="calculator" class="admin-tab-btn px-4 py-2 text-sm font-bold border-b border-transparent whitespace-nowrap">حاسبة التسعير والإعلانات</button>
         <button data-tab="shipping-settings" class="admin-tab-btn px-4 py-2 text-sm font-black border-b border-transparent whitespace-nowrap text-red-700 hover:text-red-900">🚚 إعدادات الشحن و API</button>
         <button data-tab="delivery" class="admin-tab-btn px-4 py-2 text-sm font-bold border-b border-transparent whitespace-nowrap">أسعار التوصيل (الولايات)</button>
@@ -221,7 +222,64 @@
       </section>
 
       <!-- تبويب أداء الإعلانات و ROI الحقيقي -->
-      <section id="tab-campaigns" class="tab-content hidden space-y-6">
+      
+        <!-- قسم التقارير المتقدمة -->
+        <section id="tab-reports" class="tab-content hidden space-y-6">
+          <div>
+            <h2 class="text-2xl font-black">التقارير والإحصائيات المتقدمة</h2>
+            <p class="text-sm text-slate-900/70 mt-1">حلل أرباح ومبيعات كل منتج على حدة عبر فترات زمنية مختلفة.</p>
+          </div>
+
+          <!-- فلاتر التقرير -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white p-5 rounded-2xl border border-slate-200">
+            <div>
+              <label class="text-sm font-bold block mb-2">اختر المنتج:</label>
+              <select id="reportProductSelect" class="field w-full px-4 py-2 text-sm font-bold">
+                <option value="all">جميع المنتجات</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-sm font-bold block mb-2">الفترة الزمنية:</label>
+              <select id="reportPeriodSelect" class="field w-full px-4 py-2 text-sm font-bold">
+                <option value="1" selected>آخر شهر</option>
+                <option value="2">آخر شهرين</option>
+                <option value="3">آخر 3 أشهر</option>
+                <option value="6">آخر 6 أشهر</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- بطاقات الإحصائيات -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div class="bg-white border border-slate-200 rounded-2xl p-4">
+              <p class="text-xs text-slate-900/50 font-bold mb-1">صافي الأرباح للمنتج</p>
+              <p id="reportNetProfit" class="text-xl font-black text-[#1E6F54]">0 د.ج</p>
+            </div>
+            <div class="bg-white border border-slate-200 rounded-2xl p-4">
+              <p class="text-xs text-slate-900/50 font-bold mb-1">الوحدات المباعة</p>
+              <p id="reportUnitsSold" class="text-xl font-black text-blue-600">0</p>
+            </div>
+            <div class="bg-white border border-slate-200 rounded-2xl p-4">
+              <p class="text-xs text-slate-900/50 font-bold mb-1">خسائر التوصيل (الروتور)</p>
+              <p id="reportShippingLoss" class="text-xl font-black text-[#C03B2B]">0 د.ج</p>
+            </div>
+            <div class="bg-white border border-slate-200 rounded-2xl p-4">
+              <p class="text-xs text-slate-900/50 font-bold mb-1">مبيعات ناجحة / مرتجعة</p>
+              <p id="reportOrderRatio" class="text-xl font-black text-slate-700">0 / 0</p>
+            </div>
+          </div>
+
+          <!-- المنحنى البياني -->
+          <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-3">
+            <h3 class="text-base font-black">المنحنى البياني للأرباح الصافية (حسب الأيام)</h3>
+            <div class="h-80 relative">
+              <canvas id="productReportChart"></canvas>
+            </div>
+          </div>
+        </section>
+
+
+        <section id="tab-campaigns" class="tab-content hidden space-y-6">
 
         <!-- رأس الصفحة وملخص الكل -->
         <div>

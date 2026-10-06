@@ -678,6 +678,117 @@ router.get('/:id/history', requireAuth, async (req, res) => {
   res.json(history);
 });
 
+
+router.get('/product-reports', requireAuth, async (req, res) => {
+  try {
+    const userId = getTargetUserId(req.user);
+    const productId = req.query.product_id;
+    const months = parseInt(req.query.months) || 1;
+    
+    // Calculate the start date
+    const startDate = new Date();
+    startDate.setMonth(startDate.getMonth() - months);
+    const startDateStr = startDate.toISOString();
+    
+    let ordersQuery = "SELECT * FROM orders WHERE created_at >= $1";
+    let params = [startDateStr];
+    if (userId) {
+      ordersQuery += " AND user_id = $2";
+      params.push(userId);
+    }
+    
+    const orders = await db.all(ordersQuery, params);
+    
+    const timeline = {};
+    let totalRevenue = 0;
+    let totalCogs = 0;
+    let totalUnits = 0;
+    let totalShippingLosses = 0;
+    let totalDelivered = 0;
+    let totalReturned = 0;
+    
+    for (const o of orders) {
+      const isDelivered = o.status === 'تم التوصيل';
+      const isReturned = ['مسترجع', 'ملغاة', 'في الانتظار'].includes(o.status) && o.shipping_cost_incurred == 1;
+      
+      let items = [];
+      try { items = JSON.parse(o.items || "[]"); } catch(e){}
+      
+      let orderHasProduct = false;
+      let productQty = 0;
+      let productRevenue = 0;
+      let productCogs = 0;
+      
+      for (const item of items) {
+        if (!productId || productId === 'all' || item.id == productId) {
+          orderHasProduct = true;
+          const qty = Number(item.qty) || 0;
+          const cost = Number(item.cost_price) || 0;
+          const price = Number(item.price) || 0;
+          
+          productQty += qty;
+          productRevenue += (price * qty);
+          productCogs += (cost * qty);
+        }
+      }
+      
+      if (orderHasProduct) {
+        if (isDelivered) {
+          totalRevenue += productRevenue;
+          totalCogs += productCogs;
+          totalUnits += productQty;
+          totalDelivered++;
+        } else if (isReturned) {
+          totalReturned++;
+          const lostShipping = Number(o.shipping_cost_actual || o.delivery_price) || 0;
+          const share = (items.length > 0) ? (productQty / items.reduce((acc, i) => acc + (Number(i.qty)||0), 0)) : 1;
+          totalShippingLosses += (lostShipping * share);
+        }
+        
+        const dateKey = (o.created_at || '').substring(0, 10);
+        if (dateKey) {
+          if (!timeline[dateKey]) timeline[dateKey] = { revenue: 0, cogs: 0, lost: 0, profit: 0 };
+          if (isDelivered) {
+            timeline[dateKey].revenue += productRevenue;
+            timeline[dateKey].cogs += productCogs;
+          } else if (isReturned) {
+            const lostShipping = Number(o.shipping_cost_actual || o.delivery_price) || 0;
+            const share = (items.length > 0) ? (productQty / items.reduce((acc, i) => acc + (Number(i.qty)||0), 0)) : 1;
+            timeline[dateKey].lost += (lostShipping * share);
+          }
+          timeline[dateKey].profit = timeline[dateKey].revenue - timeline[dateKey].cogs - timeline[dateKey].lost;
+        }
+      }
+    }
+    
+    const sortedDates = Object.keys(timeline).sort();
+    const chartData = {
+      labels: sortedDates,
+      profits: sortedDates.map(d => timeline[d].profit)
+    };
+    
+    const netProfit = totalRevenue - totalCogs - totalShippingLosses;
+    
+    res.json({
+      success: true,
+      stats: {
+        revenue: totalRevenue,
+        cogs: totalCogs,
+        shipping_losses: totalShippingLosses,
+        net_profit: netProfit,
+        units_sold: totalUnits,
+        delivered_count: totalDelivered,
+        returned_count: totalReturned
+      },
+      chartData
+    });
+    
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to generate report' });
+  }
+});
+
 router.get('/profit-30d', requireAuth, async (req, res) => {
   try {
   const userId = getTargetUserId(req.user);
