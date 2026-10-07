@@ -1,3 +1,4 @@
+const AppError = require('../utils/AppError');
 const { parseItems } = require("../utils/orderItems");
 const express = require("express");
 const router = express.Router();
@@ -18,7 +19,7 @@ function escapeHtml(value) {
 }
 
 // 1. جلب إعدادات الشحن الخاصة بالتاجر الحالي
-router.get("/settings", requireAuth, async (req, res) => {
+router.get("/settings", requireAuth, async (req, res, next) => {
   try {
     const config = await ShippingService.getVendorConfig(req.user.id);
     if (config) {
@@ -30,7 +31,7 @@ router.get("/settings", requireAuth, async (req, res) => {
     }
     res.json(config);
   } catch (err) {
-    res.status(500).json({ error: "Internal Server Error" });
+    return next(new AppError("Internal Server Error", 500));
   }
 });
 
@@ -39,7 +40,7 @@ router.post(
   "/settings",
   requireAuth,
   requireActiveSubscription,
-  async (req, res) => {
+  async (req, res, next) => {
     try {
       const {
         provider,
@@ -103,7 +104,7 @@ router.post(
   },
 );
 
-router.get("/custom-rates", requireAuth, async (req, res) => {
+router.get("/custom-rates", requireAuth, async (req, res, next) => {
   const rates = await db.all(
     `SELECT d.wilaya_code, d.wilaya_name,
        COALESCE(v.home_price, d.home_price) AS home_price,
@@ -128,10 +129,10 @@ router.put(
   "/custom-rates",
   requireAuth,
   requireActiveSubscription,
-  async (req, res) => {
+  async (req, res, next) => {
     const { rates } = req.body;
     if (!Array.isArray(rates) || rates.length > 69)
-      return res.status(400).json({ error: "بيانات أسعار الولايات غير صالحة" });
+      return next(new AppError("بيانات أسعار الولايات غير صالحة", 400));
 
     try {
       await db.transaction(async (trx) => {
@@ -177,11 +178,11 @@ router.put(
 );
 
 // 3. حساب سعر الشحن للزبون عند إتمام الطلب (Public Endpoint)
-router.get("/calculate-cost", async (req, res) => {
+router.get("/calculate-cost", async (req, res, next) => {
   try {
     const { store_id, wilaya_code, delivery_type, subtotal } = req.query;
     if (!store_id || !wilaya_code) {
-      return res.status(400).json({ error: "بيانات غير كافية لحساب الشحن" });
+      return next(new AppError("بيانات غير كافية لحساب الشحن", 400));
     }
 
     const storeId = Number.parseInt(store_id, 10);
@@ -196,7 +197,7 @@ router.get("/calculate-cost", async (req, res) => {
       !Number.isFinite(orderSubtotal) ||
       orderSubtotal < 0
     ) {
-      return res.status(400).json({ error: "بيانات الشحن غير صالحة" });
+      return next(new AppError("بيانات الشحن غير صالحة", 400));
     }
 
     const result = await ShippingService.calculateShippingCost(
@@ -207,7 +208,7 @@ router.get("/calculate-cost", async (req, res) => {
     );
     res.json(result);
   } catch (err) {
-    res.status(500).json({ error: "Internal Server Error" });
+    return next(new AppError("Internal Server Error", 500));
   }
 });
 
@@ -216,7 +217,7 @@ router.post(
   "/orders/:orderId/generate-label",
   requireAuth,
   requireActiveSubscription,
-  async (req, res) => {
+  async (req, res, next) => {
     try {
       const result = await ShippingService.createParcel(
         req.params.orderId,
@@ -231,7 +232,7 @@ router.post(
 );
 
 // 5. التتبع اللحظي للطلب عبر API
-router.get("/orders/:orderId/live-track", requireAuth, async (req, res) => {
+router.get("/orders/:orderId/live-track", requireAuth, async (req, res, next) => {
   try {
     const result = await ShippingService.trackParcel(
       req.params.orderId,
@@ -245,7 +246,7 @@ router.get("/orders/:orderId/live-track", requireAuth, async (req, res) => {
 });
 
 // 6. Manual Local Label Print
-router.get("/orders/:orderId/manual-label", requireAuth, async (req, res) => {
+router.get("/orders/:orderId/manual-label", requireAuth, async (req, res, next) => {
   try {
     let order;
     if (req.user.role === "admin") {

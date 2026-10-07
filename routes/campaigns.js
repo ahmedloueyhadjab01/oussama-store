@@ -123,7 +123,7 @@ router.get("/analytics", requireAuth, async (req, res) => {
                 (parseInt(item.qty, 10) || 1),
             );
           }
-        } catch {}
+        } catch (e) { console.error('Ignored Error:', e.message); }
       } else if (order.status === "تعذر التوصيل" || order.status === "مرتجع") {
         entry.cancelled_orders += 1;
         if (order.status === "تعذر التوصيل")
@@ -147,7 +147,7 @@ router.get("/analytics", requireAuth, async (req, res) => {
                 (parseInt(item.qty, 10) || 1),
             );
           }
-        } catch {}
+        } catch (e) { console.error('Ignored Error:', e.message); }
       } else if (order.status === "ملغي") {
         entry.cancelled_orders += 1;
         statusBreakdown.cancelled += 1;
@@ -168,7 +168,7 @@ router.get("/analytics", requireAuth, async (req, res) => {
                 (parseInt(item.qty, 10) || 1),
             );
           }
-        } catch {}
+        } catch (e) { console.error('Ignored Error:', e.message); }
       }
     }
 
@@ -246,7 +246,7 @@ router.get("/analytics", requireAuth, async (req, res) => {
             for (const it of items)
               cogs +=
                 (parseFloat(it.cost_price) || 0) * (parseInt(it.qty, 10) || 1);
-          } catch {}
+          } catch (e) { console.error('Ignored Error:', e.message); }
           item.profit += parseFloat(order.subtotal) - cogs;
         } else if (
           ["ملغي", "مرتجع", "تعذر التوصيل"].includes(order.status) &&

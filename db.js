@@ -114,7 +114,7 @@ function createSqlitePool() {
                 .get(info.lastInsertRowid);
               if (row) rows.push(row);
             }
-          } catch {}
+          } catch (e) { console.error('Ignored Error:', e.message); }
         }
         return Promise.resolve({ rows, rowCount: info.changes });
       } catch (e) {
@@ -166,7 +166,7 @@ if (process.env.DB_CLIENT !== "sqlite" && process.env.DB_CLIENT !== "sqlite3") {
     console.log(
       "âœ… ØªÙ… Ø§Ù„Ø§ØªØµØ§Ù„ Ø¨Ù‚Ø§Ø¹Ø¯Ø© Ø¨ÙŠØ§Ù†Ø§Øª PostgreSQL/Supabase.",
     );
-  } catch (err) {}
+  } catch (e) { console.error('Ignored Error:', e.message); }
 }
 
 if (!usePostgres) {

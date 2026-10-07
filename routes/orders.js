@@ -1,4 +1,5 @@
-const { getTargetUserId } = require("../utils/store");
+const AppError = require('../utils/AppError');
+const { getStoreUserId } = require("../utils/store");
 const { parseItems } = require("../utils/orderItems");
 const express = require("express");
 const { body, validationResult } = require("express-validator");
@@ -143,7 +144,7 @@ router.post(
       .withMessage("معرّف المتجر (store_id) مطلوب"),
   ],
   validate,
-  async (req, res) => {
+  async (req, res, next) => {
     /* validation handled by middleware */
 
     let {
@@ -164,7 +165,7 @@ router.post(
       [store_id],
     );
     if (!vendor) {
-      return res.status(404).json({ error: "المتجر غير موجود." });
+      return next(new AppError("المتجر غير موجود.", 404));
     }
     if (vendor.role !== "admin" && isSubscriptionExpired(vendor)) {
       return res.status(403).json({
@@ -205,7 +206,7 @@ router.post(
       "SELECT * FROM delivery_rates WHERE wilaya_code = $1",
       [wilaya_code],
     );
-    if (!rate) return res.status(400).json({ error: "ولاية غير معروفة" });
+    if (!rate) return next(new AppError("ولاية غير معروفة", 400));
 
     try {
       const outcome = await db.transaction(async (trx) => {
@@ -384,13 +385,13 @@ router.post(
       }
       res.status(201).json({ success: true, ...outcome });
     } catch (err) {
-      return res.status(400).json({ error: "Bad Request: Invalid parameters" });
+      return next(new AppError("Bad Request: Invalid parameters", 400));
     }
   },
 );
 
 // عرض كل الطلبات للتاجر المسجل دخوله
-router.get("/", requireAuth, async (req, res) => {
+router.get("/", requireAuth, async (req, res, next) => {
   let orders;
   if (req.user.role === "admin") {
     orders = await db.all("SELECT * FROM orders ORDER BY created_at DESC");
@@ -416,8 +417,8 @@ router.get("/", requireAuth, async (req, res) => {
 });
 
 // ملخص مالي للتاجر المسجل دخوله
-router.get("/stats", requireAuth, async (req, res) => {
-  const userId = getTargetUserId(req.user);
+router.get("/stats", requireAuth, async (req, res, next) => {
+  const userId = getStoreUserId(req.user);
 
   let liveSalesQuery, liveLostQuery, countsQuery;
   let params = [];
@@ -531,8 +532,8 @@ router.post(
   "/archive-fulfilled",
   requireAuth,
   requireActiveSubscription,
-  async (req, res) => {
-    const userId = getTargetUserId(req.user);
+  async (req, res, next) => {
+    const userId = getStoreUserId(req.user);
     await ensureFinancialArchive(userId);
 
     try {
@@ -607,7 +608,7 @@ router.put(
   "/:id/status",
   requireAuth,
   requireActiveSubscription,
-  async (req, res) => {
+  async (req, res, next) => {
     const allowed = [
       "قيد المعالجة",
       "قيد التوصيل",
@@ -618,13 +619,13 @@ router.put(
     ];
     const { status, shipping_cost_incurred } = req.body;
     if (!allowed.includes(status)) {
-      return res.status(400).json({ error: "حالة غير صالحة" });
+      return next(new AppError("حالة غير صالحة", 400));
     }
 
     const order = await db.get("SELECT * FROM orders WHERE id = $1", [
       req.params.id,
     ]);
-    if (!order) return res.status(404).json({ error: "الطلب غير موجود" });
+    if (!order) return next(new AppError("الطلب غير موجود", 404));
     if (!checkResourceOwnership(order.user_id, req, res)) return;
 
     const oldStatus = order.status;
@@ -701,11 +702,11 @@ router.put(
   "/:id/edit",
   requireAuth,
   requireActiveSubscription,
-  async (req, res) => {
+  async (req, res, next) => {
     const order = await db.get("SELECT * FROM orders WHERE id = $1", [
       req.params.id,
     ]);
-    if (!order) return res.status(404).json({ error: "الطلب غير موجود" });
+    if (!order) return next(new AppError("الطلب غير موجود", 404));
     if (!checkResourceOwnership(order.user_id, req, res)) return;
 
     const {
@@ -855,16 +856,16 @@ router.put(
   "/:id/shipping-cost",
   requireAuth,
   requireActiveSubscription,
-  async (req, res) => {
+  async (req, res, next) => {
     const { shipping_cost_actual } = req.body;
     const cost = parseFloat(shipping_cost_actual);
     if (isNaN(cost) || cost < 0)
-      return res.status(400).json({ error: "تكلفة شحن غير صالحة" });
+      return next(new AppError("تكلفة شحن غير صالحة", 400));
 
     const order = await db.get("SELECT * FROM orders WHERE id = $1", [
       req.params.id,
     ]);
-    if (!order) return res.status(404).json({ error: "الطلب غير موجود" });
+    if (!order) return next(new AppError("الطلب غير موجود", 404));
     if (!checkResourceOwnership(order.user_id, req, res)) return;
 
     await db.query(
@@ -880,11 +881,11 @@ router.delete(
   "/:id",
   requireAuth,
   requireActiveSubscription,
-  async (req, res) => {
+  async (req, res, next) => {
     const order = await db.get("SELECT * FROM orders WHERE id = $1", [
       req.params.id,
     ]);
-    if (!order) return res.status(404).json({ error: "الطلب غير موجود" });
+    if (!order) return next(new AppError("الطلب غير موجود", 404));
     if (!checkResourceOwnership(order.user_id, req, res)) return;
 
     try {
@@ -908,11 +909,11 @@ router.delete(
 );
 
 // سجل تتبع حالات الطلب
-router.get("/:id/history", requireAuth, async (req, res) => {
+router.get("/:id/history", requireAuth, async (req, res, next) => {
   const order = await db.get("SELECT user_id FROM orders WHERE id = $1", [
     req.params.id,
   ]);
-  if (!order) return res.status(404).json({ error: "الطلب غير موجود" });
+  if (!order) return next(new AppError("الطلب غير موجود", 404));
   if (!checkResourceOwnership(order.user_id, req, res)) return;
 
   const history = await db.all(
@@ -922,9 +923,9 @@ router.get("/:id/history", requireAuth, async (req, res) => {
   res.json(history);
 });
 
-router.get("/product-reports", requireAuth, async (req, res) => {
+router.get("/product-reports", requireAuth, async (req, res, next) => {
   try {
-    const userId = getTargetUserId(req.user);
+    const userId = getStoreUserId(req.user);
     const productId = req.query.product_id;
     const months = parseInt(req.query.months) || 1;
 
@@ -1051,13 +1052,13 @@ router.get("/product-reports", requireAuth, async (req, res) => {
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Failed to generate report" });
+    return next(new AppError("Failed to generate report", 500));
   }
 });
 
-router.get("/profit-30d", requireAuth, async (req, res) => {
+router.get("/profit-30d", requireAuth, async (req, res, next) => {
   try {
-    const userId = getTargetUserId(req.user);
+    const userId = getStoreUserId(req.user);
 
     let ordersQuery =
       "SELECT * FROM orders WHERE status = 'تم التسليم' AND created_at >= $1";

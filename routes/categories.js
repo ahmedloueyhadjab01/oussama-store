@@ -1,4 +1,4 @@
-const { getTargetUserId } = require("../utils/store");
+const { getStoreUserId } = require("../utils/store");
 const express = require("express");
 const slugify = require("slugify");
 const { body, validationResult } = require("express-validator");
@@ -68,12 +68,12 @@ router.get("/flat", requireAuth, async (req, res) => {
   if (req.user.role === "admin") {
     categories = await db.all(
       "SELECT * FROM categories WHERE user_id = $1 ORDER BY name",
-      [getTargetUserId(req.user)],
+      [getStoreUserId(req.user)],
     );
   } else {
     categories = await db.all(
       "SELECT * FROM categories WHERE user_id = $1 ORDER BY name",
-      [getTargetUserId(req.user)],
+      [getStoreUserId(req.user)],
     );
   }
   res.json(categories);
@@ -120,7 +120,7 @@ router.post(
       // التحقق أن التصنيف الأب ينتمي لنفس التاجر
       if (
         parent.user_id !== null &&
-        parent.user_id !== getTargetUserId(req.user) &&
+        parent.user_id !== getStoreUserId(req.user) &&
         req.user.role !== "admin"
       ) {
         return res.status(403).json({ error: "التصنيف الأب لا ينتمي لمتجرك." });
@@ -129,7 +129,7 @@ router.post(
 
     const result = await db.query(
       "INSERT INTO categories (user_id, name, image, slug, parent_id) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-      [getTargetUserId(req.user), name.trim(), image, slug, parent_id || null],
+      [getStoreUserId(req.user), name.trim(), image, slug, parent_id || null],
     );
 
     res.status(201).json(result.rows[0]);

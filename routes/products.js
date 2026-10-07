@@ -1,4 +1,4 @@
-const { getTargetUserId } = require("../utils/store");
+const { getStoreUserId } = require("../utils/store");
 const express = require("express");
 const slugify = require("slugify");
 const { body, validationResult } = require("express-validator");
@@ -176,7 +176,7 @@ router.get("/", async (req, res) => {
 // خاص: كل المنتجات للتاجر في لوحة تحكمه
 router.get("/admin/all", requireAuth, async (req, res) => {
   let products;
-  const userId = getTargetUserId(req.user);
+  const userId = getStoreUserId(req.user);
   products = await db.all(
     "SELECT * FROM products WHERE user_id = $1 ORDER BY created_at DESC",
     [userId],
@@ -257,7 +257,7 @@ router.post(
       if (
         cat &&
         cat.user_id !== null &&
-        cat.user_id !== getTargetUserId(req.user) &&
+        cat.user_id !== getStoreUserId(req.user) &&
         req.user.role !== "admin"
       ) {
         return res.status(403).json({ error: "هذا التصنيف لا ينتمي لمتجرك." });
@@ -306,7 +306,7 @@ router.post(
         if (Array.isArray(extImgs)) {
           imagePaths = [...new Set([...imagePaths, ...extImgs])];
         }
-      } catch {}
+      } catch (e) { console.error('Ignored Error:', e.message); }
     }
 
     if (hasVariants) {
@@ -335,7 +335,7 @@ router.post(
            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
            RETURNING id`,
           [
-            getTargetUserId(req.user),
+            getStoreUserId(req.user),
             name.trim(),
             slug,
             description,
@@ -466,7 +466,7 @@ router.put(
       try {
         const ext = JSON.parse(req.body.existing_images);
         if (Array.isArray(ext)) images = ext;
-      } catch {}
+      } catch (e) { console.error('Ignored Error:', e.message); }
     }
     if (req.files && req.files.length) {
       const newImgs = req.files.map((f) => f.url || `/uploads/${f.filename}`);

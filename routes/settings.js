@@ -1,4 +1,5 @@
-const { getTargetUserId } = require("../utils/store");
+const AppError = require('../utils/AppError');
+const { getStoreUserId } = require("../utils/store");
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const db = require("../db");
@@ -15,7 +16,7 @@ const socialKeys = [
   "social_telegram",
 ];
 
-router.get("/social", async (req, res) => {
+router.get("/social", async (req, res, next) => {
   const storeId = req.query.store_id ? parseInt(req.query.store_id, 10) : null;
 
   const result = {};
@@ -39,7 +40,7 @@ router.get("/social", async (req, res) => {
   res.json(result);
 });
 
-router.put("/social", requireAuth, async (req, res) => {
+router.put("/social", requireAuth, async (req, res, next) => {
   try {
     await db.transaction(async (trx) => {
       for (const key of socialKeys) {
@@ -71,18 +72,18 @@ router.put("/social", requireAuth, async (req, res) => {
   }
 });
 
-router.post("/reset-stats", requireAuth, async (req, res) => {
-  const targetUserId = getTargetUserId(req.user);
+router.post("/reset-stats", requireAuth, async (req, res, next) => {
+  const targetUserId = getStoreUserId(req.user);
   const { password } = req.body;
-  if (!password) return res.status(400).json({ error: "كلمة المرور مطلوبة" });
+  if (!password) return next(new AppError("كلمة المرور مطلوبة", 400));
 
   const user = await db.get("SELECT password_hash FROM users WHERE id = $1", [
     req.user.id,
   ]);
-  if (!user) return res.status(404).json({ error: "المستخدم غير موجود" });
+  if (!user) return next(new AppError("المستخدم غير موجود", 404));
 
   const match = await bcrypt.compare(password, user.password_hash);
-  if (!match) return res.status(403).json({ error: "كلمة المرور غير صحيحة" });
+  if (!match) return next(new AppError("كلمة المرور غير صحيحة", 403));
 
   try {
     await db.transaction(async (trx) => {
@@ -110,18 +111,18 @@ router.post("/reset-stats", requireAuth, async (req, res) => {
   }
 });
 
-router.post("/reset-store", requireAuth, async (req, res) => {
-  const targetUserId = getTargetUserId(req.user);
+router.post("/reset-store", requireAuth, async (req, res, next) => {
+  const targetUserId = getStoreUserId(req.user);
   const { password } = req.body;
-  if (!password) return res.status(400).json({ error: "كلمة المرور مطلوبة" });
+  if (!password) return next(new AppError("كلمة المرور مطلوبة", 400));
 
   const user = await db.get("SELECT password_hash FROM users WHERE id = $1", [
     req.user.id,
   ]);
-  if (!user) return res.status(404).json({ error: "المستخدم غير موجود" });
+  if (!user) return next(new AppError("المستخدم غير موجود", 404));
 
   const match = await bcrypt.compare(password, user.password_hash);
-  if (!match) return res.status(403).json({ error: "كلمة المرور غير صحيحة" });
+  if (!match) return next(new AppError("كلمة المرور غير صحيحة", 403));
 
   try {
     await db.transaction(async (trx) => {
@@ -177,7 +178,7 @@ router.post("/reset-store", requireAuth, async (req, res) => {
   }
 });
 
-router.put("/", requireAuth, async (req, res) => {
+router.put("/", requireAuth, async (req, res, next) => {
   const { store_name, store_description, contact_email, currency, language } =
     req.body;
   const contact_phone = req.body.contact_phone ?? req.body.phone;
@@ -216,11 +217,11 @@ router.put("/", requireAuth, async (req, res) => {
 
     res.json({ success: true });
   } catch (e) {
-    res.status(500).json({ error: "Internal Server Error" });
+    return next(new AppError("Internal Server Error", 500));
   }
 });
 
-router.get("/profile", requireAuth, async (req, res) => {
+router.get("/profile", requireAuth, async (req, res, next) => {
   try {
     const user = await db.get(
       "SELECT name, email, store_name, store_slug FROM users WHERE id = $1",
@@ -228,11 +229,11 @@ router.get("/profile", requireAuth, async (req, res) => {
     );
     res.json(user);
   } catch (e) {
-    res.status(500).json({ error: "Internal Server Error" });
+    return next(new AppError("Internal Server Error", 500));
   }
 });
 
-router.put("/profile", requireAuth, async (req, res) => {
+router.put("/profile", requireAuth, async (req, res, next) => {
   const { name, store_name } = req.body;
   try {
     await db.query(
@@ -241,7 +242,7 @@ router.put("/profile", requireAuth, async (req, res) => {
     );
     res.json({ success: true });
   } catch (e) {
-    res.status(500).json({ error: "Internal Server Error" });
+    return next(new AppError("Internal Server Error", 500));
   }
 });
 

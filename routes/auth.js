@@ -1,3 +1,4 @@
+const AppError = require('../utils/AppError');
 const bcrypt = require("bcryptjs");
 
 const express = require("express");
@@ -36,7 +37,7 @@ router.post(
       .withMessage("كلمة المرور غير صالحة"),
   ],
   validate,
-  async (req, res) => {
+  async (req, res, next) => {
     /* validation handled by middleware */
 
     const { username, password } = req.body;
@@ -132,10 +133,10 @@ router.post(
   },
 );
 
-router.get("/me", requireAuth, async (req, res) => {
+router.get("/me", requireAuth, async (req, res, next) => {
   const user = await db.get("SELECT * FROM users WHERE id = $1", [req.user.id]);
   if (!user) {
-    return res.status(404).json({ error: "المستخدم غير موجود" });
+    return next(new AppError("المستخدم غير موجود", 404));
   }
 
   const subInfo = computeSubscriptionStatus(user);
@@ -159,7 +160,7 @@ router.get("/me", requireAuth, async (req, res) => {
   });
 });
 
-router.get("/store-info/:identifier", async (req, res) => {
+router.get("/store-info/:identifier", async (req, res, next) => {
   const identifier = req.params.identifier;
   let vendor;
   if (identifier === "1" || identifier === "default") {
@@ -185,7 +186,7 @@ router.get("/store-info/:identifier", async (req, res) => {
       [identifier],
     );
   }
-  if (!vendor) return res.status(404).json({ error: "المتجر غير موجود" });
+  if (!vendor) return next(new AppError("المتجر غير موجود", 404));
   res.json({
     id: vendor.id,
     name: vendor.name,
@@ -199,7 +200,7 @@ router.post("/logout", (req, res) => {
   res.json({ success: true, message: "Logged out successfully" });
 });
 
-router.put("/change-password", requireAuth, async (req, res) => {
+router.put("/change-password", requireAuth, async (req, res, next) => {
   const { old_password: currentPassword, new_password: newPassword } = req.body;
   if (!currentPassword || !newPassword)
     return res
@@ -209,13 +210,13 @@ router.put("/change-password", requireAuth, async (req, res) => {
     const user = await db.get("SELECT password_hash FROM users WHERE id = $1", [
       req.user.id,
     ]);
-    if (!user) return res.status(404).json({ error: "المستخدم غير موجود" });
+    if (!user) return next(new AppError("المستخدم غير موجود", 404));
     const match = await require("bcryptjs").compare(
       currentPassword,
       user.password_hash,
     );
     if (!match)
-      return res.status(400).json({ error: "كلمة المرور الحالية غير صحيحة" });
+      return next(new AppError("كلمة المرور الحالية غير صحيحة", 400));
     const hash = await require("bcryptjs").hash(newPassword, 10);
     await db.query("UPDATE users SET password_hash = $1 WHERE id = $2", [
       hash,
@@ -223,7 +224,7 @@ router.put("/change-password", requireAuth, async (req, res) => {
     ]);
     res.json({ success: true });
   } catch (e) {
-    res.status(500).json({ error: "Internal Server Error" });
+    return next(new AppError("Internal Server Error", 500));
   }
 });
 
