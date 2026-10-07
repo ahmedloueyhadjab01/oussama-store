@@ -1,7 +1,7 @@
 // إدارة سلة التسوق باستخدام localStorage (لا بيانات دفع حساسة تُخزَّن هنا)
 // كل سطر في السلة يُعرَّف بمجموعة (id + variant_id) حتى يبقى كل مقاس/حجم كسطر مستقل تمامًا
 const Cart = {
-  KEY: 'store_cart_v1',
+  KEY: "store_cart_v1",
 
   get() {
     try {
@@ -17,16 +17,22 @@ const Cart = {
   },
 
   lineKey(id, variantId) {
-    return `${id}::${variantId || 'none'}`;
+    return `${id}::${variantId || "none"}`;
   },
 
   add(product, qty = 1, variant = null, customImage = null) {
     const items = this.get();
     const variantId = variant ? variant.id : null;
     const key = this.lineKey(product.id, variantId);
-    const existing = items.find((i) => this.lineKey(i.id, i.variant_id) === key);
-    const itemImage = (variant && variant.image) || customImage || product.image;
-    const label = variant ? (variant.label || [variant.color, variant.size].filter(Boolean).join(' - ')) : null;
+    const existing = items.find(
+      (i) => this.lineKey(i.id, i.variant_id) === key,
+    );
+    const itemImage =
+      (variant && variant.image) || customImage || product.image;
+    const label = variant
+      ? variant.label ||
+        [variant.color, variant.size].filter(Boolean).join(" - ")
+      : null;
 
     if (existing) {
       existing.qty += qty;
@@ -64,7 +70,9 @@ const Cart = {
 
   remove(id, variantId) {
     const key = this.lineKey(id, variantId);
-    this.save(this.get().filter((i) => this.lineKey(i.id, i.variant_id) !== key));
+    this.save(
+      this.get().filter((i) => this.lineKey(i.id, i.variant_id) !== key),
+    );
   },
 
   clear() {
@@ -80,9 +88,9 @@ const Cart = {
   },
 
   updateBadge() {
-    const badge = document.getElementById('cartCount');
+    const badge = document.getElementById("cartCount");
     if (badge) badge.textContent = this.count();
   },
 };
 
-document.addEventListener('DOMContentLoaded', () => Cart.updateBadge());
+document.addEventListener("DOMContentLoaded", () => Cart.updateBadge());

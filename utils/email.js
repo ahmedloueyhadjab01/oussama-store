@@ -1,8 +1,9 @@
-const nodemailer = require('nodemailer');
+const nodemailer = require("nodemailer");
 
 function createTransporter() {
   // محاولة استخدام SMTP_* أولاً، ثم EMAIL_* للتوافق الخلفي
-  const host = process.env.SMTP_HOST || process.env.EMAIL_HOST || 'smtp.gmail.com';
+  const host =
+    process.env.SMTP_HOST || process.env.EMAIL_HOST || "smtp.gmail.com";
   const port = process.env.SMTP_PORT || process.env.EMAIL_PORT;
   const user = process.env.SMTP_USER || process.env.EMAIL_USER;
   const pass = process.env.SMTP_PASS || process.env.EMAIL_PASS;
@@ -10,8 +11,8 @@ function createTransporter() {
   if (host && user && pass) {
     return nodemailer.createTransport({
       host: host,
-      port: parseInt(port || '587', 10),
-      secure: (process.env.SMTP_SECURE || 'false') === 'true',
+      port: parseInt(port || "587", 10),
+      secure: (process.env.SMTP_SECURE || "false") === "true",
       auth: {
         user: user,
         pass: pass,
@@ -21,27 +22,38 @@ function createTransporter() {
   return null;
 }
 
-async function sendOtpEmail(toEmail, otpCode, userName = 'مرحباً', type = 'reset') {
-  if (process.env.NODE_ENV !== 'production') {
-    console.log('\n=========================================');
+async function sendOtpEmail(
+  toEmail,
+  otpCode,
+  userName = "مرحباً",
+  type = "reset",
+) {
+  if (process.env.NODE_ENV !== "production") {
+    console.log("\n=========================================");
     console.log(`📧 [رمز التحقق OTP] البريد: ${toEmail} | النوع: ${type}`);
     console.log(`🔐 الرمز: ${otpCode}`);
-    console.log('⏰ صالح لمدة: 15 دقيقة');
-    console.log('=========================================\n');
+    console.log("⏰ صالح لمدة: 15 دقيقة");
+    console.log("=========================================\n");
   }
 
   const transporter = createTransporter();
   if (!transporter) {
-    return process.env.NODE_ENV === 'production'
-      ? { success: false, simulated: false, error: 'إعدادات البريد الإلكتروني غير مكتملة.' }
+    return process.env.NODE_ENV === "production"
+      ? {
+          success: false,
+          simulated: false,
+          error: "إعدادات البريد الإلكتروني غير مكتملة.",
+        }
       : { success: true, simulated: true, otp: otpCode };
   }
 
-  const isVerify = type === 'verify';
-  const title = isVerify ? '🔐 تفعيل حساب التاجر والتحقق من البريد' : '🔐 استعادة كلمة المرور';
-  const bodyText = isVerify 
-    ? 'أهلاً بك في منصة متجر الجملة والشوالات! يرجى استخدام رمز التحقق التالي لتفعيل حسابك والتحقق من صحة بريدك الإلكتروني لتفادي أي انتحال لبياناتك:'
-    : 'تلقينا طلباً لإعادة تعيين كلمة المرور الخاصة بحسابك في منصة المتجر الإلكتروني. استخدم رمز التحقق التالي لإكمال العملية:';
+  const isVerify = type === "verify";
+  const title = isVerify
+    ? "🔐 تفعيل حساب التاجر والتحقق من البريد"
+    : "🔐 استعادة كلمة المرور";
+  const bodyText = isVerify
+    ? "أهلاً بك في منصة متجر الجملة والشوالات! يرجى استخدام رمز التحقق التالي لتفعيل حسابك والتحقق من صحة بريدك الإلكتروني لتفادي أي انتحال لبياناتك:"
+    : "تلقينا طلباً لإعادة تعيين كلمة المرور الخاصة بحسابك في منصة المتجر الإلكتروني. استخدم رمز التحقق التالي لإكمال العملية:";
 
   const html = `
     <div dir="rtl" style="font-family: 'Almarai', Arial, sans-serif; background-color: #FAF3E6; padding: 30px; color: #17241F;">
@@ -65,14 +77,18 @@ async function sendOtpEmail(toEmail, otpCode, userName = 'مرحباً', type = 
 
   try {
     await transporter.sendMail({
-      from: process.env.SMTP_FROM || process.env.EMAIL_FROM || `"متجري" <${user}>`,
+      from:
+        process.env.SMTP_FROM || process.env.EMAIL_FROM || `"متجري" <${user}>`,
       to: toEmail,
-      subject: `${isVerify ? 'رمز تفعيل حسابك' : 'رمز استعادة كلمة المرور'}: ${otpCode}`,
+      subject: `${isVerify ? "رمز تفعيل حسابك" : "رمز استعادة كلمة المرور"}: ${otpCode}`,
       html,
     });
     return { success: true, simulated: false };
   } catch (err) {
-    console.error('⚠️ خطأ أثناء إرسال البريد الإلكتروني عبر SMTP:', err.message);
+    console.error(
+      "⚠️ خطأ أثناء إرسال البريد الإلكتروني عبر SMTP:",
+      err.message,
+    );
     return { success: false, simulated: false, error: err.message };
   }
 }

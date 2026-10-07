@@ -1,36 +1,57 @@
-const multer = require('multer');
-const path = require('path');
-const crypto = require('crypto');
-const fs = require('fs');
+const multer = require("multer");
+const path = require("path");
+const crypto = require("crypto");
+const fs = require("fs");
 
-const ALLOWED_EXTENSIONS = new Set(['.jpg', '.jpeg', '.png', '.webp', '.gif']);
+const ALLOWED_EXTENSIONS = new Set([".jpg", ".jpeg", ".png", ".webp", ".gif"]);
 
-const uploadsDir = path.join(__dirname, '..', 'public', 'uploads');
+const uploadsDir = path.join(__dirname, "..", "public", "uploads");
 try {
   fs.mkdirSync(uploadsDir, { recursive: true });
-} catch (e) { console.error('Ignored Error:', e.message); }
+} catch (e) {
+  console.error("Ignored Error:", e.message);
+}
 
 let supabaseClient = null;
-if (process.env.SUPABASE_URL && (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY)) {
+if (
+  process.env.SUPABASE_URL &&
+  (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY)
+) {
   try {
-    const { createClient } = require('@supabase/supabase-js');
+    const { createClient } = require("@supabase/supabase-js");
     supabaseClient = createClient(
       process.env.SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY
+      process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY,
     );
   } catch (err) {
-    console.warn('⚠️ Supabase Storage client init warning:', err.message);
+    console.warn("⚠️ Supabase Storage client init warning:", err.message);
   }
 }
 
 function fileFilter(req, file, cb) {
   if (!file || !file.originalname) return cb(null, false);
-  const extension = require('path').extname(file.originalname).toLowerCase();
-  const allowed = ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.jfif', '.heic', '.heif', '.mp4', '.mov', '.avi'];
-  if (allowed.includes(extension) || file.mimetype.startsWith('image/') || file.mimetype.startsWith('video/')) {
+  const extension = require("path").extname(file.originalname).toLowerCase();
+  const allowed = [
+    ".jpg",
+    ".jpeg",
+    ".png",
+    ".webp",
+    ".gif",
+    ".jfif",
+    ".heic",
+    ".heif",
+    ".mp4",
+    ".mov",
+    ".avi",
+  ];
+  if (
+    allowed.includes(extension) ||
+    file.mimetype.startsWith("image/") ||
+    file.mimetype.startsWith("video/")
+  ) {
     return cb(null, true);
   }
-  return cb(new Error('نوع الملف غير مدعوم. يرجى رفع صور فقط.'));
+  return cb(new Error("نوع الملف غير مدعوم. يرجى رفع صور فقط."));
 }
 
 // استخدام الذاكرة إذا كانت هناك سحابة Supabase، أو القرص المحلي كخيار بديل
@@ -40,7 +61,7 @@ const storage = supabaseClient
       destination: (req, file, cb) => cb(null, uploadsDir),
       filename: (req, file, cb) => {
         const ext = path.extname(file.originalname).toLowerCase();
-        const safeName = crypto.randomBytes(16).toString('hex') + ext;
+        const safeName = crypto.randomBytes(16).toString("hex") + ext;
         cb(null, safeName);
       },
     });
@@ -53,24 +74,38 @@ const rawMulter = multer({
 
 async function uploadToSupabaseStorage(buffer, originalname, mimetype) {
   const ext = require("path").extname(originalname).toLowerCase();
-  const safeName = Date.now() + "_" + require("crypto").randomBytes(8).toString("hex") + ext;
+  const safeName =
+    Date.now() + "_" + require("crypto").randomBytes(8).toString("hex") + ext;
   const bucketName = process.env.SUPABASE_STORAGE_BUCKET || "uploads";
   let fallbackLocal = false;
-  
+
   if (supabaseClient) {
-    try { await supabaseClient.storage.createBucket(bucketName, { public: true }).catch(()=>{}); } catch (e) { console.error('Ignored Error:', e.message); }
-    const { data, error } = await supabaseClient.storage.from(bucketName).upload(safeName, buffer, { contentType: mimetype, upsert: true });
+    try {
+      await supabaseClient.storage
+        .createBucket(bucketName, { public: true })
+        .catch(() => {});
+    } catch (e) {
+      console.error("Ignored Error:", e.message);
+    }
+    const { data, error } = await supabaseClient.storage
+      .from(bucketName)
+      .upload(safeName, buffer, { contentType: mimetype, upsert: true });
     if (error) {
-      console.warn("Supabase upload failed, falling back to local:", error.message);
+      console.warn(
+        "Supabase upload failed, falling back to local:",
+        error.message,
+      );
       fallbackLocal = true;
     } else {
-      const { data: pUrl } = supabaseClient.storage.from(bucketName).getPublicUrl(safeName);
+      const { data: pUrl } = supabaseClient.storage
+        .from(bucketName)
+        .getPublicUrl(safeName);
       return { url: pUrl.publicUrl, filename: safeName };
     }
   } else {
     fallbackLocal = true;
   }
-  
+
   if (fallbackLocal) {
     const fs = require("fs");
     const path = require("path");
@@ -92,7 +127,7 @@ const upload = {
             const uploaded = await uploadToSupabaseStorage(
               req.file.buffer,
               req.file.originalname,
-              req.file.mimetype
+              req.file.mimetype,
             );
             req.file.url = uploaded.url;
             req.file.filename = uploaded.filename;
@@ -117,7 +152,7 @@ const upload = {
                 const uploaded = await uploadToSupabaseStorage(
                   file.buffer,
                   file.originalname,
-                  file.mimetype
+                  file.mimetype,
                 );
                 file.url = uploaded.url;
                 file.filename = uploaded.filename;
@@ -137,19 +172,21 @@ const upload = {
   },
   deleteFiles: async (urls) => {
     if (!supabaseClient || !urls || !urls.length) return;
-    const bucketName = process.env.SUPABASE_STORAGE_BUCKET || 'uploads';
+    const bucketName = process.env.SUPABASE_STORAGE_BUCKET || "uploads";
     try {
-      const filenames = urls.map(url => {
-        const parts = url.split('/');
-        return parts[parts.length - 1];
-      }).filter(Boolean);
+      const filenames = urls
+        .map((url) => {
+          const parts = url.split("/");
+          return parts[parts.length - 1];
+        })
+        .filter(Boolean);
       if (filenames.length > 0) {
         await supabaseClient.storage.from(bucketName).remove(filenames);
       }
     } catch (err) {
-      console.warn('Failed to delete from Supabase:', err.message);
+      console.warn("Failed to delete from Supabase:", err.message);
     }
-  }
+  },
 };
 
 module.exports = upload;

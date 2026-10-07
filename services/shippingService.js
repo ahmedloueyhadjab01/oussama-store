@@ -1,18 +1,21 @@
-const db = require('../db');
+const db = require("../db");
 
 class ShippingService {
   static async getVendorConfig(vendorId) {
     if (!vendorId) return null;
-    let config = await db.get('SELECT * FROM vendor_shipping_configs WHERE user_id = $1', [vendorId]);
+    let config = await db.get(
+      "SELECT * FROM vendor_shipping_configs WHERE user_id = $1",
+      [vendorId],
+    );
     if (!config) {
       config = {
         user_id: vendorId,
-        provider: 'manual',
-        api_key: '',
-        api_token: '',
+        provider: "manual",
+        api_key: "",
+        api_token: "",
         from_wilaya_id: 16,
-        from_commune: 'الجزائر الوسطى',
-        pricing_mode: 'flat',
+        from_commune: "الجزائر الوسطى",
+        pricing_mode: "flat",
         flat_home_price: 600,
         flat_desk_price: 350,
         free_shipping_enabled: 0,
@@ -20,93 +23,154 @@ class ShippingService {
         is_active: 1,
       };
     } else {
-      const hp = parseFloat(config.flat_home_price); config.flat_home_price = isNaN(hp) ? 600 : hp;
-      const dp = parseFloat(config.flat_desk_price); config.flat_desk_price = isNaN(dp) ? 350 : dp;
-      const fst = parseFloat(config.free_shipping_threshold); config.free_shipping_threshold = isNaN(fst) ? 15000 : fst;
+      const hp = parseFloat(config.flat_home_price);
+      config.flat_home_price = isNaN(hp) ? 600 : hp;
+      const dp = parseFloat(config.flat_desk_price);
+      config.flat_desk_price = isNaN(dp) ? 350 : dp;
+      const fst = parseFloat(config.free_shipping_threshold);
+      config.free_shipping_threshold = isNaN(fst) ? 15000 : fst;
     }
     return config;
   }
 
-  static async calculateShippingCost(vendorId, toWilayaCode, deliveryType = 'home', cartSubtotal = 0) {
+  static async calculateShippingCost(
+    vendorId,
+    toWilayaCode,
+    deliveryType = "home",
+    cartSubtotal = 0,
+  ) {
     const config = await this.getVendorConfig(vendorId);
     if (!config) {
-      const rate = await db.get('SELECT * FROM delivery_rates WHERE wilaya_code = $1', [toWilayaCode]);
-      const price = rate ? (deliveryType === 'desk' ? parseFloat(rate.desk_price) : parseFloat(rate.home_price)) : 600;
-      return { price: isNaN(price) ? 600 : price, is_free: false, provider: 'default' };
+      const rate = await db.get(
+        "SELECT * FROM delivery_rates WHERE wilaya_code = $1",
+        [toWilayaCode],
+      );
+      const price = rate
+        ? deliveryType === "desk"
+          ? parseFloat(rate.desk_price)
+          : parseFloat(rate.home_price)
+        : 600;
+      return {
+        price: isNaN(price) ? 600 : price,
+        is_free: false,
+        provider: "default",
+      };
     }
 
-    if (config.free_shipping_enabled && cartSubtotal >= config.free_shipping_threshold) {
+    if (
+      config.free_shipping_enabled &&
+      cartSubtotal >= config.free_shipping_threshold
+    ) {
       return { price: 0, is_free: true, provider: config.provider };
     }
 
-    if (config.pricing_mode === 'custom') {
-      const customRate = await db.get('SELECT * FROM vendor_custom_delivery_rates WHERE user_id = $1 AND wilaya_code = $2', [vendorId, toWilayaCode]);
+    if (config.pricing_mode === "custom") {
+      const customRate = await db.get(
+        "SELECT * FROM vendor_custom_delivery_rates WHERE user_id = $1 AND wilaya_code = $2",
+        [vendorId, toWilayaCode],
+      );
       if (customRate) {
-        if (!customRate.is_deliverable) return { price: 0, is_free: false, is_unavailable: true, provider: 'custom' };
-        const price = deliveryType === 'desk' ? parseFloat(customRate.desk_price) : parseFloat(customRate.home_price);
-        return { price: isNaN(price) ? 0 : price, is_free: false, provider: 'custom' };
+        if (!customRate.is_deliverable)
+          return {
+            price: 0,
+            is_free: false,
+            is_unavailable: true,
+            provider: "custom",
+          };
+        const price =
+          deliveryType === "desk"
+            ? parseFloat(customRate.desk_price)
+            : parseFloat(customRate.home_price);
+        return {
+          price: isNaN(price) ? 0 : price,
+          is_free: false,
+          provider: "custom",
+        };
       }
     }
 
-    if (config.pricing_mode === 'auto' && config.provider === 'yalidine') {
+    if (config.pricing_mode === "auto" && config.provider === "yalidine") {
       try {
         const url = `https://api.yalidine.app/v1/deliveryfees?from_wilaya_id=${config.from_wilaya_id}&to_wilaya_id=${toWilayaCode}`;
-        const res = await fetch(url, { headers: { 'X-API-ID': config.api_key, 'X-API-TOKEN': config.api_token } });
+        const res = await fetch(url, {
+          headers: {
+            "X-API-ID": config.api_key,
+            "X-API-TOKEN": config.api_token,
+          },
+        });
         if (res.ok) {
           const data = await res.json();
-          const fee = deliveryType === 'desk' ? data.desk_fee : data.home_fee;
-          if (fee !== undefined && fee !== null) return { price: Number(fee), is_free: false, provider: 'yalidine' };
+          const fee = deliveryType === "desk" ? data.desk_fee : data.home_fee;
+          if (fee !== undefined && fee !== null)
+            return { price: Number(fee), is_free: false, provider: "yalidine" };
         }
       } catch (err) {
-        console.warn('API Shipping calculation fallback to flat:', err.message);
+        console.warn("API Shipping calculation fallback to flat:", err.message);
       }
     }
 
-    const fallbackPrice = deliveryType === 'desk' ? Number(config.flat_desk_price) : Number(config.flat_home_price);
-    return { price: isNaN(fallbackPrice) ? 600 : fallbackPrice, is_free: false, provider: config.provider };
+    const fallbackPrice =
+      deliveryType === "desk"
+        ? Number(config.flat_desk_price)
+        : Number(config.flat_home_price);
+    return {
+      price: isNaN(fallbackPrice) ? 600 : fallbackPrice,
+      is_free: false,
+      provider: config.provider,
+    };
   }
 
   static async createParcel(orderId, requestUserId, isAdmin = false) {
     let order;
     if (isAdmin) {
-      order = await db.get('SELECT * FROM orders WHERE id = $1', [orderId]);
+      order = await db.get("SELECT * FROM orders WHERE id = $1", [orderId]);
     } else {
-      order = await db.get('SELECT * FROM orders WHERE id = $1 AND user_id = $2', [orderId, requestUserId]);
+      order = await db.get(
+        "SELECT * FROM orders WHERE id = $1 AND user_id = $2",
+        [orderId, requestUserId],
+      );
     }
-    if (!order) throw new Error('الطلبية غير موجودة');
+    if (!order) throw new Error("الطلبية غير موجودة");
 
     const vendorId = order.user_id;
     const config = await this.getVendorConfig(vendorId);
 
-    if (!config || config.provider === 'manual' || !config.api_key) {
+    if (!config || config.provider === "manual" || !config.api_key) {
       return { label_url: `/api/shipping/orders/${orderId}/manual-label` };
     }
 
-    if (config.provider === 'yalidine') {
-      const items = typeof order.items === 'string' ? JSON.parse(order.items || '[]') : (order.items || []);
-      const productDescription = items.map((i) => `${i.name} (x${i.qty})`).join(' + ');
+    if (config.provider === "yalidine") {
+      const items =
+        typeof order.items === "string"
+          ? JSON.parse(order.items || "[]")
+          : order.items || [];
+      const productDescription = items
+        .map((i) => `${i.name} (x${i.qty})`)
+        .join(" + ");
 
-      const payload = [{
-        order_id: `ORD-${order.id}`,
-        firstname: order.customer_name,
-        familyname: '',
-        contact_phone: order.phone,
-        address: `${order.commune || ''} - ${order.address || ''}`,
-        to_wilaya_name: order.wilaya_name,
-        to_commune_name: order.commune,
-        product_list: productDescription.substring(0, 200),
-        price: parseFloat(order.total),
-        freeshipping: parseFloat(order.delivery_price) === 0 ? 1 : 0,
-        is_stopdesk: order.delivery_type === 'desk' ? 1 : 0,
-        has_exchange: 0,
-      }];
+      const payload = [
+        {
+          order_id: `ORD-${order.id}`,
+          firstname: order.customer_name,
+          familyname: "",
+          contact_phone: order.phone,
+          address: `${order.commune || ""} - ${order.address || ""}`,
+          to_wilaya_name: order.wilaya_name,
+          to_commune_name: order.commune,
+          product_list: productDescription.substring(0, 200),
+          price: parseFloat(order.total),
+          freeshipping: parseFloat(order.delivery_price) === 0 ? 1 : 0,
+          is_stopdesk: order.delivery_type === "desk" ? 1 : 0,
+          has_exchange: 0,
+        },
+      ];
 
-      const res = await fetch('https://api.yalidine.app/v1/parcels', {
-        method: 'POST',
+      const res = await fetch("https://api.yalidine.app/v1/parcels", {
+        method: "POST",
         headers: {
-          'X-API-ID': config.api_key,
-          'X-API-TOKEN': config.api_token,
-          'Content-Type': 'application/json',
+          "X-API-ID": config.api_key,
+          "X-API-TOKEN": config.api_token,
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
       });
@@ -115,46 +179,62 @@ class ShippingService {
       const parcelData = resData[`ORD-${order.id}`];
 
       if (!parcelData || !parcelData.tracking) {
-        throw new Error(resData.message || (parcelData && parcelData.error) || 'فشل في توليد البوليصة من مزود الشحن');
+        throw new Error(
+          resData.message ||
+            (parcelData && parcelData.error) ||
+            "فشل في توليد البوليصة من مزود الشحن",
+        );
       }
 
       const trackingCode = parcelData.tracking;
-      const labelUrl = parcelData.label || `https://api.yalidine.app/v1/parcels/${trackingCode}/label`;
+      const labelUrl =
+        parcelData.label ||
+        `https://api.yalidine.app/v1/parcels/${trackingCode}/label`;
 
-      await db.query(`UPDATE orders SET tracking_number = $1 WHERE id = $2`, [trackingCode, order.id]);
+      await db.query(`UPDATE orders SET tracking_number = $1 WHERE id = $2`, [
+        trackingCode,
+        order.id,
+      ]);
       return { tracking_number: trackingCode, label_url: labelUrl };
     }
 
-    throw new Error('مزود الشحن غير مدعوم');
+    throw new Error("مزود الشحن غير مدعوم");
   }
 
   static async trackParcel(orderId, requestUserId, isAdmin = false) {
     let order;
     if (isAdmin) {
-      order = await db.get('SELECT * FROM orders WHERE id = $1', [orderId]);
+      order = await db.get("SELECT * FROM orders WHERE id = $1", [orderId]);
     } else {
-      order = await db.get('SELECT * FROM orders WHERE id = $1 AND user_id = $2', [orderId, requestUserId]);
+      order = await db.get(
+        "SELECT * FROM orders WHERE id = $1 AND user_id = $2",
+        [orderId, requestUserId],
+      );
     }
-    if (!order) throw new Error('الطلبية غير موجودة');
-    if (!order.tracking_number) throw new Error('لا يوجد رقم تتبع لهذه الطلبية');
+    if (!order) throw new Error("الطلبية غير موجودة");
+    if (!order.tracking_number)
+      throw new Error("لا يوجد رقم تتبع لهذه الطلبية");
 
     const vendorId = order.user_id;
     const config = await this.getVendorConfig(vendorId);
 
-    if (!config || config.provider !== 'yalidine' || !config.api_key) {
-      throw new Error('التتبع التلقائي غير مدعوم أو غير مهيأ لهذا المتجر');
+    if (!config || config.provider !== "yalidine" || !config.api_key) {
+      throw new Error("التتبع التلقائي غير مدعوم أو غير مهيأ لهذا المتجر");
     }
 
-    const res = await fetch(`https://api.yalidine.app/v1/histories?tracking=${order.tracking_number}`, {
-      headers: {
-        'X-API-ID': config.api_key,
-        'X-API-TOKEN': config.api_token,
+    const res = await fetch(
+      `https://api.yalidine.app/v1/histories?tracking=${order.tracking_number}`,
+      {
+        headers: {
+          "X-API-ID": config.api_key,
+          "X-API-TOKEN": config.api_token,
+        },
       },
-    });
+    );
 
     const resData = await res.json();
     if (!res.ok || !resData.data || !resData.data.length) {
-      throw new Error('لم يتم العثور على معلومات التتبع');
+      throw new Error("لم يتم العثور على معلومات التتبع");
     }
 
     return { history: resData.data };

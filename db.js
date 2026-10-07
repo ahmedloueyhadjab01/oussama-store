@@ -1,58 +1,71 @@
-﻿require('dotenv').config();
-const { Pool } = require('pg');
-const path = require('path');
-const fs = require('fs');
+﻿require("dotenv").config();
+const { Pool } = require("pg");
+const path = require("path");
+const fs = require("fs");
 
-const rawConnectionString = process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/postgres';
+const rawConnectionString =
+  process.env.DATABASE_URL ||
+  "postgresql:
 
 let pool;
-let databaseMode = 'postgres';
+let databaseMode = "postgres";
 
-
-// â”€â”€â”€ SQLite wrapper ÙŠØ­Ø§ÙƒÙŠ ÙˆØ§Ø¬Ù‡Ø© pg Pool â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-let sqliteInstance = null; // Ù…Ø´Ø§Ø±ÙƒØ© Ø§Ù„Ù€ instance Ù„Ù„Ù€ initDb
+let sqliteInstance = null;
 
 function createSqlitePool() {
-  const Database = require('better-sqlite3');
-  const dbPath = path.join(__dirname, 'eco-store.sqlite');
+  const Database = require("better-sqlite3");
+  const dbPath = path.join(__dirname, "eco-store.sqlite");
   const sqlite = new Database(dbPath);
-  sqlite.pragma('journal_mode = WAL');
-  sqlite.pragma('foreign_keys = ON'); // Ù†ÙÙØ¹Ù‘Ù„ Ø¨Ø¹Ø¯ Ø¥Ù†Ø´Ø§Ø¡ Ø§Ù„Ø¬Ø¯Ø§ÙˆÙ„
+  sqlite.pragma("journal_mode = WAL");
+  sqlite.pragma("foreign_keys = ON");
   sqliteInstance = sqlite;
 
   console.log(`âœ… Ù‚Ø§Ø¹Ø¯Ø© Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª SQLite Ø¯Ø§Ø¦Ù…Ø©: ${dbPath}`);
 
   function convertSql(sql) {
     return sql
-      .replace(/\bpublic\./gi, '')
-      .replace(/::jsonb/gi, '')
-      .replace(/\\bNOW\\(\\)/gi, 'CURRENT_TIMESTAMP')
-      .replace(/\$(\d+)/g, '@p$1')
-      .replace(/SERIAL\s+PRIMARY\s+KEY/gi, 'INTEGER PRIMARY KEY AUTOINCREMENT')
-      .replace(/TIMESTAMPTZ/gi, 'TEXT')
-      .replace(/NUMERIC\(\d+,\s*\d+\)/gi, 'REAL')
-      .replace(/NUMERIC\(\d+\)/gi, 'REAL')
-      .replace(/VARCHAR\(\d+\)/gi, 'TEXT')
-      .replace(/JSONB/gi, 'TEXT')
-      .replace(/ILIKE/gi, 'LIKE')
-      .replace(/ON CONFLICT \(email\) DO NOTHING/gi, 'ON CONFLICT(email) DO NOTHING')
-      .replace(/ON CONFLICT \(username\) DO NOTHING/gi, 'ON CONFLICT(username) DO NOTHING')
-      .replace(/ON CONFLICT \(user_id\) DO NOTHING/gi, 'ON CONFLICT(user_id) DO NOTHING')
-      .replace(/ON CONFLICT \(wilaya_code\) DO NOTHING/gi, 'ON CONFLICT(wilaya_code) DO NOTHING');
+      .replace(/\bpublic\./gi, "")
+      .replace(/::jsonb/gi, "")
+      .replace(/\\bNOW\\(\\)/gi, "CURRENT_TIMESTAMP")
+      .replace(/\$(\d+)/g, "@p$1")
+      .replace(/SERIAL\s+PRIMARY\s+KEY/gi, "INTEGER PRIMARY KEY AUTOINCREMENT")
+      .replace(/TIMESTAMPTZ/gi, "TEXT")
+      .replace(/NUMERIC\(\d+,\s*\d+\)/gi, "REAL")
+      .replace(/NUMERIC\(\d+\)/gi, "REAL")
+      .replace(/VARCHAR\(\d+\)/gi, "TEXT")
+      .replace(/JSONB/gi, "TEXT")
+      .replace(/ILIKE/gi, "LIKE")
+      .replace(
+        /ON CONFLICT \(email\) DO NOTHING/gi,
+        "ON CONFLICT(email) DO NOTHING",
+      )
+      .replace(
+        /ON CONFLICT \(username\) DO NOTHING/gi,
+        "ON CONFLICT(username) DO NOTHING",
+      )
+      .replace(
+        /ON CONFLICT \(user_id\) DO NOTHING/gi,
+        "ON CONFLICT(user_id) DO NOTHING",
+      )
+      .replace(
+        /ON CONFLICT \(wilaya_code\) DO NOTHING/gi,
+        "ON CONFLICT(wilaya_code) DO NOTHING",
+      );
   }
-
 
   function convertParams(params) {
     if (!Array.isArray(params)) return params;
     const obj = {};
-    params.forEach((v, i) => { obj['p' + (i + 1)] = v; });
+    params.forEach((v, i) => {
+      obj["p" + (i + 1)] = v;
+    });
     return obj;
   }
   const fakePool = {
     query: (sql, params = []) => {
       try {
         const trimmed = sql.trim();
-        // Ø¥Ø°Ø§ ÙƒØ§Ù†Øª schema (Ø¹Ø¯Ø© Ø¬Ø¯Ø§ÙˆÙ„)ØŒ Ù†ÙÙ‘Ø°Ù‡Ø§ Ø¹Ø¨Ø± exec
+
         if (!params.length && /CREATE\s+TABLE/i.test(trimmed)) {
           sqlite.exec(convertSql(trimmed));
           return Promise.resolve({ rows: [], rowCount: 0 });
@@ -60,7 +73,6 @@ function createSqlitePool() {
 
         const converted = convertSql(trimmed);
 
-        // INSERT/UPDATE/DELETE ... RETURNING
         if (/RETURNING/i.test(converted)) {
           const prepared = sqlite.prepare(converted);
           const rows = prepared.all(convertParams(params));
@@ -69,34 +81,46 @@ function createSqlitePool() {
 
         const upper = converted.trimStart().toUpperCase();
 
-        if (upper.startsWith('SELECT') || upper.startsWith('WITH')) {
+        if (upper.startsWith("SELECT") || upper.startsWith("WITH")) {
           const prepared = sqlite.prepare(converted);
           const rows = prepared.all(convertParams(params));
           return Promise.resolve({ rows, rowCount: rows.length });
         }
 
-        // CREATE INDEX / CREATE TABLE / ALTER TABLE
-        if (upper.startsWith('CREATE') || upper.startsWith('ALTER') || upper.startsWith('DROP')) {
-          try { sqlite.exec(converted); } catch (e) { /* ignore if exists */ }
+        if (
+          upper.startsWith("CREATE") ||
+          upper.startsWith("ALTER") ||
+          upper.startsWith("DROP")
+        ) {
+          try {
+            sqlite.exec(converted);
+          } catch (e) {
+            /* ignore if exists */
+          }
           return Promise.resolve({ rows: [], rowCount: 0 });
         }
 
-        // INSERT / UPDATE / DELETE
         const prepared = sqlite.prepare(converted);
         const info = prepared.run(convertParams(params));
         const rows = [];
-        if (upper.startsWith('INSERT') && info.lastInsertRowid) {
+        if (upper.startsWith("INSERT") && info.lastInsertRowid) {
           try {
-            const tableMatch = converted.match(/INSERT\s+(?:OR\s+\w+\s+)?INTO\s+(\w+)/i);
+            const tableMatch = converted.match(
+              /INSERT\s+(?:OR\s+\w+\s+)?INTO\s+(\w+)/i,
+            );
             if (tableMatch) {
-              const row = sqlite.prepare(`SELECT * FROM ${tableMatch[1]} WHERE rowid = ?`).get(info.lastInsertRowid);
+              const row = sqlite
+                .prepare(`SELECT * FROM ${tableMatch[1]} WHERE rowid = ?`)
+                .get(info.lastInsertRowid);
               if (row) rows.push(row);
             }
           } catch {}
         }
         return Promise.resolve({ rows, rowCount: info.changes });
       } catch (e) {
-        return Promise.reject(new Error(`SQLite Error [${sql.substring(0, 60)}...]: ${e.message}`));
+        return Promise.reject(
+          new Error(`SQLite Error [${sql.substring(0, 60)}...]: ${e.message}`),
+        );
       }
     },
     connect: () => {
@@ -111,67 +135,74 @@ function createSqlitePool() {
 }
 
 function buildPool(connectionString) {
-  const isProduction = process.env.NODE_ENV === 'production';
-  const isRemoteDb = connectionString.includes('supabase') || connectionString.includes('render') || connectionString.includes('neon') || connectionString.includes('pooler');
+  const isProduction = process.env.NODE_ENV === "production";
+  const isRemoteDb =
+    connectionString.includes("supabase") ||
+    connectionString.includes("render") ||
+    connectionString.includes("neon") ||
+    connectionString.includes("pooler");
 
   return new Pool({
     connectionString,
-    ssl: (isProduction || isRemoteDb) ? { rejectUnauthorized: false } : false,
+    ssl: isProduction || isRemoteDb ? { rejectUnauthorized: false } : false,
   });
 }
 
-// â”€â”€â”€ Ù…Ø­Ø§ÙˆÙ„Ø© Ø§Ù„Ø§ØªØµØ§Ù„ Ø¨Ù€ PostgreSQL Ø£ÙˆÙ„Ø§Ù‹ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let usePostgres = false;
-if (process.env.DB_CLIENT !== 'sqlite' && process.env.DB_CLIENT !== 'sqlite3') {
+if (process.env.DB_CLIENT !== "sqlite" && process.env.DB_CLIENT !== "sqlite3") {
   try {
     const parsed = new URL(rawConnectionString);
     if (
       !parsed.hostname ||
-      parsed.hostname.includes('[PROJECT-REF]') ||
-      parsed.username.includes('YOUR-PASSWORD') ||
-      rawConnectionString.includes('[YOUR-PASSWORD]') ||
-      rawConnectionString.includes('[PROJECT-REF]')
+      parsed.hostname.includes("[PROJECT-REF]") ||
+      parsed.username.includes("YOUR-PASSWORD") ||
+      rawConnectionString.includes("[YOUR-PASSWORD]") ||
+      rawConnectionString.includes("[PROJECT-REF]")
     ) {
-      throw new Error('Invalid placeholder database URL');
+      throw new Error("Invalid placeholder database URL");
     }
     pool = buildPool(rawConnectionString);
     usePostgres = true;
-    console.log('âœ… ØªÙ… Ø§Ù„Ø§ØªØµØ§Ù„ Ø¨Ù‚Ø§Ø¹Ø¯Ø© Ø¨ÙŠØ§Ù†Ø§Øª PostgreSQL/Supabase.');
-  } catch (err) {
-    // fallback to SQLite
-  }
+    console.log(
+      "âœ… ØªÙ… Ø§Ù„Ø§ØªØµØ§Ù„ Ø¨Ù‚Ø§Ø¹Ø¯Ø© Ø¨ÙŠØ§Ù†Ø§Øª PostgreSQL/Supabase.",
+    );
+  } catch (err) {}
 }
 
-// â”€â”€â”€ Ø¥Ø°Ø§ ÙØ´Ù„ PostgreSQLØŒ Ø§Ø³ØªØ®Ø¯Ù… SQLite Ø¯Ø§Ø¦Ù… Ø¹Ù„Ù‰ Ø§Ù„Ù‚Ø±Øµ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 if (!usePostgres) {
   try {
     pool = createSqlitePool();
-    databaseMode = 'sqlite';
-    console.log('âœ… ÙˆØ¶Ø¹ SQLite Ø§Ù„Ù…Ø­Ù„ÙŠ Ø§Ù„Ø¯Ø§Ø¦Ù… Ù†Ø´Ø·. Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ù…Ø­ÙÙˆØ¸Ø© ÙÙŠ eco-store.sqlite');
+    databaseMode = "sqlite";
+    console.log(
+      "âœ… ÙˆØ¶Ø¹ SQLite Ø§Ù„Ù…Ø­Ù„ÙŠ Ø§Ù„Ø¯Ø§Ø¦Ù… Ù†Ø´Ø·. Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ù…Ø­ÙÙˆØ¸Ø© ÙÙŠ eco-store.sqlite",
+    );
   } catch (sqliteErr) {
-    console.error('âŒ ÙØ´Ù„ SQLite Ø£ÙŠØ¶Ø§Ù‹:', sqliteErr.message);
-    console.warn('âš ï¸ Ø§Ù„Ø±Ø¬ÙˆØ¹ Ù„Ù€ pg-mem (Ù…Ø¤Ù‚Øª):');
+    console.error("âŒ ÙØ´Ù„ SQLite Ø£ÙŠØ¶Ø§Ù‹:", sqliteErr.message);
+    console.warn("âš ï¸ Ø§Ù„Ø±Ø¬ÙˆØ¹ Ù„Ù€ pg-mem (Ù…Ø¤Ù‚Øª):");
     try {
-      const { newDb } = require('pg-mem');
+      const { newDb } = require("pg-mem");
       const memDb = newDb();
       const { Pool: MemPool } = memDb.adapters.createPg();
       pool = new MemPool();
-      databaseMode = 'memory';
+      databaseMode = "memory";
     } catch (memErr) {
-      throw new Error('ÙØ´Ù„ Ø¥Ù†Ø´Ø§Ø¡ Ø£ÙŠ Ù‚Ø§Ø¹Ø¯Ø© Ø¨ÙŠØ§Ù†Ø§Øª: ' + memErr.message);
+      throw new Error(
+        "ÙØ´Ù„ Ø¥Ù†Ø´Ø§Ø¡ Ø£ÙŠ Ù‚Ø§Ø¹Ø¯Ø© Ø¨ÙŠØ§Ù†Ø§Øª: " + memErr.message,
+      );
     }
   }
 }
 
-if (databaseMode === 'memory') {
-  console.log('âš ï¸ ÙˆØ¶Ø¹ Ù‚Ø§Ø¹Ø¯Ø© Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù…Ø¤Ù‚ØªØ© (pg-mem) - Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ù„Ù† ØªÙØ­ÙØ¸ Ø¹Ù†Ø¯ Ø¥ÙŠÙ‚Ø§Ù Ø§Ù„Ø³ÙŠØ±ÙØ±!');
+if (databaseMode === "memory") {
+  console.log(
+    "âš ï¸ ÙˆØ¶Ø¹ Ù‚Ø§Ø¹Ø¯Ø© Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù…Ø¤Ù‚ØªØ© (pg-mem) - Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ù„Ù† ØªÙØ­ÙØ¸ Ø¹Ù†Ø¯ Ø¥ÙŠÙ‚Ø§Ù Ø§Ù„Ø³ÙŠØ±ÙØ±!",
+  );
 }
 
-pool.on('error', (err) => {
-  console.error('Unexpected error on idle PostgreSQL client:', err);
+pool.on("error", (err) => {
+  console.error("Unexpected error on idle PostgreSQL client:", err);
 });
 
-// ØªØ­ÙˆÙŠÙ„ Ø§Ø³ØªØ¹Ù„Ø§Ù…Ø§Øª Ø§Ù„Ù…Ø¹Ø§Ù…Ù„Ø§Øª Ù…Ù† Ø¹Ù„Ø§Ù…Ø§Øª Ø§Ù„Ø§Ø³ØªÙÙ‡Ø§Ù… (?) Ø¥Ù„Ù‰ Ø¯ÙˆÙ„Ø§Ø±Ø§Øª Ø§Ù„ØªØ±Ù‚ÙŠÙ… ($1, $2)
 function convertPlaceholders(sql) {
   let paramIndex = 1;
   return sql.replace(/\?/g, () => `$${paramIndex++}`);
@@ -223,9 +254,12 @@ async function run(sql, params = [], client = null) {
 async function transaction(callback) {
   const client = await pool.connect();
   try {
-    try { await client.query('BEGIN'); } catch (e) { if (!e.message.includes('within a transaction')) throw e; }
-    
-    // ØªÙˆÙÙŠØ± Ù†ÙØ³ Ø§Ù„ÙˆØ§Ø¬Ù‡Ø§Øª Ø¯Ø§Ø®Ù„ Ø§Ù„Ù…Ø¹Ø§Ù…Ù„Ø©
+    try {
+      await client.query("BEGIN");
+    } catch (e) {
+      if (!e.message.includes("within a transaction")) throw e;
+    }
+
     const trx = {
       query: (sql, params) => query(sql, params, client),
       get: (sql, params) => get(sql, params, client),
@@ -235,10 +269,18 @@ async function transaction(callback) {
     };
 
     const result = await callback(trx);
-    try { await client.query('COMMIT'); } catch (e) { if (!e.message.includes('cannot commit')) throw e; }
+    try {
+      await client.query("COMMIT");
+    } catch (e) {
+      if (!e.message.includes("cannot commit")) throw e;
+    }
     return result;
   } catch (err) {
-    try { await client.query('ROLLBACK'); } catch (e) { if (!e.message.includes('cannot rollback')) throw e; }
+    try {
+      await client.query("ROLLBACK");
+    } catch (e) {
+      if (!e.message.includes("cannot rollback")) throw e;
+    }
     throw err;
   } finally {
     client.release();
@@ -250,21 +292,29 @@ async function transaction(callback) {
  */
 async function ensureFinancialArchive(userId, client = null) {
   if (userId) {
-    const exists = await get('SELECT id FROM financial_archive WHERE user_id = $1', [userId], client);
+    const exists = await get(
+      "SELECT id FROM financial_archive WHERE user_id = $1",
+      [userId],
+      client,
+    );
     if (!exists) {
       await query(
-        'INSERT INTO financial_archive (user_id, archived_sales, archived_cogs, archived_shipping_cost) VALUES ($1, 0, 0, 0) ON CONFLICT(user_id) DO NOTHING',
+        "INSERT INTO financial_archive (user_id, archived_sales, archived_cogs, archived_shipping_cost) VALUES ($1, 0, 0, 0) ON CONFLICT(user_id) DO NOTHING",
         [userId],
-        client
+        client,
       );
     }
   } else {
-    const nullExists = await get('SELECT id FROM financial_archive WHERE user_id IS NULL', [], client);
+    const nullExists = await get(
+      "SELECT id FROM financial_archive WHERE user_id IS NULL",
+      [],
+      client,
+    );
     if (!nullExists) {
       await query(
-        'INSERT INTO financial_archive (user_id, archived_sales, archived_cogs, archived_shipping_cost) VALUES (NULL, 0, 0, 0)',
+        "INSERT INTO financial_archive (user_id, archived_sales, archived_cogs, archived_shipping_cost) VALUES (NULL, 0, 0, 0)",
         [],
-        client
+        client,
       );
     }
   }
@@ -274,7 +324,9 @@ async function ensureFinancialArchive(userId, client = null) {
  * ØªÙ‡ÙŠØ¦Ø© Ø¬Ø¯Ø§ÙˆÙ„ Ù‚Ø§Ø¹Ø¯Ø© Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª ÙˆØ§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ø£ÙˆÙ„ÙŠØ© ÙÙŠ PostgreSQL
  */
 async function initDb() {
-  console.log('ðŸ”„ Ø¬Ø§Ø±ÙŠ ØªÙ‡ÙŠØ¦Ø© Ù‚Ø§Ø¹Ø¯Ø© Ø¨ÙŠØ§Ù†Ø§Øª PostgreSQL / Supabase...');
+  console.log(
+    "ðŸ”„ Ø¬Ø§Ø±ÙŠ ØªÙ‡ÙŠØ¦Ø© Ù‚Ø§Ø¹Ø¯Ø© Ø¨ÙŠØ§Ù†Ø§Øª PostgreSQL / Supabase...",
+  );
 
   const schemaSql = `
     CREATE TABLE IF NOT EXISTS admins (
@@ -549,95 +601,150 @@ async function initDb() {
   await pool.query(schemaSql);
 
   try {
-    if (databaseMode === 'postgres') {
-      await pool.query('ALTER TABLE vendor_shipping_configs ADD COLUMN IF NOT EXISTS manual_provider_name VARCHAR(255);');
+    if (databaseMode === "postgres") {
+      await pool.query(
+        "ALTER TABLE vendor_shipping_configs ADD COLUMN IF NOT EXISTS manual_provider_name VARCHAR(255);",
+      );
     } else {
-      await pool.query('ALTER TABLE vendor_shipping_configs ADD COLUMN manual_provider_name VARCHAR(255);');
+      await pool.query(
+        "ALTER TABLE vendor_shipping_configs ADD COLUMN manual_provider_name VARCHAR(255);",
+      );
     }
-  } catch (err) {}
-
-
-  // Ø¥Ø¶Ø§ÙØ© Ø§Ù„Ø£Ø¹Ù…Ø¯Ø© Ø§Ù„Ø¬Ø¯ÙŠØ¯Ø© Ù„Ù„Ù…Ù†ØªØ¬Ø§Øª Ø¥Ø°Ø§ ÙƒØ§Ù†Øª Ù‚Ø§Ø¹Ø¯Ø© Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ù…ÙˆØ¬ÙˆØ¯Ø© Ø¨Ø§Ù„ÙØ¹Ù„
-  try {
-    await pool.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS video_file TEXT DEFAULT ''`);
-    await pool.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS reviews TEXT DEFAULT ''`);
-    await pool.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS rating NUMERIC(3, 2) DEFAULT 5`);
   } catch (e) {
-    // Ø§Ù„Ø£Ø¹Ù…Ø¯Ø© Ù‚Ø¯ ØªÙƒÙˆÙ† Ù…ÙˆØ¬ÙˆØ¯Ø© Ø¨Ø§Ù„ÙØ¹Ù„ØŒ Ù„Ø§ Ù…Ø´ÙƒÙ„Ø©
-    console.log('â„¹ï¸ Ø£Ø¹Ù…Ø¯Ø© Ø§Ù„Ù…Ù†ØªØ¬Ø§Øª Ø§Ù„Ø¬Ø¯ÙŠØ¯Ø© Ù…ÙˆØ¬ÙˆØ¯Ø© Ø¨Ø§Ù„ÙØ¹Ù„ Ø£Ùˆ Ù„Ø§ ØªØ­ØªØ§Ø¬ Ø¥Ù„Ù‰ Ø¥Ø¶Ø§ÙØ©');
+    console.error("DB Error ignored:", e.message);
   }
 
   try {
-    if (databaseMode === 'sqlite') {
-      await pool.query(`ALTER TABLE categories ADD COLUMN image TEXT DEFAULT ''`);
+    await pool.query(
+      `ALTER TABLE products ADD COLUMN IF NOT EXISTS video_file TEXT DEFAULT ''`,
+    );
+    await pool.query(
+      `ALTER TABLE products ADD COLUMN IF NOT EXISTS reviews TEXT DEFAULT ''`,
+    );
+    await pool.query(
+      `ALTER TABLE products ADD COLUMN IF NOT EXISTS rating NUMERIC(3, 2) DEFAULT 5`,
+    );
+  } catch (e) {
+    console.log(
+      "â„¹ï¸ Ø£Ø¹Ù…Ø¯Ø© Ø§Ù„Ù…Ù†ØªØ¬Ø§Øª Ø§Ù„Ø¬Ø¯ÙŠØ¯Ø© Ù…ÙˆØ¬ÙˆØ¯Ø© Ø¨Ø§Ù„ÙØ¹Ù„ Ø£Ùˆ Ù„Ø§ ØªØ­ØªØ§Ø¬ Ø¥Ù„Ù‰ Ø¥Ø¶Ø§ÙØ©",
+    );
+  }
+
+  try {
+    if (databaseMode === "sqlite") {
+      await pool.query(
+        `ALTER TABLE categories ADD COLUMN image TEXT DEFAULT ''`,
+      );
     } else {
-      await pool.query(`ALTER TABLE categories ADD COLUMN IF NOT EXISTS image TEXT DEFAULT ''`);
+      await pool.query(
+        `ALTER TABLE categories ADD COLUMN IF NOT EXISTS image TEXT DEFAULT ''`,
+      );
     }
   } catch (e) {
     if (!/already exists|duplicate column/i.test(e.message)) {
-      console.warn('âš ï¸ ØªØ¹Ø°Ø± Ø¥Ø¶Ø§ÙØ© Ø¹Ù…ÙˆØ¯ ØµÙˆØ±Ø© Ø§Ù„ØªØµÙ†ÙŠÙ:', e.message);
+      console.warn(
+        "âš ï¸ ØªØ¹Ø°Ø± Ø¥Ø¶Ø§ÙØ© Ø¹Ù…ÙˆØ¯ ØµÙˆØ±Ø© Ø§Ù„ØªØµÙ†ÙŠÙ:",
+        e.message,
+      );
     }
   }
 
-  // Ø¥Ø¯Ø®Ø§Ù„ Ø§Ù„ÙˆÙ„Ø§ÙŠØ§Øª Ø§Ù„Ø§ÙØªØ±Ø§Ø¶ÙŠØ© Ø¥Ø°Ø§ ÙƒØ§Ù† Ø§Ù„Ø¬Ø¯ÙˆÙ„ ÙØ§Ø±ØºØ§Ù‹
-  const wilayaCountRes = await pool.query('SELECT COUNT(*) AS c FROM delivery_rates');
+  const wilayaCountRes = await pool.query(
+    "SELECT COUNT(*) AS c FROM delivery_rates",
+  );
   if (parseInt(wilayaCountRes.rows[0].c, 10) === 0) {
     try {
-      const wilayasSeed = require('./data/wilayas.json');
+      const wilayasSeed = require("./data/wilayas.json");
       for (const w of wilayasSeed) {
         await pool.query(
-          'INSERT INTO delivery_rates (wilaya_code, wilaya_name, home_price, desk_price) VALUES ($1, $2, 0, 0) ON CONFLICT (wilaya_code) DO NOTHING',
-          [w.code, w.name]
+          "INSERT INTO delivery_rates (wilaya_code, wilaya_name, home_price, desk_price) VALUES ($1, $2, 0, 0) ON CONFLICT (wilaya_code) DO NOTHING",
+          [w.code, w.name],
         );
       }
-      console.log('âœ… ØªÙ… Ø¥Ø¯Ø®Ø§Ù„ Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù€ 69 ÙˆÙ„Ø§ÙŠØ© ÙÙŠ PostgreSQL');
+      console.log(
+        "âœ… ØªÙ… Ø¥Ø¯Ø®Ø§Ù„ Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù€ 69 ÙˆÙ„Ø§ÙŠØ© ÙÙŠ PostgreSQL",
+      );
     } catch (e) {
-      console.warn('âš ï¸ ØªØ¹Ø°Ø± Ø¥Ø¯Ø®Ø§Ù„ Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„ÙˆÙ„Ø§ÙŠØ§Øª Ø§Ù„Ø§ÙØªØ±Ø§Ø¶ÙŠØ©:', e.message);
+      console.warn(
+        "âš ï¸ ØªØ¹Ø°Ø± Ø¥Ø¯Ø®Ø§Ù„ Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„ÙˆÙ„Ø§ÙŠØ§Øª Ø§Ù„Ø§ÙØªØ±Ø§Ø¶ÙŠØ©:",
+        e.message,
+      );
     }
   }
 
-  // Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª ÙˆØ³Ø§Ø¦Ù„ Ø§Ù„ØªÙˆØ§ØµÙ„ Ø§Ù„Ø§ÙØªØ±Ø§Ø¶ÙŠØ©
-  const defaultSocialKeys = ['social_whatsapp', 'social_instagram', 'social_facebook', 'social_tiktok', 'social_telegram'];
+  const defaultSocialKeys = [
+    "social_whatsapp",
+    "social_instagram",
+    "social_facebook",
+    "social_tiktok",
+    "social_telegram",
+  ];
   for (const key of defaultSocialKeys) {
-    const exists = await get('SELECT id FROM settings WHERE user_id IS NULL AND key = $1', [key]);
+    const exists = await get(
+      "SELECT id FROM settings WHERE user_id IS NULL AND key = $1",
+      [key],
+    );
     if (!exists) {
-      await query('INSERT INTO settings (user_id, key, value) VALUES (NULL, $1, $2)', [key, '']);
+      await query(
+        "INSERT INTO settings (user_id, key, value) VALUES (NULL, $1, $2)",
+        [key, ""],
+      );
     }
   }
 
-  // Ø¥Ù†Ø´Ø§Ø¡ Ø­Ø³Ø§Ø¨ Ø§Ù„Ù…Ø´Ø±Ù Ø§Ù„Ø§ÙØªØ±Ø§Ø¶ÙŠ Ø¥Ù† Ù„Ù… ÙŠÙƒÙ† Ù…ÙˆØ¬ÙˆØ¯Ø§Ù‹
-  const userCountRes = await pool.query('SELECT COUNT(*) AS c FROM users');
+  const userCountRes = await pool.query("SELECT COUNT(*) AS c FROM users");
   if (parseInt(userCountRes.rows[0].c, 10) === 0) {
-    const defaultUsername = (process.env.ADMIN_USERNAME || 'kalkoul.dz').trim();
-    const defaultPassword = process.env.ADMIN_PASSWORD || 'kalkoul.dz28';
+    const defaultUsername = (process.env.ADMIN_USERNAME || "kalkoul.dz").trim();
+    const defaultPassword = process.env.ADMIN_PASSWORD || "kalkoul.dz28";
     if (!defaultUsername || defaultPassword.length < 12) {
-      throw new Error('Set ADMIN_USERNAME and an ADMIN_PASSWORD of at least 12 characters before initializing an empty database.');
+      throw new Error(
+        "Set ADMIN_USERNAME and an ADMIN_PASSWORD of at least 12 characters before initializing an empty database.",
+      );
     }
 
-    const bcrypt = require('bcryptjs');
+    const bcrypt = require("bcryptjs");
     const hash = bcrypt.hashSync(defaultPassword, 10);
     const now = new Date();
-    const trialEnd = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString();
-    const subEnd = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000).toISOString();
+    const trialEnd = new Date(
+      now.getTime() + 7 * 24 * 60 * 60 * 1000,
+    ).toISOString();
+    const subEnd = new Date(
+      now.getTime() + 365 * 24 * 60 * 60 * 1000,
+    ).toISOString();
 
     await pool.query(
       `INSERT INTO users (name, email, password_hash, role, subscription_plan, subscription_status, trial_ends_at, subscription_ends_at, store_name, store_slug)
        VALUES ($1, $2, $3, 'admin', 'annual', 'active', $4, $5, 'Ù…ØªØ¬Ø± Ø§Ù„Ø¬Ù…Ù„Ø© ÙˆØ§Ù„Ø´ÙˆØ§Ù„Ø§Øª', 'jomla')
        ON CONFLICT (email) DO NOTHING`,
-      [defaultUsername, `${defaultUsername}@mystore.dz`, hash, trialEnd, subEnd]
+      [
+        defaultUsername,
+        `${defaultUsername}@mystore.dz`,
+        hash,
+        trialEnd,
+        subEnd,
+      ],
     );
 
     await pool.query(
       `INSERT INTO admins (username, password_hash) VALUES ($1, $2) ON CONFLICT (username) DO NOTHING`,
-      [defaultUsername, hash]
+      [defaultUsername, hash],
     );
-    console.log(`âœ… ØªÙ… Ø¥Ù†Ø´Ø§Ø¡ Ø­Ø³Ø§Ø¨ Ø§Ù„Ù…Ø´Ø±Ù Ø§Ù„Ø§ÙØªØ±Ø§Ø¶ÙŠ: ${defaultUsername}`);
+    console.log(
+      `âœ… ØªÙ… Ø¥Ù†Ø´Ø§Ø¡ Ø­Ø³Ø§Ø¨ Ø§Ù„Ù…Ø´Ø±Ù Ø§Ù„Ø§ÙØªØ±Ø§Ø¶ÙŠ: ${defaultUsername}`,
+    );
   }
 
-  console.log('âœ… Ø§ÙƒØªÙ…Ù„Øª ØªÙ‡ÙŠØ¦Ø© Ù‚Ø§Ø¹Ø¯Ø© Ø¨ÙŠØ§Ù†Ø§Øª PostgreSQL Ø¨Ù†Ø¬Ø§Ø­.');
+  console.log(
+    "âœ… Ø§ÙƒØªÙ…Ù„Øª ØªÙ‡ÙŠØ¦Ø© Ù‚Ø§Ø¹Ø¯Ø© Ø¨ÙŠØ§Ù†Ø§Øª PostgreSQL Ø¨Ù†Ø¬Ø§Ø­.",
+  );
 }
 
+function toDbDate(dateInput) {
+  const d = dateInput ? new Date(dateInput) : new Date();
+  return d.toISOString().replace("T", " ").substring(0, 19);
+}
 module.exports = {
+  toDbDate,
   pool,
   query,
   get,
@@ -648,4 +755,3 @@ module.exports = {
   initDb,
   getMode: () => databaseMode,
 };
-

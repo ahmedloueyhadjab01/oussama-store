@@ -1,6 +1,6 @@
+const bcrypt = require("bcryptjs");
 
 const express = require("express");
-const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const slugify = require("slugify");
 const rateLimit = require("express-rate-limit");
@@ -27,51 +27,79 @@ router.post(
   "/login",
   authLimiter,
   [
-    body("username").trim().isLength({ min: 1, max: 255 }).withMessage("اسم المستخدم أو البريد الإلكتروني غير صالح"),
-    body("password").isLength({ min: 1, max: 1024 }).withMessage("كلمة المرور غير صالحة"),
+    body("username")
+      .trim()
+      .isLength({ min: 1, max: 255 })
+      .withMessage("اسم المستخدم أو البريد الإلكتروني غير صالح"),
+    body("password")
+      .isLength({ min: 1, max: 1024 })
+      .withMessage("كلمة المرور غير صالحة"),
   ],
+  validate,
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ error: errors.array()[0].msg });
-    }
+    /* validation handled by middleware */
 
     const { username, password } = req.body;
     const loginIdentifier = username.trim().toLowerCase();
 
-    let user = await db.get("SELECT * FROM public.users WHERE LOWER(email) = $1", [loginIdentifier]);
+    let user = await db.get("SELECT * FROM users WHERE LOWER(email) = $1", [
+      loginIdentifier,
+    ]);
     if (!user) {
-      user = await db.get("SELECT * FROM public.users WHERE LOWER(store_slug) = $1", [loginIdentifier]);
+      user = await db.get("SELECT * FROM users WHERE LOWER(store_slug) = $1", [
+        loginIdentifier,
+      ]);
     }
     if (!user) {
-      const sameNameUsers = await db.all("SELECT * FROM public.users WHERE LOWER(name) = $1 LIMIT 2", [loginIdentifier]);
+      const sameNameUsers = await db.all(
+        "SELECT * FROM users WHERE LOWER(name) = $1 LIMIT 2",
+        [loginIdentifier],
+      );
       if (sameNameUsers.length === 1) user = sameNameUsers[0];
     }
 
     if (!user) {
-      const admin = await db.get("SELECT * FROM public.admins WHERE LOWER(username) = $1", [loginIdentifier]);
+      const admin = await db.get(
+        "SELECT * FROM public.admins WHERE LOWER(username) = $1",
+        [loginIdentifier],
+      );
       if (admin && bcrypt.compareSync(password, admin.password_hash)) {
         const now = new Date();
-        const trialEnd = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString();
-        const subEnd = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000).toISOString();
-        const insertRes = await db.query(`
-          INSERT INTO public.users (name, email, password_hash, role, subscription_plan, subscription_status, trial_ends_at, subscription_ends_at, store_name, store_slug)
+        const trialEnd = new Date(
+          now.getTime() + 7 * 24 * 60 * 60 * 1000,
+        ).toISOString();
+        const subEnd = new Date(
+          now.getTime() + 365 * 24 * 60 * 60 * 1000,
+        ).toISOString();
+        const insertRes = await db.query(
+          `
+          INSERT INTO users (name, email, password_hash, role, subscription_plan, subscription_status, trial_ends_at, subscription_ends_at, store_name, store_slug)
           VALUES ($1, $2, $3, 'admin', 'annual', 'active', $4, $5, 'Admin Store', 'main')
           ON CONFLICT (email) DO UPDATE SET password_hash = EXCLUDED.password_hash
           RETURNING *
-        `, [admin.username, `${admin.username}@mystore.dz`, admin.password_hash, trialEnd, subEnd]);
+        `,
+          [
+            admin.username,
+            `${admin.username}@mystore.dz`,
+            admin.password_hash,
+            trialEnd,
+            subEnd,
+          ],
+        );
         user = insertRes.rows[0];
       }
     }
 
     if (!user || !bcrypt.compareSync(password, user.password_hash)) {
-      return res.status(401).json({ error: "اسم المستخدم أو كلمة المرور غير صحيحة" });
+      return res
+        .status(401)
+        .json({ error: "اسم المستخدم أو كلمة المرور غير صحيحة" });
     }
 
     const token = jwt.sign(
       { id: user.id, email: user.email, name: user.name, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "7d" },
     );
 
     res.cookie("token", token, {
@@ -101,11 +129,11 @@ router.post(
         ...subInfo,
       },
     });
-  }
+  },
 );
 
 router.get("/me", requireAuth, async (req, res) => {
-  const user = await db.get("SELECT * FROM public.users WHERE id = $1", [req.user.id]);
+  const user = await db.get("SELECT * FROM users WHERE id = $1", [req.user.id]);
   if (!user) {
     return res.status(404).json({ error: "المستخدم غير موجود" });
   }
@@ -134,17 +162,28 @@ router.get("/me", requireAuth, async (req, res) => {
 router.get("/store-info/:identifier", async (req, res) => {
   const identifier = req.params.identifier;
   let vendor;
-  if (identifier === '1' || identifier === 'default') {
+  if (identifier === "1" || identifier === "default") {
     // Single-tenant mode
     if (process.env.MAIN_STORE_USER_ID) {
-      vendor = await db.get("SELECT id, name, store_name, store_slug FROM public.users WHERE id = $1", [process.env.MAIN_STORE_USER_ID]);
+      vendor = await db.get(
+        "SELECT id, name, store_name, store_slug FROM users WHERE id = $1",
+        [process.env.MAIN_STORE_USER_ID],
+      );
     } else {
-      vendor = await db.get("SELECT id, name, store_name, store_slug FROM public.users WHERE id = 2");
+      vendor = await db.get(
+        "SELECT id, name, store_name, store_slug FROM users WHERE role = 'admin' LIMIT 1",
+      );
     }
   } else if (/^\d+$/.test(identifier)) {
-    vendor = await db.get("SELECT id, name, store_name, store_slug FROM public.users WHERE id = $1", [parseInt(identifier, 10)]);
+    vendor = await db.get(
+      "SELECT id, name, store_name, store_slug FROM users WHERE id = $1",
+      [parseInt(identifier, 10)],
+    );
   } else {
-    vendor = await db.get("SELECT id, name, store_name, store_slug FROM public.users WHERE store_slug = $1", [identifier]);
+    vendor = await db.get(
+      "SELECT id, name, store_name, store_slug FROM users WHERE store_slug = $1",
+      [identifier],
+    );
   }
   if (!vendor) return res.status(404).json({ error: "المتجر غير موجود" });
   res.json({
@@ -160,24 +199,32 @@ router.post("/logout", (req, res) => {
   res.json({ success: true, message: "Logged out successfully" });
 });
 
-
 router.put("/change-password", requireAuth, async (req, res) => {
   const { old_password: currentPassword, new_password: newPassword } = req.body;
-  if (!currentPassword || !newPassword) return res.status(400).json({ error: "الرجاء إدخال كلمة المرور الحالية والجديدة" });
+  if (!currentPassword || !newPassword)
+    return res
+      .status(400)
+      .json({ error: "الرجاء إدخال كلمة المرور الحالية والجديدة" });
   try {
-    const user = await db.get("SELECT password_hash FROM public.users WHERE id = $1", [req.user.id]);
+    const user = await db.get("SELECT password_hash FROM users WHERE id = $1", [
+      req.user.id,
+    ]);
     if (!user) return res.status(404).json({ error: "المستخدم غير موجود" });
-    const match = await require("bcryptjs").compare(currentPassword, user.password_hash);
-    if (!match) return res.status(400).json({ error: "كلمة المرور الحالية غير صحيحة" });
+    const match = await require("bcryptjs").compare(
+      currentPassword,
+      user.password_hash,
+    );
+    if (!match)
+      return res.status(400).json({ error: "كلمة المرور الحالية غير صحيحة" });
     const hash = await require("bcryptjs").hash(newPassword, 10);
-    await db.query("UPDATE public.users SET password_hash = $1 WHERE id = $2", [hash, req.user.id]);
+    await db.query("UPDATE users SET password_hash = $1 WHERE id = $2", [
+      hash,
+      req.user.id,
+    ]);
     res.json({ success: true });
-  } catch(e) {
-    res.status(500).json({ error: e.message });
+  } catch (e) {
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
-
 module.exports = router;
-
-
