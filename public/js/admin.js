@@ -2063,8 +2063,10 @@ function renderCampaignTable(campaigns) {
       const roasColor = c.real_roas >= 1 ? "#1E6F54" : "#C03B2B";
       const delivRate = c.delivery_rate.toFixed(0);
 
-      const linkUrl = `${window.location.origin}/?utm_source=${encodeURIComponent(c.source)}&utm_campaign=${encodeURIComponent(c.campaign_name)}`;
-      const copyBtn = `<button onclick="navigator.clipboard.writeText('${linkUrl}').then(() => { if (typeof showToast !== 'undefined') showToast('تم نسخ رابط الحملة بنجاح!'); else alert('تم نسخ رابط الحملة بنجاح!'); })" class="ml-2 mt-1 text-slate-400 hover:text-blue-600 transition-colors" title="نسخ رابط الحملة" style="cursor: pointer;">
+      const safeSource = encodeURIComponent(c.source || "").replace(/'/g, "%27");
+      const safeCamp = encodeURIComponent(c.campaign_name || "").replace(/'/g, "%27");
+      const linkUrl = `${window.location.origin}/?utm_source=${safeSource}&utm_campaign=${safeCamp}`;
+      const copyBtn = `<button type="button" data-copy-campaign-url="${escapeHtml(linkUrl)}" class="copy-campaign-btn ml-2 mt-1 text-slate-400 hover:text-blue-600 transition-colors" title="نسخ رابط الحملة" style="cursor: pointer;">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
       </button>`;
 
@@ -2073,7 +2075,7 @@ function renderCampaignTable(campaigns) {
         <div class="flex items-start">
           <div class="flex-1">
             <span class="font-black text-sm block">${escapeHtml(c.campaign_name)}</span>
-            <span class="text-sm text-slate-900/50">${getSourceLabel(c.source)}</span>
+            <span class="text-sm text-slate-900/50">${escapeHtml(getSourceLabel(c.source))}</span>
           </div>
           ${copyBtn}
         </div>
@@ -2092,6 +2094,19 @@ function renderCampaignTable(campaigns) {
     })
     .join("");
 }
+
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest("[data-copy-campaign-url]");
+  if (btn) {
+    const url = btn.getAttribute("data-copy-campaign-url");
+    if (url) {
+      navigator.clipboard.writeText(url).then(() => {
+        if (typeof showToast !== "undefined") showToast("تم نسخ رابط الحملة بنجاح!");
+        else alert("تم نسخ رابط الحملة بنجاح!");
+      });
+    }
+  }
+});
 
 ["campaignSearchInput", "campaignProfitFilter", "campaignRoasFilter"].forEach(
   (id) => {

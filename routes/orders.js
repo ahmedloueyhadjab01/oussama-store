@@ -4,7 +4,7 @@ const express = require('express');
 const { body, validationResult } = require('express-validator');
 const rateLimit = require('express-rate-limit');
 const db = require('../db');
-const { normalizeSource } = require('../utils/source');
+const { normalizeSource, sanitizeUtm } = require('../utils/source');
 const ShippingService = require('../services/shippingService');
 const { requireAuth, requireActiveSubscription, checkResourceOwnership, isSubscriptionExpired } = require('../middleware/auth');
 const { ensureFinancialArchive } = require('../db');
@@ -219,9 +219,9 @@ router.post(
         const total = subtotal + deliveryPrice;
 
         const utm_source = normalizeSource(req.body.utm_source);
-        const utm_campaign = (req.body.utm_campaign || '').trim();
-        const utm_medium = (req.body.utm_medium || '').trim();
-        const utm_content = (req.body.utm_content || '').trim();
+        const utm_campaign = sanitizeUtm(req.body.utm_campaign, 100);
+        const utm_medium = sanitizeUtm(req.body.utm_medium, 100);
+        const utm_content = sanitizeUtm(req.body.utm_content, 100);
 
         const insertRes = await trx.query(
           `INSERT INTO orders
@@ -267,7 +267,9 @@ router.post(
       }
       res.status(201).json({ success: true, ...outcome });
     } catch (err) {
-      return res.status(400).json({ error: err.message || 'تعذر إتمام الطلب' });
+      console.error('Order creation error:', err);
+      const clientMessage = (err.message && !err.message.includes('syntax') && !err.message.includes('relation') && !err.message.includes('pg_') && !err.message.includes('column')) ? err.message : 'تعذر إتمام الطلب، يرجى المحاولة لاحقاً';
+      return res.status(400).json({ error: clientMessage });
     }
   }
 );
@@ -556,6 +558,8 @@ router.put('/:id/edit', requireAuth, requireActiveSubscription, async (req, res)
           err.statusCode = 400;
           throw err;
         }
+        const verifiedItems = [];
+        let calculatedSubtotal = 0;
         for (const item of items) {
           const productId = Number(item.id);
           const quantity = Number(item.qty);
@@ -564,30 +568,46 @@ router.put('/:id/edit', requireAuth, requireActiveSubscription, async (req, res)
             err.statusCode = 400;
             throw err;
           }
-          const product = await trx.get('SELECT id, user_id, has_variants FROM products WHERE id = $1', [productId]);
+          const product = await trx.get('SELECT id, user_id, name, price, cost_price, has_variants FROM products WHERE id = $1', [productId]);
           if (!product || Number(product.user_id) !== Number(order.user_id)) {
             const err = new Error('لا يمكن إضافة منتج لا ينتمي إلى المتجر صاحب الطلب');
             err.statusCode = 403;
             throw err;
           }
+          let itemCost = parseFloat(product.cost_price || 0);
+          let itemPrice = parseFloat(product.price || 0);
+          let itemLabel = product.name;
+          let variantIdVal = null;
           if (item.variant_id != null) {
             const variantId = Number(item.variant_id);
             const variant = Number.isSafeInteger(variantId)
-              ? await trx.get('SELECT id FROM product_variants WHERE id = $1 AND product_id = $2', [variantId, productId])
+              ? await trx.get('SELECT id, label, cost_price FROM product_variants WHERE id = $1 AND product_id = $2', [variantId, productId])
               : null;
             if (!variant || !product.has_variants) {
               const err = new Error('متغير المنتج لا يطابق المنتج المحدد');
               err.statusCode = 400;
               throw err;
             }
+            variantIdVal = variant.id;
+            if (variant.cost_price != null) itemCost = parseFloat(variant.cost_price || 0);
+            if (variant.label) itemLabel = `${product.name} (${variant.label})`;
           } else if (product.has_variants) {
             const err = new Error('يجب تحديد المقاس أو النوع للمنتج');
             err.statusCode = 400;
             throw err;
           }
+          calculatedSubtotal += itemPrice * quantity;
+          verifiedItems.push({
+            id: product.id,
+            name: itemLabel,
+            price: itemPrice,
+            cost_price: itemCost,
+            qty: quantity,
+            variant_id: variantIdVal,
+          });
         }
-        finalSubtotal = items.reduce((sum, it) => sum + (parseFloat(it.price) || 0) * (parseInt(it.qty, 10) || 1), 0);
-        finalItems = items;
+        finalSubtotal = calculatedSubtotal;
+        finalItems = verifiedItems;
       }
 
       const finalTotal = finalSubtotal + finalDeliveryPrice;
@@ -903,7 +923,7 @@ router.get('/profit-30d', requireAuth, async (req, res) => {
     net_profit: revenue - cost_of_goods - shipping_cost,
     top_products
   });
-  } catch (err) { res.status(500).json({error: err.message}); }
+  } catch (err) { console.error('Orders report error:', err); res.status(500).json({ error: 'تعذر إعداد تقرير الطلبات' }); }
 });
 
 module.exports = router;
