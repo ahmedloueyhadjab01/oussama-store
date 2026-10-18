@@ -31,7 +31,11 @@ router.get('/', async (req, res) => {
     vendorId = parseInt(store_id, 10);
   } else if (store_slug) {
     const vendor = await db.get('SELECT id FROM users WHERE store_slug = $1', [store_slug]);
-    if (vendor) vendorId = vendor.id;
+    if (vendor) {
+      vendorId = vendor.id;
+    } else {
+      return res.json([]);
+    }
   } else {
     const token = (req.cookies && req.cookies.token) || (req.get('authorization') && req.get('authorization').replace('Bearer ', ''));
     if (token) {
@@ -47,7 +51,13 @@ router.get('/', async (req, res) => {
   if (vendorId) {
     categories = await db.all('SELECT * FROM categories WHERE user_id = $1', [vendorId]);
   } else {
-    categories = await db.all('SELECT * FROM categories');
+    // إذا لم يُحدد متجر، نقتصر على المتجر الرئيسي بدلاً من كشف تصنيفات كل المتاجر
+    const defaultVendor = await db.get("SELECT id FROM users WHERE role = 'admin' ORDER BY id ASC LIMIT 1");
+    if (defaultVendor) {
+      categories = await db.all('SELECT * FROM categories WHERE user_id = $1', [defaultVendor.id]);
+    } else {
+      categories = [];
+    }
   }
   res.json(buildTree(categories, null));
 });

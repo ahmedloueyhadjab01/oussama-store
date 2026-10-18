@@ -73,14 +73,15 @@ const rawMulter = multer({
   limits: { fileSize: 8 * 1024 * 1024, files: 8 },
 });
 
-async function uploadFileBuffer(buffer, originalname, mimetype) {
+async function uploadFileBuffer(buffer, originalname, mimetype, userId = null) {
   // فحص البايتات السحرية للتأكد من المحتوى الحقيقي
   if (!validateMagicBytes(buffer)) {
     throw new Error('محتوى الملف غير صالح أو تم التلاعب بامتداده (فشل التحقق الأمني من توقيع الملف).');
   }
 
   const ext = path.extname(originalname).toLowerCase();
-  const safeName = Date.now() + '_' + crypto.randomBytes(8).toString('hex') + ext;
+  const userPrefix = userId ? `u${userId}_` : '';
+  const safeName = `${userPrefix}${Date.now()}_${crypto.randomBytes(8).toString('hex')}${ext}`;
   const bucketName = process.env.SUPABASE_STORAGE_BUCKET || 'uploads';
   let fallbackLocal = false;
 
@@ -124,7 +125,8 @@ const upload = {
             const uploaded = await uploadFileBuffer(
               req.file.buffer,
               req.file.originalname,
-              req.file.mimetype
+              req.file.mimetype,
+              req.user?.id || null
             );
             req.file.url = uploaded.url;
             req.file.filename = uploaded.filename;
@@ -147,7 +149,8 @@ const upload = {
                 const uploaded = await uploadFileBuffer(
                   file.buffer,
                   file.originalname,
-                  file.mimetype
+                  file.mimetype,
+                  req.user?.id || null
                 );
                 file.url = uploaded.url;
                 file.filename = uploaded.filename;
@@ -161,12 +164,18 @@ const upload = {
       });
     };
   },
-  deleteFiles: async (urls) => {
+  deleteFiles: async (urls, userId = null) => {
     if (!urls || !urls.length) return;
     // حذف محلي
     for (const url of urls) {
       if (typeof url === 'string' && url.startsWith('/uploads/')) {
         const safeBase = path.basename(url);
+        // التحقق من ملكية الصورة للتاجر إذا كانت مسبوقة بـ u<id>_
+        const userMatch = safeBase.match(/^u(\d+)_/);
+        if (userMatch && userId && parseInt(userMatch[1], 10) !== parseInt(userId, 10)) {
+          console.warn(`[Security] Blocked unauthorized attempt to delete file ${safeBase} by user ${userId}`);
+          continue;
+        }
         const localPath = path.join(uploadsDir, safeBase);
         try { if (fs.existsSync(localPath)) fs.unlinkSync(localPath); } catch {}
       }
@@ -178,7 +187,12 @@ const upload = {
         const filenames = urls.map(url => {
           if (typeof url !== 'string') return null;
           const parts = url.split('/');
-          return parts[parts.length - 1];
+          const safeBase = parts[parts.length - 1];
+          const userMatch = safeBase.match(/^u(\d+)_/);
+          if (userMatch && userId && parseInt(userMatch[1], 10) !== parseInt(userId, 10)) {
+            return null;
+          }
+          return safeBase;
         }).filter(Boolean);
         if (filenames.length > 0) {
           await supabaseClient.storage.from(bucketName).remove(filenames);

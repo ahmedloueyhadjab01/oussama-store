@@ -219,24 +219,29 @@ router.get('/theme', async (req, res) => {
     row = await db.get("SELECT value FROM settings WHERE user_id = $1 AND key = 'theme_primary_color'", [storeId]);
   }
   if (!row) {
-    row = await db.get("SELECT value FROM settings WHERE key = 'theme_primary_color' ORDER BY id DESC LIMIT 1");
-  }
-  if (!row) {
     row = await db.get("SELECT value FROM settings WHERE user_id IS NULL AND key = 'theme_primary_color'");
   }
+
   let rowBg;
-  if (storeId) rowBg = await db.get("SELECT value FROM settings WHERE user_id = $1 AND key = 'theme_background'", [storeId]);
-  if (!rowBg) rowBg = await db.get("SELECT value FROM settings WHERE key = 'theme_background' ORDER BY id DESC LIMIT 1");
-  if (!rowBg) rowBg = await db.get("SELECT value FROM settings WHERE user_id IS NULL AND key = 'theme_background'");
-    let rowBgColor;
-    if (storeId) rowBgColor = await db.get("SELECT value FROM settings WHERE user_id = $1 AND key = 'theme_bg_color'", [storeId]);
-    if (!rowBgColor) rowBgColor = await db.get("SELECT value FROM settings WHERE key = 'theme_bg_color' ORDER BY id DESC LIMIT 1");
-    if (!rowBgColor) rowBgColor = await db.get("SELECT value FROM settings WHERE user_id IS NULL AND key = 'theme_bg_color'");
+  if (storeId) {
+    rowBg = await db.get("SELECT value FROM settings WHERE user_id = $1 AND key = 'theme_background'", [storeId]);
+  }
+  if (!rowBg) {
+    rowBg = await db.get("SELECT value FROM settings WHERE user_id IS NULL AND key = 'theme_background'");
+  }
+
+  let rowBgColor;
+  if (storeId) {
+    rowBgColor = await db.get("SELECT value FROM settings WHERE user_id = $1 AND key = 'theme_bg_color'", [storeId]);
+  }
+  if (!rowBgColor) {
+    rowBgColor = await db.get("SELECT value FROM settings WHERE user_id IS NULL AND key = 'theme_bg_color'");
+  }
   
   res.json({ 
     primary_color: row ? row.value : '#e11d48',
     theme_background: rowBg ? rowBg.value : 'solid',
-      theme_bg_color: rowBgColor ? rowBgColor.value : ''
+    theme_bg_color: rowBgColor ? rowBgColor.value : ''
   }); // default to rose-600
 });
 

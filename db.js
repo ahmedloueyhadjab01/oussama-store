@@ -1,4 +1,4 @@
-﻿require('dotenv').config();
+require('dotenv').config();
 const { Pool } = require('pg');
 const path = require('path');
 const fs = require('fs');
@@ -592,8 +592,10 @@ async function initDb() {
   try {
     if (databaseMode === 'postgres') {
       await pool.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS password_changed_at TIMESTAMPTZ;');
+      await pool.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS last_logout_at TIMESTAMPTZ;');
     } else {
       await pool.query('ALTER TABLE users ADD COLUMN password_changed_at TEXT;');
+      await pool.query('ALTER TABLE users ADD COLUMN last_logout_at TEXT;');
     }
   } catch (e) {}
 
@@ -684,29 +686,45 @@ async function initDb() {
   }
 
   console.log('âœ… Ø§ÙƒØªÙ…Ù„Øª ØªÙ‡ÙŠØ¦Ø© Ù‚Ø§Ø¹Ø¯Ø© Ø¨ÙŠØ§Ù†Ø§Øª PostgreSQL Ø¨Ù†Ø¬Ø§Ø­.');
-  // تنظيف القيم السابقة في orders و ad_visits لضمان عدم وجود وسوم أو أحرف ضارة
+  // تنظيف القيم السابقة لمرة واحدة فقط (One-time Migration) لضمان سرعة إقلاع السيرفر
   try {
-    const { sanitizeUtm } = require('./utils/source');
-    const dirtyOrders = await pool.query("SELECT id, utm_source, utm_campaign, utm_medium, utm_content FROM orders WHERE COALESCE(utm_source, '') != '' OR COALESCE(utm_campaign, '') != '' OR COALESCE(utm_medium, '') != '' OR COALESCE(utm_content, '') != ''");
-    for (const row of dirtyOrders.rows) {
-      const cleanSrc = sanitizeUtm(row.utm_source, 100);
-      const cleanCamp = sanitizeUtm(row.utm_campaign, 100);
-      const cleanMed = sanitizeUtm(row.utm_medium, 100);
-      const cleanContent = sanitizeUtm(row.utm_content, 100);
-      if (cleanSrc !== row.utm_source || cleanCamp !== row.utm_campaign || cleanMed !== row.utm_medium || cleanContent !== row.utm_content) {
-        await pool.query('UPDATE orders SET utm_source = $1, utm_campaign = $2, utm_medium = $3, utm_content = $4 WHERE id = $5', [cleanSrc, cleanCamp, cleanMed, cleanContent, row.id]);
+    const migrationDone = await get("SELECT value FROM settings WHERE user_id IS NULL AND key = 'migration_sanitize_utm_v1'");
+    if (!migrationDone) {
+      const { sanitizeUtm } = require('./utils/source');
+      
+      const dirtyOrders = await pool.query("SELECT id, utm_source, utm_campaign, utm_medium, utm_content FROM orders WHERE COALESCE(utm_source, '') != '' OR COALESCE(utm_campaign, '') != '' OR COALESCE(utm_medium, '') != '' OR COALESCE(utm_content, '') != ''");
+      for (const row of dirtyOrders.rows) {
+        const cleanSrc = sanitizeUtm(row.utm_source, 100);
+        const cleanCamp = sanitizeUtm(row.utm_campaign, 100);
+        const cleanMed = sanitizeUtm(row.utm_medium, 100);
+        const cleanContent = sanitizeUtm(row.utm_content, 100);
+        if (cleanSrc !== row.utm_source || cleanCamp !== row.utm_campaign || cleanMed !== row.utm_medium || cleanContent !== row.utm_content) {
+          await pool.query('UPDATE orders SET utm_source = $1, utm_campaign = $2, utm_medium = $3, utm_content = $4 WHERE id = $5', [cleanSrc, cleanCamp, cleanMed, cleanContent, row.id]);
+        }
       }
-    }
 
-    const dirtyVisits = await pool.query("SELECT id, source, campaign, medium, content FROM ad_visits WHERE COALESCE(source, '') != '' OR COALESCE(campaign, '') != '' OR COALESCE(medium, '') != '' OR COALESCE(content, '') != ''");
-    for (const row of dirtyVisits.rows) {
-      const cleanSrc = sanitizeUtm(row.source, 100);
-      const cleanCamp = sanitizeUtm(row.campaign, 100);
-      const cleanMed = sanitizeUtm(row.medium, 100);
-      const cleanContent = sanitizeUtm(row.content, 100);
-      if (cleanSrc !== row.source || cleanCamp !== row.campaign || cleanMed !== row.medium || cleanContent !== row.content) {
-        await pool.query('UPDATE ad_visits SET source = $1, campaign = $2, medium = $3, content = $4 WHERE id = $5', [cleanSrc, cleanCamp, cleanMed, cleanContent, row.id]);
+      const dirtyVisits = await pool.query("SELECT id, source, campaign, medium, content FROM ad_visits WHERE COALESCE(source, '') != '' OR COALESCE(campaign, '') != '' OR COALESCE(medium, '') != '' OR COALESCE(content, '') != ''");
+      for (const row of dirtyVisits.rows) {
+        const cleanSrc = sanitizeUtm(row.source, 100);
+        const cleanCamp = sanitizeUtm(row.campaign, 100);
+        const cleanMed = sanitizeUtm(row.medium, 100);
+        const cleanContent = sanitizeUtm(row.content, 100);
+        if (cleanSrc !== row.source || cleanCamp !== row.campaign || cleanMed !== row.medium || cleanContent !== row.content) {
+          await pool.query('UPDATE ad_visits SET source = $1, campaign = $2, medium = $3, content = $4 WHERE id = $5', [cleanSrc, cleanCamp, cleanMed, cleanContent, row.id]);
+        }
       }
+
+      const dirtySpend = await pool.query("SELECT id, campaign_name, source FROM campaign_ad_spend WHERE COALESCE(campaign_name, '') != '' OR COALESCE(source, '') != ''");
+      for (const row of dirtySpend.rows) {
+        const cleanCamp = sanitizeUtm(row.campaign_name, 100);
+        const cleanSrc = sanitizeUtm(row.source, 100);
+        if (cleanCamp !== row.campaign_name || cleanSrc !== row.source) {
+          await pool.query('UPDATE campaign_ad_spend SET campaign_name = $1, source = $2 WHERE id = $3', [cleanCamp, cleanSrc, row.id]);
+        }
+      }
+
+      await query("INSERT INTO settings (user_id, key, value) VALUES (NULL, 'migration_sanitize_utm_v1', 'done') ON CONFLICT (COALESCE(user_id, 0), key) DO NOTHING");
+      console.log('✅ تم إكمال ترحيل تنظيف وسوم UTM بنجاح لمرة واحدة.');
     }
   } catch (cleanErr) {
     console.warn('⚠️ تنبيه أثناء تنظيف البيانات السابقة:', cleanErr.message);

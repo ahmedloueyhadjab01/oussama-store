@@ -48,6 +48,14 @@ router.post('/settings', requireAuth, requireActiveSubscription, async (req, res
       manual_provider_name,
     } = req.body;
 
+    const homePrice = flat_home_price !== undefined && flat_home_price !== '' ? Number(flat_home_price) : 600;
+    const deskPrice = flat_desk_price !== undefined && flat_desk_price !== '' ? Number(flat_desk_price) : 350;
+    const threshold = free_shipping_threshold !== undefined && free_shipping_threshold !== '' ? Number(free_shipping_threshold) : 15000;
+
+    if (!Number.isFinite(homePrice) || homePrice < 0 || !Number.isFinite(deskPrice) || deskPrice < 0 || !Number.isFinite(threshold) || threshold < 0) {
+      return res.status(400).json({ error: 'أسعار الشحن وحد الشحن المجاني يجب أن تكون أرقاماً موجبة صحيحة.' });
+    }
+
     await db.query(
       `INSERT INTO vendor_shipping_configs (
         user_id, provider, api_key, api_token, from_wilaya_id, from_commune,
@@ -74,10 +82,10 @@ router.post('/settings', requireAuth, requireActiveSubscription, async (req, res
         parseInt(from_wilaya_id, 10) || 16,
         from_commune || '',
         pricing_mode || 'flat',
-        flat_home_price !== undefined && flat_home_price !== '' ? Number(flat_home_price) : 600,
-        flat_desk_price !== undefined && flat_desk_price !== '' ? Number(flat_desk_price) : 350,
+        homePrice,
+        deskPrice,
         free_shipping_enabled ? 1 : 0,
-        free_shipping_threshold !== undefined && free_shipping_threshold !== '' ? Number(free_shipping_threshold) : 15000,
+        threshold,
         manual_provider_name || null
       ]
     );

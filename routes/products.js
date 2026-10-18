@@ -10,52 +10,7 @@ const router = express.Router();
 
 
 
-function sanitizeSingleImageUrl(clean) {
-  if (typeof clean !== 'string') return null;
-  const s = clean.trim();
-  if (!s || s.length > 500) return null;
-  if (/[<>"'\s]/.test(s)) return null;
-  if (s.startsWith('/uploads/')) {
-    const filename = s.slice('/uploads/'.length);
-    return /^[a-zA-Z0-9_\-.]+\.(jpg|jpeg|png|webp|gif|mp4|mov)$/i.test(filename) ? s : null;
-  }
-  if (s.startsWith('https://')) {
-    try {
-      const parsedUrl = new URL(s);
-      if (parsedUrl.protocol !== 'https:') return null;
-      const pathname = parsedUrl.pathname.toLowerCase();
-      return /\.(jpg|jpeg|png|webp|gif|mp4|mov)$/i.test(pathname) ? s : null;
-    } catch {
-      return null;
-    }
-  }
-  return null;
-}
-
-function sanitizeImageUrls(raw) {
-  if (!raw) return [];
-  let arr = [];
-  if (Array.isArray(raw)) {
-    arr = raw;
-  } else if (typeof raw === 'string') {
-    try {
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) arr = parsed;
-      else if (typeof parsed === 'string') arr = [parsed];
-    } catch {
-      if (raw.trim().startsWith('/uploads/') || raw.trim().startsWith('https://')) {
-        arr = [raw.trim()];
-      }
-    }
-  }
-
-  const result = [];
-  for (const item of arr) {
-    const valid = sanitizeSingleImageUrl(item);
-    if (valid) result.push(valid);
-  }
-  return result;
-}
+const { sanitizeSingleImageUrl, sanitizeImageUrls } = require('../utils/image');
 
 function escapeLike(str) {
   return String(str || '').replace(/([%_\\])/g, '\\$1');
@@ -646,8 +601,9 @@ router.delete('/:id/variants/:variantId', requireAuth, requireActiveSubscription
   if (variant.image) {
     const otherProduct = await db.get('SELECT id FROM products WHERE image = $1 OR images LIKE $2', [variant.image, '%' + variant.image + '%']);
     const otherVariant = await db.get('SELECT id FROM product_variants WHERE id != $1 AND image = $2', [variant.id, variant.image]);
-    if (!otherProduct && !otherVariant) {
-      upload.deleteFiles([variant.image]);
+    const otherCategory = await db.get('SELECT id FROM categories WHERE image = $1', [variant.image]);
+    if (!otherProduct && !otherVariant && !otherCategory) {
+      upload.deleteFiles([variant.image], product.user_id);
     }
   }
 
@@ -683,12 +639,13 @@ router.delete('/:id', requireAuth, requireActiveSubscription, async (req, res) =
       if (!imgUrl) continue;
       const otherProduct = await db.get('SELECT id FROM products WHERE id != $1 AND (image = $2 OR images LIKE $3)', [product.id, imgUrl, '%' + imgUrl + '%']);
       const otherVariant = await db.get('SELECT id FROM product_variants WHERE product_id != $1 AND image = $2', [product.id, imgUrl]);
-      if (!otherProduct && !otherVariant) {
+      const otherCategory = await db.get('SELECT id FROM categories WHERE image = $1', [imgUrl]);
+      if (!otherProduct && !otherVariant && !otherCategory) {
         safeToDelete.push(imgUrl);
       }
     }
     if (safeToDelete.length > 0) {
-      upload.deleteFiles(safeToDelete);
+      upload.deleteFiles(safeToDelete, product.user_id);
     }
   }
   
