@@ -607,6 +607,24 @@ async function initDb() {
     }
   } catch (err) {}
 
+  // تفعيل Row Level Security (RLS) لجميع الجداول عند العمل مع PostgreSQL / Supabase
+  if (databaseMode === 'postgres') {
+    const rlsTables = [
+      'admins', 'users', 'password_resets', 'push_tokens', 'notifications',
+      'subscriptions_log', 'subscription_requests', 'categories', 'products',
+      'product_variants', 'variant_restocks', 'stock_restocks', 'orders',
+      'order_items', 'order_status_history', 'settings', 'delivery_rates',
+      'vendor_shipping_configs', 'vendor_custom_delivery_rates', 'financial_archive',
+      'campaign_ad_spend', 'ad_visits'
+    ];
+    for (const tbl of rlsTables) {
+      try {
+        await pool.query(`ALTER TABLE IF EXISTS ${tbl} ENABLE ROW LEVEL SECURITY;`);
+      } catch (rlsErr) {}
+    }
+    console.log('🔒 تم تفعيل Row Level Security (RLS) على جميع جداول PostgreSQL/Supabase بنجاح.');
+  }
+
 
   // Ø¥Ø¶Ø§ÙØ© Ø§Ù„Ø£Ø¹Ù…Ø¯Ø© Ø§Ù„Ø¬Ø¯ÙŠØ¯Ø© Ù„Ù„Ù…Ù†ØªØ¬Ø§Øª Ø¥Ø°Ø§ ÙƒØ§Ù†Øª Ù‚Ø§Ø¹Ø¯Ø© Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ù…ÙˆØ¬ÙˆØ¯Ø© Ø¨Ø§Ù„ÙØ¹Ù„
   try {
