@@ -270,6 +270,20 @@ function updateSubscriptionUI(user) {
           ? new Date(expDate).toLocaleDateString("ar-DZ")
           : "-";
   }
+    // تحديث بيانات هوية المتجر والحساب
+  const themeUserEl = document.getElementById("themeUsername");
+  const themeStoreEl = document.getElementById("themeStoreName");
+  const themeEmailEl = document.getElementById("themeEmail");
+  const themeUrlEl = document.getElementById("themeStoreUrl");
+  const themeRoleEl = document.getElementById("themeAccountRoleBadge");
+  if (themeUserEl) themeUserEl.value = user.name || user.username || "";
+  if (themeStoreEl) themeStoreEl.value = user.store_name || user.name || "متجري";
+  if (themeEmailEl) themeEmailEl.value = user.email || "";
+  if (themeUrlEl) themeUrlEl.value = `${window.location.origin}/`;
+  if (themeRoleEl) {
+    themeRoleEl.textContent = user.role === "admin" ? "حساب إداري نشط" : (user.subscription_plan === "annual" ? "مشترك سنوي نشط" : "مشترك شهري");
+  }
+
   if (statusBadge) {
     statusBadge.textContent = isExpired
       ? "مشاهدة فقط"
@@ -3712,3 +3726,136 @@ document
 document
   .getElementById("reportPeriodSelect")
   ?.addEventListener("change", loadProductReport);
+
+// ---------- هوية المتجر وتغيير كلمة المرور ----------
+let themeAndSecurityListenersInitialized = false;
+
+function initThemeAndSecurityListeners() {
+  if (themeAndSecurityListenersInitialized) return;
+  themeAndSecurityListenersInitialized = true;
+
+  // زر النسخ لرابط المتجر
+  const copyThemeStoreUrlBtn = document.getElementById("copyThemeStoreUrlBtn");
+  if (copyThemeStoreUrlBtn) {
+    copyThemeStoreUrlBtn.addEventListener("click", () => {
+      const url = document.getElementById("themeStoreUrl")?.value || `${window.location.origin}/`;
+      navigator.clipboard.writeText(url).then(() => {
+        showToast("تم نسخ رابط متجرك بنجاح 📋");
+      }).catch(() => {
+        prompt("انسخ رابط متجرك:", url);
+      });
+    });
+  }
+
+  // إظهار / إخفاء كلمة المرور (أيقونة العين)
+  document.querySelectorAll(".toggle-pwd-btn").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      const targetId = btn.dataset.target;
+      const input = document.getElementById(targetId);
+      if (!input) return;
+      if (input.type === "password") {
+        input.type = "text";
+        btn.classList.add("text-blue-600");
+      } else {
+        input.type = "password";
+        btn.classList.remove("text-blue-600");
+      }
+    });
+  });
+
+  // زر الانتقال السريع لتغيير كلمة المرور من الهيدر
+  const quickChangePasswordBtn = document.getElementById("quickChangePasswordBtn");
+  if (quickChangePasswordBtn) {
+    quickChangePasswordBtn.addEventListener("click", () => {
+      const themeTabBtn = document.querySelector('[data-tab="theme"]');
+      if (themeTabBtn) {
+        themeTabBtn.click();
+        setTimeout(() => {
+          const pwdInput = document.getElementById("currentPasswordInput");
+          if (pwdInput) {
+            pwdInput.focus();
+            pwdInput.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+        }, 150);
+      }
+    });
+  }
+
+  // نموذج تغيير كلمة المرور
+  const changePasswordForm = document.getElementById("changePasswordForm");
+  if (changePasswordForm) {
+    changePasswordForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const alertBox = document.getElementById("changePasswordAlert");
+      const submitBtn = document.getElementById("submitChangePasswordBtn");
+
+      const oldPassword = document.getElementById("currentPasswordInput")?.value?.trim();
+      const newPassword = document.getElementById("newPasswordInput")?.value?.trim();
+      const confirmPassword = document.getElementById("confirmPasswordInput")?.value?.trim();
+
+      const showAlert = (msg, isError = true) => {
+        if (!alertBox) return;
+        alertBox.className = `p-3.5 rounded-xl text-xs font-bold ${
+          isError ? "bg-rose-50 text-rose-700 border border-rose-200" : "bg-emerald-50 text-emerald-700 border border-emerald-200"
+        }`;
+        alertBox.textContent = msg;
+        alertBox.classList.remove("hidden");
+        alertBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      };
+
+      if (!oldPassword || !newPassword || !confirmPassword) {
+        showAlert("يرجى ملء جميع حقول كلمة المرور.");
+        return;
+      }
+
+      if (newPassword.length < 10) {
+        showAlert("كلمة المرور الجديدة يجب ألا تقل عن 10 أحرف/أرقام.");
+        return;
+      }
+
+      if (newPassword !== confirmPassword) {
+        showAlert("كلمة المرور الجديدة وتأكيدها غير متطابقين.");
+        return;
+      }
+
+      if (oldPassword === newPassword) {
+        showAlert("كلمة المرور الجديدة يجب أن تكون مختلفة عن كلمة المرور الحالية.");
+        return;
+      }
+
+      submitBtn.disabled = true;
+      const originalHtml = submitBtn.innerHTML;
+      submitBtn.innerHTML = `<span>جاري التحديث والحفظ...</span>`;
+
+      try {
+        const res = await fetch("/api/auth/change-password", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ old_password: oldPassword, new_password: newPassword }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || "فشل تغيير كلمة المرور");
+        }
+        showAlert(data.message || "تم تغيير كلمة المرور بنجاح! سيتم تسجيل الخروج للتحقق...", false);
+        changePasswordForm.reset();
+        showToast("تم تغيير كلمة المرور بنجاح! يرجى إعادة تسجيل الدخول.");
+        setTimeout(() => {
+          location.reload();
+        }, 2200);
+      } catch (err) {
+        showAlert(err.message, true);
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalHtml;
+      }
+    });
+  }
+}
+
+// Initialise listeners on DOM ready and immediately if document is already ready
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initThemeAndSecurityListeners);
+} else {
+  initThemeAndSecurityListeners();
+}
