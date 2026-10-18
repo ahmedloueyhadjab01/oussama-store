@@ -270,7 +270,15 @@ function updateSubscriptionUI(user) {
           ? new Date(expDate).toLocaleDateString("ar-DZ")
           : "-";
   }
-    // تحديث بيانات هوية المتجر والحساب
+  if (statusBadge) {
+    statusBadge.textContent = isExpired
+      ? "مشاهدة فقط"
+      : isTrial
+        ? "فترة تجريبية"
+        : "اشتراك مفعل";
+  }
+
+  // تحديث بيانات هوية المتجر والحساب
   const themeUserEl = document.getElementById("themeUsername");
   const themeStoreEl = document.getElementById("themeStoreName");
   const themeEmailEl = document.getElementById("themeEmail");
@@ -282,14 +290,6 @@ function updateSubscriptionUI(user) {
   if (themeUrlEl) themeUrlEl.value = `${window.location.origin}/`;
   if (themeRoleEl) {
     themeRoleEl.textContent = user.role === "admin" ? "حساب إداري نشط" : (user.subscription_plan === "annual" ? "مشترك سنوي نشط" : "مشترك شهري");
-  }
-
-  if (statusBadge) {
-    statusBadge.textContent = isExpired
-      ? "مشاهدة فقط"
-      : isTrial
-        ? "فترة تجريبية"
-        : "اشتراك مفعل";
   }
 }
 
@@ -499,7 +499,7 @@ function initDashboard() {
       }
     });
   });
-  document.querySelector(".admin-tab-btn").classList.add("active-tab");
+  document.querySelector('.admin-tab-btn').click();
 
   loadCategoryTree();
   loadProducts();
@@ -580,8 +580,8 @@ function renderCategoryNode(cat, container) {
  </div>
  <div class="flex gap-2">
  <button class="add-sub-btn text-sm bg-red-700 text-white w-6 h-6 rounded-full font-black" title="إضافة تصنيف فرعي">+</button>
- <button class="edit-cat-btn text-sm text-slate-900/70 hover:text-slate-900 font-bold px-1" title="تعديل التصنيف">✏️</button>
- <button class="del-cat-btn text-sm text-[#E52F20] font-extrabold px-1" title="حذف التصنيف">🗑️</button>
+ <button class="edit-cat-btn text-sm text-slate-900/70 hover:text-slate-900 font-bold px-1" title="تعديل التصنيف"><svg class="w-4 h-4 inline-block pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg></button>
+ <button class="del-cat-btn text-sm text-[#E52F20] font-extrabold px-1" title="حذف التصنيف"><svg class="w-4 h-4 inline-block pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
  </div>
  </div>
  <div class="children pr-4 space-y-2"></div>
@@ -832,7 +832,7 @@ async function loadProducts() {
   }
 
   table.innerHTML = `
- <table class="w-full text-sm">
+ <table class="w-full text-xs sm:text-sm">
  <thead class="bg-slate-50 text-slate-900/60">
  <tr>
  <th class="p-3 text-right">الصورة</th>
@@ -863,8 +863,8 @@ async function loadProducts() {
  <td class="p-3 font-bold">${p.stock} ${unitLabel}${p.has_variants ? ' <span class="text-[10px] bg-yellow-500/20 text-yellow-600 border border-gold/40 rounded-full px-2 py-0.5 font-bold">مقاسات</span>' : ""}</td>
  <td class="p-3">${p.is_active ? '<span class="text-blue-600 font-bold">مفعّل</span>' : '<span class="text-slate-900/40">معطّل</span>'}</td>
  <td class="p-3 flex gap-2">
- <button class="edit-btn text-blue-600 font-extrabold">✏️ تعديل</button>
- <button class="del-btn text-red-500 font-extrabold">🗑️ حذف</button>
+ <button class="edit-btn text-blue-600 font-extrabold"><svg class="w-4 h-4 inline-block pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg> تعديل</button>
+ <button class="del-btn text-red-500 font-extrabold"><svg class="w-4 h-4 inline-block pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg> حذف</button>
  </td>
  `;
     tr.querySelector(".edit-btn").addEventListener("click", () =>
@@ -936,7 +936,7 @@ function addColorBlock(
   const container = document.getElementById("colorBlocksContainer");
   const block = document.createElement("div");
   block.className =
-    "color-block bg-slate-100/60 border border-slate-200/20 rounded-xl p-4 space-y-3 relative";
+    "color-block bg-slate-50 border border-slate-200/60 shadow-sm rounded-2xl p-5 space-y-4 relative";
   block.dataset.blockId = blockId;
 
   block.innerHTML = `
@@ -946,14 +946,17 @@ function addColorBlock(
  <input class="cb-color-name field px-4 py-1.5 text-sm font-bold flex-1" placeholder="اسم اللون (مثال: أصفر، أسود، أحمر)" value="${escapeHtml(colorName)}" />
  </div>
  <div class="flex items-center gap-2">
- <label class="btn-outline px-4 py-1.5 rounded-lg text-sm font-bold cursor-pointer flex items-center gap-1">
- <span>صورة هذا اللون</span>
+ 
+ <label class="bg-white border border-slate-200 shadow-sm hover:border-blue-300 hover:text-blue-600 px-4 py-2 rounded-xl text-xs font-bold text-slate-600 cursor-pointer flex items-center gap-2 transition-all">
+ <span>صورة اللون</span>
+ <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
  <input type="file" accept="image/*" class="cb-image-file hidden" />
  </label>
+
  <div class="cb-image-preview w-8 h-8 rounded-lg border border-slate-200/30 bg-white overflow-hidden flex items-center justify-center text-[10px] text-slate-900/40">
  ${imagePath ? `<img src="${escapeHtml(imagePath)}" class="w-full h-full object-cover" />` : "لا صورة"}
  </div>
- <button type="button" class="cb-remove-btn text-[#E52F20] hover:bg-[#E52F20]/10 w-7 h-7 rounded-lg font-black text-sm flex items-center justify-center" title="حذف هذا اللون">&times;</button>
+ <button type="button" class="cb-remove-btn text-slate-400 hover:text-rose-600 hover:bg-rose-50 w-8 h-8 rounded-xl transition-colors flex items-center justify-center" title="حذف هذا اللون"><svg class="w-5 h-5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
  </div>
  </div>
 
@@ -962,8 +965,8 @@ function addColorBlock(
  <div class="flex items-center justify-between">
  <span class="text-[11px] font-extrabold text-slate-900/70">المقاسات المتوفرة لهذا اللون:</span>
  <div class="flex gap-2">
- <button type="button" class="cb-quick-sizes text-[10px] text-blue-600 font-bold hover:underline">+ مقاسات شائعة (S, M, L, XL)</button>
- <button type="button" class="cb-add-size-btn text-[10px] bg-red-700 text-white px-2 py-0.5 rounded font-bold">+ مقاس</button>
+ <button type="button" class="cb-quick-sizes text-[11px] text-blue-600 font-bold hover:text-blue-700 hover:bg-blue-50 px-2 py-1 rounded-lg transition-colors">+ مقاسات جاهزة (S,M,L,XL)</button>
+ <button type="button" class="cb-add-size-btn text-[11px] bg-slate-800 text-white px-3 py-1 rounded-lg font-bold hover:bg-slate-700 shadow-sm transition-all">+ إضافة مقاس</button>
  </div>
  </div>
  <div class="cb-sizes-list space-y-1.5"></div>
@@ -1037,7 +1040,7 @@ function addVariantRow(label = "", qty = "", cost = "") {
  <input class="v-label field px-1 py-1 text-[12px] min-w-0" placeholder="النوع/المقاس" value="${escapeHtml(label)}" />
  <input class="v-qty field px-1 py-1 text-[12px] min-w-0" type="number" min="0" placeholder="الكمية" value="${qty}" />
  <input class="v-cost field px-1 py-1 text-[12px] min-w-0" type="number" step="0.01" min="0" placeholder="سعر الشراء" value="${cost}" />
- <button type="button" class="v-remove text-red-500 font-extrabold text-sm px-1">🗑️ حذف</button>
+ <button type="button" class="v-remove text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-1.5 rounded-lg transition-colors" title="حذف المقاس"><svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
  `;
   row.querySelector(".v-remove").addEventListener("click", () => row.remove());
   document.getElementById("variantRows").appendChild(row);
@@ -1213,7 +1216,7 @@ function renderVariantsEditPanel(product) {
  <div class="flex gap-2">
  <button type="button" class="v-image-btn text-sky-700 hover:bg-sky-50 px-2 py-1 rounded font-black text-sm" data-vid="${v.id}" title="تغيير صورة اللون أو المقاس">تغيير الصورة</button>
  <button type="button" class="v-restock-btn text-blue-600 hover:bg-red-700/10 px-2 py-1 rounded font-black text-sm" data-vid="${v.id}" data-label="${escapeHtml(labelText)}" data-stock="${v.stock}">+ تزويد</button>
- <button type="button" class="v-delete-btn text-red-500 hover:bg-[#E52F20]/10 px-2 py-1 rounded font-black text-sm" data-vid="${v.id}" data-label="${escapeHtml(labelText)}" data-stock="${v.stock}">🗑️ حذف</button>
+ <button type="button" class="v-delete-btn text-red-500 hover:bg-[#E52F20]/10 px-2 py-1 rounded font-black text-sm" data-vid="${v.id}" data-label="${escapeHtml(labelText)}" data-stock="${v.stock}"><svg class="w-4 h-4 inline-block pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg> حذف</button>
  </div>
  </div>
  `;
@@ -1892,7 +1895,7 @@ function addCalcFixedRow(label = "", amount = "") {
   row.innerHTML = `
  <input class="calc-fixed-label field px-2 py-1.5 text-sm" placeholder="اسم المصروف (مثال: إيجار)" value="${escapeHtml(label)}" />
  <input class="calc-fixed-amount field px-2 py-1.5 text-sm" type="number" min="0" placeholder="المبلغ" value="${amount}" />
- <button type="button" class="calc-remove-row text-red-500 font-extrabold text-sm px-1">🗑️ حذف</button>
+ <button type="button" class="calc-remove-row text-red-500 font-extrabold text-sm px-1"><svg class="w-4 h-4 inline-block pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg> حذف</button>
  `;
   row.querySelector(".calc-remove-row").addEventListener("click", () => {
     row.remove();
@@ -1904,65 +1907,101 @@ function addCalcFixedRow(label = "", amount = "") {
   document.getElementById("calcFixedRows").appendChild(row);
 }
 
+
 function recomputeCalculator() {
-  const cost = parseFloat(document.getElementById("calcCost").value) || 0;
-  const price = parseFloat(document.getElementById("calcPrice").value) || 0;
-  const shipping =
-    parseFloat(document.getElementById("calcShipping").value) || 0;
-  const packaging =
-    parseFloat(document.getElementById("calcPackaging").value) || 0;
-  const misc = parseFloat(document.getElementById("calcMisc").value) || 0;
-  const adCost = parseFloat(document.getElementById("calcAdCost").value) || 0;
+  // 1. Get Bulk Inputs
+  const bulkQty = parseFloat(document.getElementById("calcBulkQty")?.value) || 1;
+  const bulkPrice = parseFloat(document.getElementById("calcBulkPrice")?.value) || 0;
+  const bulkShipping = parseFloat(document.getElementById("calcBulkShipping")?.value) || 0;
+  const bulkMisc = parseFloat(document.getElementById("calcBulkMisc")?.value) || 0;
 
-  const unitCost = cost + shipping + packaging + misc; // تكلفة الوحدة الكاملة بدون الإعلان
-  const margin = price - unitCost; // هامش المساهمة قبل الإعلان (= أقصى ما يمكن دفعه كإعلان)
-  const marginPct = price > 0 ? (margin / price) * 100 : 0;
-  const netUnit = margin - adCost; // صافي الربح الفعلي بعد خصم تكلفة الإعلان المُدخلة
+  // Calculate True Unit Cost
+  const unitCost = (bulkPrice + bulkShipping + bulkMisc) / bulkQty;
+  if(document.getElementById("calcTrueUnitCost")) {
+    document.getElementById("calcTrueUnitCost").textContent = money(unitCost);
+  }
 
-  document.getElementById("calcUnitCost").textContent = money(unitCost);
-  document.getElementById("calcMargin").textContent = money(margin);
-  document.getElementById("calcMarginPct").textContent =
-    `${marginPct.toFixed(1)}%`;
-  document.getElementById("calcMaxAd").textContent = money(Math.max(margin, 0));
-  const netEl = document.getElementById("calcNetUnit");
-  netEl.textContent = money(netUnit);
-  netEl.style.color = netUnit >= 0 ? "#1E6F54" : "#2F6690";
+  // 2. Get Sales & Ops Inputs
+  const sellingPrice = parseFloat(document.getElementById("calcSellingPrice")?.value) || 0;
+  const cpa = parseFloat(document.getElementById("calcCPA")?.value) || 0;
+  const packaging = parseFloat(document.getElementById("calcPackaging")?.value) || 0;
+  const delivery = parseFloat(document.getElementById("calcDelivery")?.value) || 0;
 
-  // مجموع المصاريف الثابتة الشهرية من كل البنود المضافة
-  const totalFixed = Array.from(
-    document.querySelectorAll(".calc-fixed-amount"),
-  ).reduce((sum, inp) => sum + (parseFloat(inp.value) || 0), 0);
-  document.getElementById("calcTotalFixed").textContent = money(totalFixed);
+  // 3. Get Expected Success Rates
+  const confirmRateVal = parseFloat(document.getElementById("calcConfirmRate")?.value) || 70;
+  const deliveryRateVal = parseFloat(document.getElementById("calcDeliveryRate")?.value) || 60;
+  
+  if(document.getElementById("valConfirm")) document.getElementById("valConfirm").textContent = confirmRateVal + "%";
+  if(document.getElementById("valDelivery")) document.getElementById("valDelivery").textContent = deliveryRateVal + "%";
 
-  // نقطة التعادل: تُحسب على هامش المساهمة بعد خصم تكلفة الإعلان الفعلية (الربح الحقيقي للوحدة)
-  const breakevenUnits = netUnit > 0 ? Math.ceil(totalFixed / netUnit) : null;
-  document.getElementById("calcBreakevenUnits").textContent =
-    breakevenUnits !== null ? `${breakevenUnits} قطعة` : "غير ممكن ️";
-  document.getElementById("calcBreakevenDaily").textContent =
-    breakevenUnits !== null ? `${Math.ceil(breakevenUnits / 30)} قطعة` : "";
+  const confirmRate = confirmRateVal / 100;
+  const deliveryRate = deliveryRateVal / 100;
 
-  // بانر الحالة
-  const banner = document.getElementById("calcStatusBanner");
-  if (margin <= 0) {
-    banner.className = "rounded-2xl border p-4 font-extrabold text-center";
-    banner.style.background = "#fdecea";
-    banner.style.borderColor = "#2F6690";
-    banner.style.color = "#2F6690";
-    banner.textContent =
-      "️ سعر البيع لا يغطي حتى تكلفة المنتج والشحن والتغليف أنت خاسر في كل عملية بيع حتى بدون إعلان!";
-  } else if (netUnit <= 0) {
-    banner.style.background = "#fff8e6";
-    banner.style.borderColor = "#C9A227";
-    banner.style.color = "#8a6d00";
-    banner.textContent = `️ تكلفة الإعلان الحالية (${money(adCost)}) تتجاوز هامش ربحك يجب رفع سعر البيع أو تقليل تكلفة الإعلان إلى أقل من ${money(margin)}.`;
-  } else {
-    banner.style.background = "#e9f5f0";
-    banner.style.borderColor = "#1E6F54";
-    banner.style.color = "#1E6F54";
-    banner.textContent = ` المشروع رابح: ${money(netUnit)} صافي ربح لكل قطعة بعد كل التكاليف والإعلان.`;
+  // 4. Advanced "Landed Profit" Logic
+  // To get 1 successful delivered order, how many leads do we need?
+  // Leads -> Confirmed -> Delivered
+  // 1 Delivered = (1 / deliveryRate) Confirmed
+  // 1 Confirmed = (1 / confirmRate) Leads
+  // Leads needed = 1 / (confirmRate * deliveryRate)
+  const leadsNeeded = (confirmRate > 0 && deliveryRate > 0) ? (1 / (confirmRate * deliveryRate)) : 0;
+  
+  // Cost of those leads (Total CPA per 1 success)
+  const effectiveCpaCost = leadsNeeded * cpa;
+
+  // Shipped orders needed to get 1 successful delivery
+  const shippedOrders = (deliveryRate > 0) ? (1 / deliveryRate) : 0;
+  
+  // Cost of ops (Packaging + Delivery) per 1 success
+  // We pay packaging and delivery for all shipped orders (delivered + returned)
+  const effectiveOpsCost = shippedOrders * (packaging + delivery);
+
+  // 5. Update Results UI
+  const grossProfit = sellingPrice - unitCost;
+  const netProfit = sellingPrice - unitCost - effectiveOpsCost - effectiveCpaCost;
+
+  if(document.getElementById("resSellPrice")) document.getElementById("resSellPrice").textContent = money(sellingPrice);
+  if(document.getElementById("resUnitCost")) document.getElementById("resUnitCost").textContent = "- " + money(unitCost);
+  if(document.getElementById("resOpsCost")) document.getElementById("resOpsCost").textContent = "- " + money(effectiveOpsCost);
+  if(document.getElementById("resCpaCost")) document.getElementById("resCpaCost").textContent = "- " + money(effectiveCpaCost);
+  if(document.getElementById("resGrossProfit")) document.getElementById("resGrossProfit").textContent = money(grossProfit);
+  
+  const netEl = document.getElementById("resNetProfit");
+  if(netEl) {
+    netEl.textContent = money(netProfit);
+    if(netProfit >= 0) {
+      netEl.className = "font-black text-2xl text-emerald-600 bg-emerald-50 px-3 py-1 rounded-lg border border-emerald-200";
+    } else {
+      netEl.className = "font-black text-2xl text-rose-600 bg-rose-50 px-3 py-1 rounded-lg border border-rose-200";
+    }
+  }
+
+  // Breakeven CPA (When Net Profit = 0)
+  // 0 = sellingPrice - unitCost - effectiveOpsCost - (leadsNeeded * MaxCPA)
+  // leadsNeeded * MaxCPA = sellingPrice - unitCost - effectiveOpsCost
+  const breakevenCpa = leadsNeeded > 0 ? (sellingPrice - unitCost - effectiveOpsCost) / leadsNeeded : 0;
+  if(document.getElementById("resBreakevenCpa")) {
+    document.getElementById("resBreakevenCpa").textContent = money(breakevenCpa);
   }
 }
 
+// Ensure listeners are attached
+function attachCalcListeners() {
+  const ids = [
+    "calcBulkQty", "calcBulkPrice", "calcBulkShipping", "calcBulkMisc",
+    "calcSellingPrice", "calcCPA", "calcPackaging", "calcDelivery",
+    "calcConfirmRate", "calcDeliveryRate"
+  ];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener("input", recomputeCalculator);
+      el.addEventListener("change", recomputeCalculator);
+    }
+  });
+}
+document.addEventListener("DOMContentLoaded", attachCalcListeners);
+// Try to attach now in case DOM is already loaded
+attachCalcListeners();
 // ========== أداء الإعلانات والأرباح الحقيقية (Campaign ROI Dashboard) ==========
 
 const SOURCE_LABELS = {
@@ -2141,8 +2180,8 @@ async function loadCampaignAnalytics() {
  <td class="p-3 text-sm text-slate-900/60">${String(s.spend_date).slice(0, 10)}</td>
  <td class="p-3 text-sm text-slate-900/50">${escapeHtml(s.notes || "")}</td>
  <td class="p-3">
- <button data-spend="${encodeURIComponent(JSON.stringify({ id: s.id, campaign_name: s.campaign_name, source: s.source, spend_amount: s.spend_amount, spend_date: String(s.spend_date).slice(0, 10), notes: s.notes || "" }))}" class="edit-spend-btn text-slate-900/70 hover:text-slate-900 text-sm font-black px-2 py-1 rounded-lg hover:bg-slate-50 transition">✏️ تعديل</button>
- <button data-spend-id="${s.id}" class="delete-spend-btn text-rose-600 hover:text-rose-700 text-sm font-black px-2 py-1 rounded-lg hover:bg-rose-50 transition">🗑️ حذف</button>
+ <button data-spend="${encodeURIComponent(JSON.stringify({ id: s.id, campaign_name: s.campaign_name, source: s.source, spend_amount: s.spend_amount, spend_date: String(s.spend_date).slice(0, 10), notes: s.notes || "" }))}" class="edit-spend-btn text-slate-900/70 hover:text-slate-900 text-sm font-black px-2 py-1 rounded-lg hover:bg-slate-50 transition"><svg class="w-4 h-4 inline-block pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg> تعديل</button>
+ <button data-spend-id="${s.id}" class="delete-spend-btn text-rose-600 hover:text-rose-700 text-sm font-black px-2 py-1 rounded-lg hover:bg-rose-50 transition"><svg class="w-4 h-4 inline-block pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg> حذف</button>
  </td>
  </tr>`,
         )
@@ -2696,7 +2735,7 @@ async function loadProfit30d() {
     return;
   }
   container.innerHTML = `
- <table class="w-full text-sm">
+ <table class="w-full text-sm min-w-[1000px]">
  <thead class="bg-slate-50 text-slate-900/60">
  <tr>
  <th class="p-3 text-right">المنتج</th>
@@ -2813,7 +2852,7 @@ function renderOrdersTable() {
   }
 
   table.innerHTML = `
- <table class="w-full text-sm">
+ <table class="w-full text-sm min-w-[1000px]">
  <thead class="bg-slate-50 text-slate-900/60">
  <tr>
  <th class="p-3 text-right">#</th>
@@ -2977,7 +3016,7 @@ function renderOrdersTable() {
  }
  </td>
  <td class="p-3 text-sm text-slate-900/40">${new Date(o.created_at).toLocaleString("ar-DZ")}</td>
- <td class="p-3"><button class="del-order-btn text-rose-600 font-extrabold text-sm hover:underline">🗑️ حذف</button></td>
+ <td class="p-3"><button class="del-order-btn text-rose-600 font-extrabold text-sm hover:underline"><svg class="w-4 h-4 inline-block pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg> حذف</button></td>
  `;
 
     const selectEl = tr.querySelector(".status-select");
@@ -3133,7 +3172,7 @@ async function loadDeliveryRates() {
 function renderDeliveryTable(rates) {
   const container = document.getElementById("deliveryTable");
   container.innerHTML = `
- <table class="w-full text-sm">
+ <table class="w-full text-sm min-w-[1000px]">
  <thead class="bg-slate-50 text-slate-900/60">
  <tr>
  <th class="p-3 text-right">#</th>
@@ -3152,8 +3191,8 @@ function renderDeliveryTable(rates) {
     tr.innerHTML = `
  <td class="p-2 text-sm text-slate-900/40">${String(r.wilaya_code).padStart(2, "0")}</td>
  <td class="p-2 font-bold">${escapeHtml(r.wilaya_name)}</td>
- <td class="p-2"><input type="number" min="0" step="10" data-code="${r.wilaya_code}" data-field="home_price" value="${r.home_price}" class="field px-2 py-1 text-sm w-28" /></td>
- <td class="p-2"><input type="number" min="0" step="10" data-code="${r.wilaya_code}" data-field="desk_price" value="${r.desk_price}" class="field px-2 py-1 text-sm w-28" /></td>
+ <td class="p-2"><input type="number" min="0" step="10" data-code="${r.wilaya_code}" data-field="home_price" value="${r.home_price}" class="field px-2 py-1 text-xs sm:text-sm w-20 sm:w-28" /></td>
+ <td class="p-2"><input type="number" min="0" step="10" data-code="${r.wilaya_code}" data-field="desk_price" value="${r.desk_price}" class="field px-2 py-1 text-xs sm:text-sm w-20 sm:w-28" /></td>
  `;
     tbody.appendChild(tr);
   }
@@ -3404,7 +3443,7 @@ async function loadCustomRates() {
   const res = await fetch("/api/shipping/custom-rates");
   if (!res.ok) return;
   const { rates } = await res.json();
-  table.innerHTML = `<table class="w-full text-sm"><thead class="bg-slate-50"><tr><th class="p-2 text-right">الولاية</th><th class="p-2">للمنزل</th><th class="p-2">للمكتب</th><th class="p-2">متاح</th></tr></thead><tbody>${rates.map((rate) => `<tr data-wilaya-row="${rate.wilaya_code}" class="border-t border-slate-200/10"><td class="p-2 font-bold">${rate.wilaya_code} - ${escapeHtml(rate.wilaya_name)}</td><td class="p-2"><input data-rate="home" type="number" min="0" value="${rate.home_price}" class="field w-24 px-2 py-1 text-sm" /></td><td class="p-2"><input data-rate="desk" type="number" min="0" value="${rate.desk_price}" class="field w-24 px-2 py-1 text-sm" /></td><td class="p-2 text-center"><input data-rate="deliverable" type="checkbox" ${rate.is_deliverable ? "checked" : ""} /></td></tr>`).join("")}</tbody></table>`;
+  table.innerHTML = `<table class="w-full text-sm min-w-[1000px]"><thead class="bg-slate-50"><tr><th class="p-2 text-right">الولاية</th><th class="p-2">للمنزل</th><th class="p-2">للمكتب</th><th class="p-2">متاح</th></tr></thead><tbody>${rates.map((rate) => `<tr data-wilaya-row="${rate.wilaya_code}" class="border-t border-slate-200/10"><td class="p-2 font-bold">${rate.wilaya_code} - ${escapeHtml(rate.wilaya_name)}</td><td class="p-2"><input data-rate="home" type="number" min="0" value="${rate.home_price}" class="field w-24 px-2 py-1 text-sm" /></td><td class="p-2"><input data-rate="desk" type="number" min="0" value="${rate.desk_price}" class="field w-24 px-2 py-1 text-sm" /></td><td class="p-2 text-center"><input data-rate="deliverable" type="checkbox" ${rate.is_deliverable ? "checked" : ""} /></td></tr>`).join("")}</tbody></table>`;
   document
     .getElementById("customRatesSearch")
     ?.addEventListener("input", filterCustomRates, { once: true });
@@ -3486,15 +3525,15 @@ checkSession();
 // ---------- العدّاد الحي حسب المنصة (زيارات + مشتريات تلقائية) ----------
 (function () {
   const LABELS = {
-    facebook: "🔵 فيسبوك",
-    instagram: "📸 انستغرام",
-    tiktok: "⚫ تيك توك",
-    google: "🔴 جوجل",
-    snapchat: "🟡 سناب شات",
-    youtube: "▶️ يوتيوب",
-    whatsapp: "🟢 واتساب",
-    telegram: "✈️ تيليغرام",
-    direct: "🔗 مباشر / بدون مصدر",
+    facebook: "فيسبوك",
+    instagram: " انستغرام",
+    tiktok: "تيك توك",
+    google: " جوجل",
+    snapchat: "سناب شات",
+    youtube: "️ يوتيوب",
+    whatsapp: "واتساب",
+    telegram: "️ تيليغرام",
+    direct: "مباشر / بدون مصدر",
   };
   let timer = null;
   let data = [];
@@ -3521,8 +3560,8 @@ checkSession();
         <td class="p-2 text-center font-bold">${p.visits}</td>
         <td class="p-2 text-center font-black text-emerald-700">${p.orders}</td>
         <td class="p-2 text-center">${p.conversion_rate.toFixed(1)}%</td>
-        <td class="p-2 text-center">${p.spend ? money(p.spend) : "—"}</td>
-        <td class="p-2 text-center"><button type="button" class="platform-reset-btn text-rose-600 font-black hover:underline" data-source="${escapeHtml(p.source)}">↺ صفّر</button></td>
+        <td class="p-2 text-center">${p.spend ? money(p.spend) : ""}</td>
+        <td class="p-2 text-center"><button type="button" class="platform-reset-btn text-rose-600 font-black hover:underline" data-source="${escapeHtml(p.source)}">صفّر</button></td>
       </tr>`,
         )
         .join("") ||
@@ -3613,7 +3652,7 @@ checkSession();
     if (one) {
       if (confirm("تصفير عدّاد هذه المنصة والبدء من الصفر؟"))
         reset(one.dataset.source).then(
-          (ok) => ok && showToast("تم التصفير — العدّ التلقائي بدأ من جديد"),
+          (ok) => ok && showToast("تم التصفير  العدّ التلقائي بدأ من جديد"),
         );
       return;
     }
@@ -3653,7 +3692,9 @@ async function loadProductReport() {
     const periodSelect = document.getElementById("reportPeriodSelect");
 
     if (
+      productSelect &&
       productSelect.options.length <= 1 &&
+      typeof ALL_PRODUCTS !== "undefined" &&
       ALL_PRODUCTS &&
       ALL_PRODUCTS.length > 0
     ) {
@@ -3665,57 +3706,92 @@ async function loadProductReport() {
       });
     }
 
-    const productId = productSelect.value;
-    const months = periodSelect.value;
+    const productId = productSelect ? productSelect.value : "all";
+    const months = periodSelect ? periodSelect.value : "1";
 
     const res = await fetch(
-      `/api/orders/product-reports?product_id=${productId}&months=${months}`,
+      `/api/orders/product-reports?product_id=${encodeURIComponent(productId)}&months=${encodeURIComponent(months)}`,
     );
     if (!res.ok) throw new Error("Failed to fetch reports");
     const data = await res.json();
 
-    document.getElementById("reportNetProfit").textContent =
-      money(data.stats.net_profit) + " د.ج";
-    document.getElementById("reportUnitsSold").textContent =
-      data.stats.units_sold;
-    document.getElementById("reportShippingLoss").textContent =
-      money(data.stats.shipping_losses) + " د.ج";
-    document.getElementById("reportOrderRatio").textContent =
-      `${data.stats.delivered_count} / ${data.stats.returned_count}`;
+    if (!data || !data.stats) throw new Error("Invalid report data");
 
+    // 1. تحديث المؤشرات الرئيسية (Primary KPIs)
+    const netProfitEl = document.getElementById("reportNetProfit");
+    if (netProfitEl) netProfitEl.textContent = money(data.stats.net_profit || 0) + " د.ج";
+
+    const unitsSoldEl = document.getElementById("reportUnitsSold");
+    if (unitsSoldEl) unitsSoldEl.textContent = data.stats.units_sold || 0;
+
+    const shippingLossEl = document.getElementById("reportShippingLoss");
+    if (shippingLossEl) shippingLossEl.textContent = money(data.stats.shipping_losses || 0) + " د.ج";
+
+    const orderRatioEl = document.getElementById("reportOrderRatio");
+    if (orderRatioEl) orderRatioEl.textContent = (data.stats.delivery_rate ?? 0) + "%";
+
+    // 2. تحديث مؤشرات الشريط الجانبي (Secondary KPIs)
+    const avgProfitEl = document.getElementById("reportAvgProfit");
+    if (avgProfitEl) avgProfitEl.textContent = money(data.stats.avg_profit || 0) + " د.ج";
+
+    const totalReturnsEl = document.getElementById("reportTotalReturns");
+    if (totalReturnsEl) totalReturnsEl.textContent = data.stats.returned_count || 0;
+
+    const pendingOrdersEl = document.getElementById("reportPendingOrders");
+    if (pendingOrdersEl) pendingOrdersEl.textContent = data.stats.pending_orders || 0;
+
+    // 3. تخزين القيم لنوافذ التفاصيل (Modals)
+    window._lastReportPendingProfit = money(data.stats.pending_profit || 0);
+    window._lastReportTotalUnits = data.stats.units_sold || 0;
+    window._lastReportAvgLoss = money(data.stats.avg_loss || 0);
+    window._lastReportSuccessRate = data.stats.delivery_rate || 0;
+
+    // 4. رسم المخطط البياني (Chart) بأمان
     const ctx = document.getElementById("productReportChart");
-    if (!ctx) return;
+    if (ctx && typeof Chart !== "undefined") {
+      if (productReportChartInstance) {
+        try { productReportChartInstance.destroy(); } catch (_) {}
+        productReportChartInstance = null;
+      }
 
-    if (productReportChartInstance) {
-      productReportChartInstance.destroy();
-    }
+      const labels = (data.chartData && data.chartData.labels && data.chartData.labels.length > 0)
+        ? data.chartData.labels
+        : ["لا توجد بيانات"];
+      const profits = (data.chartData && data.chartData.profits && data.chartData.profits.length > 0)
+        ? data.chartData.profits
+        : [0];
 
-    productReportChartInstance = new Chart(ctx, {
-      type: "line",
-      data: {
-        labels: data.chartData.labels,
-        datasets: [
-          {
-            label: "صافي الأرباح (د.ج)",
-            data: data.chartData.profits,
-            borderColor: "#1E6F54",
-            backgroundColor: "rgba(30, 111, 84, 0.1)",
-            borderWidth: 2,
-            fill: true,
-            tension: 0.3,
+      try {
+        productReportChartInstance = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: "صافي الأرباح (د.ج)",
+                data: profits,
+                borderColor: "#1E6F54",
+                backgroundColor: "rgba(30, 111, 84, 0.1)",
+                borderWidth: 2,
+                fill: true,
+                tension: 0.3,
+              },
+            ],
           },
-        ],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          y: { beginAtZero: true },
-        },
-      },
-    });
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: { beginAtZero: true },
+            },
+          },
+        });
+      } catch (chartErr) {
+        console.warn("Chart render issue:", chartErr);
+      }
+    }
   } catch (err) {
-    console.error(err);
+    console.error("loadProductReport error:", err);
     showToast("خطأ في تحميل التقارير", true);
   }
 }
@@ -3726,6 +3802,90 @@ document
 document
   .getElementById("reportPeriodSelect")
   ?.addEventListener("change", loadProductReport);
+
+
+// --- Sidebar Initialization ---
+document.addEventListener('DOMContentLoaded', () => {
+  const desktopNav = document.getElementById('desktopNavContainer');
+  const mobileNav = document.getElementById('mobileNavContainer');
+  if (desktopNav && mobileNav) {
+    mobileNav.innerHTML = desktopNav.innerHTML;
+    // re-bind click events for mobile nav buttons
+    mobileNav.querySelectorAll('.admin-tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.admin-tab-btn').forEach(b => {
+          b.classList.remove('active-tab');
+        });
+        document.querySelectorAll(`[data-tab="${btn.dataset.tab}"]`).forEach(b => {
+           b.classList.add('active-tab');
+        });
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+        const tabEl = document.getElementById(`tab-${btn.dataset.tab}`);
+        if (tabEl) tabEl.classList.remove('hidden');
+        document.getElementById('mobileSidebar').classList.add('hidden'); // close mobile sidebar
+
+        // triggers
+        if (btn.dataset.tab === 'campaigns') setTimeout(() => loadCampaignAnalytics(), 50);
+        else if (btn.dataset.tab === 'profit') setTimeout(() => loadProfit30d(), 50);
+        else if (btn.dataset.tab === 'calculator') { renderSavedCalculations(); recomputeCalculator(); }
+        else if (btn.dataset.tab === 'shipping-settings') loadVendorShippingSettings();
+        else if (btn.dataset.tab === 'reports') loadProductReport();
+      });
+    });
+  }
+});
+
+// --- Advanced Reports UI Logic ---
+function showReportDetails(type) {
+  const modal = document.getElementById('reportDetailsModal');
+  const modalInner = document.getElementById('rdModalInner');
+  const title = document.getElementById('rdModalTitle');
+  const desc = document.getElementById('rdModalDesc');
+  const content = document.getElementById('rdModalContent');
+  
+  modal.classList.remove('hidden');
+  
+  // Animate in
+  setTimeout(() => {
+    modalInner.classList.remove('scale-95', 'opacity-0');
+    modalInner.classList.add('scale-100', 'opacity-100');
+  }, 10);
+
+  if (type === 'profit') {
+    title.textContent = 'تفاصيل الأرباح الصافية';
+    desc.textContent = 'تحليل إضافي لمصادر الأرباح';
+    content.innerHTML = `<div class="p-4 bg-emerald-50 rounded-xl border border-emerald-100 flex justify-between items-center"><span class="font-bold text-emerald-800">الأرباح المتوقعة من الطلبات قيد التوصيل</span><span class="font-black text-emerald-600">${window._lastReportPendingProfit || '0'} د.ج</span></div>`;
+  } else if (type === 'sales') {
+    title.textContent = 'تحليل المبيعات والوحدات';
+    desc.textContent = 'المنتجات الأكثر مبيعاً';
+    content.innerHTML = `<div class="p-4 bg-blue-50 rounded-xl border border-blue-100 flex justify-between items-center"><span class="font-bold text-blue-800">إجمالي الوحدات المطلوبة ككل (بما فيها المرفوضة)</span><span class="font-black text-blue-600">${window._lastReportTotalUnits || '0'} وحدة</span></div>`;
+  } else if (type === 'loss') {
+    title.textContent = 'تفاصيل خسائر التوصيل (الروتور)';
+    desc.textContent = 'تكلفة الروتور وتأثيرها على الهامش الربحي';
+    content.innerHTML = `<div class="p-4 bg-rose-50 rounded-xl border border-rose-100 flex justify-between items-center"><span class="font-bold text-rose-800">معدل الخسارة للطلب الواحد</span><span class="font-black text-rose-600">${window._lastReportAvgLoss || '0'} د.ج</span></div>`;
+  } else if (type === 'ratio') {
+    title.textContent = 'معدل التسليم الحقيقي';
+    desc.textContent = 'النسبة بين الطلبات الناجحة والمرتجعة';
+    content.innerHTML = `
+      <div class="w-full bg-slate-200 rounded-full h-4 mb-2 overflow-hidden flex">
+        <div class="bg-emerald-500 h-4" style="width: ${window._lastReportSuccessRate || 50}%"></div>
+        <div class="bg-rose-500 h-4" style="width: ${100 - (window._lastReportSuccessRate || 50)}%"></div>
+      </div>
+      <div class="flex justify-between text-xs font-bold text-slate-500 mt-2">
+        <span class="text-emerald-600">ناجح: ${window._lastReportSuccessRate || 50}%</span>
+        <span class="text-rose-600">مرتجع: ${100 - (window._lastReportSuccessRate || 50)}%</span>
+      </div>
+    `;
+  }
+}
+
+function closeReportModal() {
+  const modal = document.getElementById('reportDetailsModal');
+  const modalInner = document.getElementById('rdModalInner');
+  modalInner.classList.remove('scale-100', 'opacity-100');
+  modalInner.classList.add('scale-95', 'opacity-0');
+  setTimeout(() => { modal.classList.add('hidden'); }, 200);
+}
 
 // ---------- هوية المتجر وتغيير كلمة المرور ----------
 let themeAndSecurityListenersInitialized = false;
