@@ -363,7 +363,7 @@ router.get('/platform-live', requireAuth, async (req, res) => {
     list.sort((a, b) => b.orders - a.orders || b.visits - a.visits);
     res.json({ platforms: list, server_time: Date.now() });
   } catch (err) {
-    res.status(500).json({ error: 'تعذر جلب العدّاد: ' + err.message });
+    console.error('Platform live counter error:', err); res.status(500).json({ error: 'تعذر جلب بيانات العداد الحي' });
   }
 });
 

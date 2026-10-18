@@ -1,3 +1,11 @@
+class UserFacingError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = 'UserFacingError';
+    this.isUserFacing = true;
+  }
+}
+
 const { getTargetUserId } = require('../utils/store');
 const { parseItems } = require('../utils/orderItems');
 const express = require('express');
@@ -150,7 +158,7 @@ router.post(
 
         for (const item of requestedItems.values()) {
           const product = await trx.get('SELECT * FROM products WHERE id = $1 AND user_id = $2 AND is_active = 1', [item.id, orderStoreId]);
-          if (!product) throw new Error('المنتج "' + (item.name || 'المحدد') + '" لم يعد متوفراً. يرجى حذفه من السلة لإتمام الطلبية.');
+          if (!product) throw new UserFacingError('المنتج "' + (item.name || 'المحدد') + '" لم يعد متوفراً. يرجى حذفه من السلة لإتمام الطلبية.');
 
           const qty = Math.max(1, Math.min(parseInt(item.qty, 10) || 1, 999));
 
@@ -161,16 +169,16 @@ router.post(
               [item.variant_id, product.id]
             );
             if (!variant) {
-              const err = new Error(`الرجاء اختيار المقاس/الحجم لـ "${product.name}"`);
+              const err = new UserFacingError(`الرجاء اختيار المقاس/الحجم لـ "${product.name}"`);
               err.isStockError = true;
               throw err;
             }
             if (!(await decrementStock({ qty, variant_id: variant.id }, trx))) {
               const latest = (await currentStockOf({ variant_id: variant.id }, trx)) || 0;
               if (latest <= 0) {
-                throw new Error(`عذراً، لقد نفد المخزون من "${product.name}" (${variant.label})`);
+                throw new UserFacingError(`عذراً، لقد نفد المخزون من "${product.name}" (${variant.label})`);
               } else {
-                throw new Error(`عذراً، الكمية المتوفرة من "${product.name}" (${variant.label}) هي ${latest} فقط`);
+                throw new UserFacingError(`عذراً، الكمية المتوفرة من "${product.name}" (${variant.label}) هي ${latest} فقط`);
               }
             }
 
@@ -180,9 +188,9 @@ router.post(
             if (!(await decrementStock({ qty, id: product.id }, trx))) {
               const latest = (await currentStockOf({ id: product.id }, trx)) || 0;
               if (latest <= 0) {
-                throw new Error(`عذراً، لقد نفد المخزون من "${product.name}"`);
+                throw new UserFacingError(`عذراً، لقد نفد المخزون من "${product.name}"`);
               } else {
-                throw new Error(`عذراً، الكمية المتوفرة من "${product.name}" هي ${latest} فقط`);
+                throw new UserFacingError(`عذراً، الكمية المتوفرة من "${product.name}" هي ${latest} فقط`);
               }
             }
 
@@ -207,11 +215,11 @@ router.post(
         }
 
         if (verifiedItems.length === 0) {
-          throw new Error('المنتجات المطلوبة غير متوفرة');
+          throw new UserFacingError('المنتجات المطلوبة غير متوفرة');
         }
 
         const shippingResultTrx = await ShippingService.calculateShippingCost(store_id, wilaya_code, delivery_type, subtotal);
-        if (shippingResultTrx.is_unavailable) throw new Error('التوصيل غير متاح لهذه الولاية.');
+        if (shippingResultTrx.is_unavailable) throw new UserFacingError('التوصيل غير متاح لهذه الولاية.');
         const deliveryPrice = shippingResultTrx.price;
         const rate = await trx.get('SELECT wilaya_name FROM delivery_rates WHERE wilaya_code = $1', [wilaya_code]);
         const wilaya_name = rate ? rate.wilaya_name : String(wilaya_code);
@@ -268,8 +276,10 @@ router.post(
       res.status(201).json({ success: true, ...outcome });
     } catch (err) {
       console.error('Order creation error:', err);
-      const clientMessage = (err.message && !err.message.includes('syntax') && !err.message.includes('relation') && !err.message.includes('pg_') && !err.message.includes('column')) ? err.message : 'تعذر إتمام الطلب، يرجى المحاولة لاحقاً';
-      return res.status(400).json({ error: clientMessage });
+      if (err.isUserFacing) {
+        return res.status(400).json({ error: err.message });
+      }
+      return res.status(400).json({ error: 'تعذر إتمام الطلب، يرجى مراجعة بيانات السلة أو المحاولة لاحقاً' });
     }
   }
 );
@@ -453,7 +463,7 @@ router.post('/archive-fulfilled', requireAuth, requireActiveSubscription, async 
 
     res.json({ success: true, archived_count: result });
   } catch (err) {
-    res.status(500).json({ error: 'تعذرت أرشفة الطلبات: ' + err.message });
+    console.error('Archive orders error:', err); res.status(500).json({ error: 'تعذرت أرشفة الطلبات' });
   }
 });
 
@@ -523,7 +533,7 @@ router.put('/:id/status', requireAuth, requireActiveSubscription, async (req, re
       items: typeof updated.items === 'string' ? JSON.parse(updated.items || '[]') : (updated.items || []),
     });
   } catch (err) {
-    res.status(500).json({ error: 'تعذر تحديث الحالة: ' + err.message });
+    console.error('Update order status error:', err); res.status(500).json({ error: 'تعذر تحديث الحالة' });
   }
 });
 
@@ -568,31 +578,42 @@ router.put('/:id/edit', requireAuth, requireActiveSubscription, async (req, res)
             err.statusCode = 400;
             throw err;
           }
-          const product = await trx.get('SELECT id, user_id, name, price, cost_price, has_variants FROM products WHERE id = $1', [productId]);
+          const product = await trx.get('SELECT id, user_id, name, price, cost_price, has_variants, image FROM products WHERE id = $1', [productId]);
           if (!product || Number(product.user_id) !== Number(order.user_id)) {
-            const err = new Error('لا يمكن إضافة منتج لا ينتمي إلى المتجر صاحب الطلب');
+            const err = new UserFacingError('لا يمكن إضافة منتج لا ينتمي إلى المتجر صاحب الطلب');
             err.statusCode = 403;
             throw err;
           }
           let itemCost = parseFloat(product.cost_price || 0);
           let itemPrice = parseFloat(product.price || 0);
           let itemLabel = product.name;
+          let itemImage = product.image || '';
           let variantIdVal = null;
+          let variantLabel = null;
+          let itemColor = '';
+          let itemColorCode = '';
+          let itemSize = '';
+
           if (item.variant_id != null) {
             const variantId = Number(item.variant_id);
             const variant = Number.isSafeInteger(variantId)
-              ? await trx.get('SELECT id, label, cost_price FROM product_variants WHERE id = $1 AND product_id = $2', [variantId, productId])
+              ? await trx.get('SELECT id, label, color, color_code, size, image, cost_price FROM product_variants WHERE id = $1 AND product_id = $2', [variantId, productId])
               : null;
             if (!variant || !product.has_variants) {
-              const err = new Error('متغير المنتج لا يطابق المنتج المحدد');
+              const err = new UserFacingError('متغير المنتج لا يطابق المنتج المحدد');
               err.statusCode = 400;
               throw err;
             }
             variantIdVal = variant.id;
+            variantLabel = variant.label || [variant.color, variant.size].filter(Boolean).join(' - ') || null;
+            itemColor = variant.color || '';
+            itemColorCode = variant.color_code || '';
+            itemSize = variant.size || '';
+            if (variant.image) itemImage = variant.image;
             if (variant.cost_price != null) itemCost = parseFloat(variant.cost_price || 0);
             if (variant.label) itemLabel = `${product.name} (${variant.label})`;
           } else if (product.has_variants) {
-            const err = new Error('يجب تحديد المقاس أو النوع للمنتج');
+            const err = new UserFacingError('يجب تحديد المقاس أو النوع للمنتج');
             err.statusCode = 400;
             throw err;
           }
@@ -604,6 +625,11 @@ router.put('/:id/edit', requireAuth, requireActiveSubscription, async (req, res)
             cost_price: itemCost,
             qty: quantity,
             variant_id: variantIdVal,
+            variant_label: variantLabel,
+            color: itemColor,
+            color_code: itemColorCode,
+            size: itemSize,
+            image: itemImage,
           });
         }
         finalSubtotal = calculatedSubtotal;
@@ -686,7 +712,7 @@ router.delete('/:id', requireAuth, requireActiveSubscription, async (req, res) =
 
     res.json({ success: true });
   } catch (err) {
-    res.status(500).json({ error: 'تعذر حذف الطلب: ' + err.message });
+    console.error('Delete order error:', err); res.status(500).json({ error: 'تعذر حذف الطلب' });
   }
 });
 

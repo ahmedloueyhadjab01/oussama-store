@@ -84,7 +84,7 @@ router.post('/settings', requireAuth, requireActiveSubscription, async (req, res
 
     res.json({ success: true, message: 'تم حفظ إعدادات الشحن بنجاح ✅' });
   } catch (err) {
-    res.status(400).json({ error: err.message || 'تعذر حفظ إعدادات الشحن' });
+    console.error('Shipping settings error:', err); res.status(400).json({ error: 'تعذر حفظ إعدادات الشحن' });
   }
 });
 
@@ -142,7 +142,7 @@ router.put('/custom-rates', requireAuth, requireActiveSubscription, async (req, 
     });
     res.json({ success: true, message: 'تم حفظ أسعار الشحن الخاصة بمتجرك ✅' });
   } catch (err) {
-    res.status(400).json({ error: err.message || 'تعذر حفظ أسعار الشحن' });
+    console.error('Custom rates error:', err); res.status(400).json({ error: 'تعذر حفظ أسعار الشحن' });
   }
 });
 
@@ -175,7 +175,8 @@ router.post('/orders/:orderId/generate-label', requireAuth, requireActiveSubscri
     const result = await ShippingService.createParcel(req.params.orderId, req.user.id, req.user.role === 'admin');
     res.json({ success: true, ...result });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    console.error('Generate label error:', err);
+    res.status(400).json({ error: 'تعذر توليد بوليصة التوصيل' });
   }
 });
 
@@ -185,7 +186,8 @@ router.get('/orders/:orderId/live-track', requireAuth, async (req, res) => {
     const result = await ShippingService.trackParcel(req.params.orderId, req.user.id, req.user.role === 'admin');
     res.json({ success: true, ...result });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    console.error('Live track error:', err);
+    res.status(400).json({ error: 'تعذر تتبع الشحنة' });
   }
 });
 
@@ -299,7 +301,7 @@ router.get('/orders/:orderId/manual-label', requireAuth, async (req, res) => {
     
     res.send(html);
   } catch (err) {
-    res.status(500).send('خطأ: ' + err.message);
+    console.error('Manual label error:', err); res.status(500).send('تعذر إنشاء بوليصة التوصيل');
   }
 });
 

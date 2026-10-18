@@ -302,6 +302,18 @@ async function ensureFinancialArchive(userId, client = null) {
  * ØªÙ‡ÙŠØ¦Ø© Ø¬Ø¯Ø§ÙˆÙ„ Ù‚Ø§Ø¹Ø¯Ø© Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª ÙˆØ§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ø£ÙˆÙ„ÙŠØ© ÙÙŠ PostgreSQL
  */
 async function initDb() {
+  // اختبار الاتصال الفعلي بالخادم فوراً (Fail-Fast على مستوى الاتصال والشهادة)
+  try {
+    await pool.query('SELECT 1');
+    console.log('✅ تم التحقق من سلامة اتصال قاعدة البيانات.');
+  } catch (connErr) {
+    if (process.env.NODE_ENV === 'production' || process.env.RENDER) {
+      console.error('❌ خطأ فادح: فشل اختبار الاتصال بقاعدة البيانات في بيئة الإنتاج:', connErr.message);
+      throw new Error('Fatal: PostgreSQL connection/SSL verification failed in production: ' + connErr.message);
+    } else {
+      console.warn('⚠️ تعذر الاتصال بـ PostgreSQL في بيئة التطوير، جاري محاولة المتابعة...');
+    }
+  }
   console.log('ðŸ”„ Ø¬Ø§Ø±ÙŠ ØªÙ‡ÙŠØ¦Ø© Ù‚Ø§Ø¹Ø¯Ø© Ø¨ÙŠØ§Ù†Ø§Øª PostgreSQL / Supabase...');
 
   const schemaSql = `
@@ -672,6 +684,35 @@ async function initDb() {
   }
 
   console.log('âœ… Ø§ÙƒØªÙ…Ù„Øª ØªÙ‡ÙŠØ¦Ø© Ù‚Ø§Ø¹Ø¯Ø© Ø¨ÙŠØ§Ù†Ø§Øª PostgreSQL Ø¨Ù†Ø¬Ø§Ø­.');
+  // تنظيف القيم السابقة في orders و ad_visits لضمان عدم وجود وسوم أو أحرف ضارة
+  try {
+    const { sanitizeUtm } = require('./utils/source');
+    const dirtyOrders = await pool.query("SELECT id, utm_source, utm_campaign, utm_medium, utm_content FROM orders WHERE COALESCE(utm_source, '') != '' OR COALESCE(utm_campaign, '') != '' OR COALESCE(utm_medium, '') != '' OR COALESCE(utm_content, '') != ''");
+    for (const row of dirtyOrders.rows) {
+      const cleanSrc = sanitizeUtm(row.utm_source, 100);
+      const cleanCamp = sanitizeUtm(row.utm_campaign, 100);
+      const cleanMed = sanitizeUtm(row.utm_medium, 100);
+      const cleanContent = sanitizeUtm(row.utm_content, 100);
+      if (cleanSrc !== row.utm_source || cleanCamp !== row.utm_campaign || cleanMed !== row.utm_medium || cleanContent !== row.utm_content) {
+        await pool.query('UPDATE orders SET utm_source = $1, utm_campaign = $2, utm_medium = $3, utm_content = $4 WHERE id = $5', [cleanSrc, cleanCamp, cleanMed, cleanContent, row.id]);
+      }
+    }
+
+    const dirtyVisits = await pool.query("SELECT id, source, campaign, medium, content FROM ad_visits WHERE COALESCE(source, '') != '' OR COALESCE(campaign, '') != '' OR COALESCE(medium, '') != '' OR COALESCE(content, '') != ''");
+    for (const row of dirtyVisits.rows) {
+      const cleanSrc = sanitizeUtm(row.source, 100);
+      const cleanCamp = sanitizeUtm(row.campaign, 100);
+      const cleanMed = sanitizeUtm(row.medium, 100);
+      const cleanContent = sanitizeUtm(row.content, 100);
+      if (cleanSrc !== row.source || cleanCamp !== row.campaign || cleanMed !== row.medium || cleanContent !== row.content) {
+        await pool.query('UPDATE ad_visits SET source = $1, campaign = $2, medium = $3, content = $4 WHERE id = $5', [cleanSrc, cleanCamp, cleanMed, cleanContent, row.id]);
+      }
+    }
+  } catch (cleanErr) {
+    console.warn('⚠️ تنبيه أثناء تنظيف البيانات السابقة:', cleanErr.message);
+  }
+
+
 }
 
 module.exports = {

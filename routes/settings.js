@@ -57,9 +57,18 @@ router.get('/social', async (req, res) => {
   res.json(result);
 });
 
-// ØªØ§Ø¬Ø±: ØªØ­Ø¯ÙŠØ« Ø±ÙˆØ§Ø¨Ø· Ø§Ù„ØªÙˆØ§ØµÙ„ Ø§Ù„Ø§Ø¬ØªÙ…Ø§Ø¹ÙŠ (Ø®Ø§ØµØ© Ø¨Ø§Ù„ØªØ§Ø¬Ø±)
-router.put('/social', requireAuth, async (req, res) => {
+// تاجر: تحديث روابط التواصل الاجتماعي (خاصة بالتاجر)
+router.put('/social', requireAuth, requireActiveSubscription, async (req, res) => {
   try {
+    for (const key of socialKeys) {
+      if (req.body[key] !== undefined) {
+        const val = String(req.body[key]).trim();
+        if (!isValidSocialUrl(key, val)) {
+          return res.status(400).json({ error: 'رابط غير صالح لـ ' + key });
+        }
+      }
+    }
+
     await db.transaction(async (trx) => {
       for (const key of socialKeys) {
         if (req.body[key] !== undefined) {
@@ -75,7 +84,8 @@ router.put('/social', requireAuth, async (req, res) => {
     });
     res.json({ success: true });
   } catch (err) {
-    res.status(500).json({ error: 'ØªØ¹Ø°Ø± Ø­ÙØ¸ Ø§Ù„Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª: ' + err.message });
+    console.error('Settings save error:', err);
+    res.status(500).json({ error: 'تعذر حفظ الإعدادات' });
   }
 });
 

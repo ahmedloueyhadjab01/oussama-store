@@ -360,7 +360,7 @@ router.post(
       res.status(201).json(await serialize(product));
     } catch (err) {
       console.error('Error creating product:', err);
-      res.status(500).json({ error: 'تعذر إنشاء المنتج: ' + err.message });
+      res.status(500).json({ error: 'تعذر إنشاء المنتج' });
     }
   }
 );
@@ -554,7 +554,7 @@ router.put('/:id/variants/:variantId', requireAuth, requireActiveSubscription, a
   const color = req.body.color !== undefined ? String(req.body.color).trim() : variant.color;
   const color_code = req.body.color_code !== undefined ? normalizeColorCode(req.body.color_code) : variant.color_code;
   const size = req.body.size !== undefined ? String(req.body.size).trim() : variant.size;
-  const image = req.body.image !== undefined ? String(req.body.image).trim() : variant.image;
+  const image = req.body.image !== undefined ? (sanitizeSingleImageUrl(req.body.image) || '') : variant.image;
   const label = req.body.label !== undefined ? String(req.body.label).trim() : (variant.label || [color, size].filter(Boolean).join(' - '));
 
   await db.transaction(async (trx) => {

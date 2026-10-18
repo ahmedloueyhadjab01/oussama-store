@@ -552,7 +552,7 @@
                  <div class="flex flex-wrap gap-2">
                    ${`${distinctColors.map((c, idx) => `
                      <label class="cursor-pointer relative">
-                       <input type="radio" name="expressColor" value="${escapeHtml(c)}" class="peer hidden" ${idx===0?'checked':''} onchange="changeExpressColor('${escapeHtml(c).replace(/'/g, "\'")}')">
+                       <input type="radio" name="expressColor" value="${escapeHtml(c)}" class="peer hidden" ${idx===0?'checked':''} onchange="changeExpressColor(this.value)">
                        <div class="px-4 py-2 border-2 border-[var(--border)] rounded-lg peer-checked:border-primary peer-checked:bg-red-50 peer-checked:text-primary font-bold text-sm text-[var(--muted)] transition-colors">
                          ${escapeHtml(c || 'افتراضي')}
                        </div>

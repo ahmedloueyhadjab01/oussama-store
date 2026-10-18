@@ -5,8 +5,8 @@ const PLATFORMS = ['facebook', 'instagram', 'tiktok', 'google', 'snapchat', 'you
 function sanitizeUtm(raw, maxLen = 100) {
   if (!raw) return '';
   const str = String(raw).trim().slice(0, maxLen);
-  // Allow only safe characters: letters, numbers, spaces, dots, dashes, underscores
-  return str.replace(/[^\w\-. ]/g, '').trim();
+  // Allow safe characters in any language: Unicode letters, numbers, spaces, dots, dashes, underscores
+  return str.replace(/[^\p{L}\p{N}_\-. ]/gu, '').trim();
 }
 
 function normalizeSource(raw) {

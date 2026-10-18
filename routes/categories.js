@@ -5,6 +5,7 @@ const { body, validationResult } = require('express-validator');
 const db = require('../db');
 const { requireAuth, checkResourceOwnership, requireActiveSubscription } = require('../middleware/auth');
 const upload = require('./upload');
+const { sanitizeSingleImageUrl } = require('../utils/image');
 
 const router = express.Router();
 
@@ -79,7 +80,7 @@ router.post(
     }
 
     const { name, parent_id } = req.body;
-    const image = req.file ? req.file.url : (req.body.image || '');
+    const image = req.file ? req.file.url : (sanitizeSingleImageUrl(req.body.image) || '');
     let slug = slugify(name, { lower: true, strict: true, locale: 'ar' }) || `cat-${Date.now()}`;
 
     // ضمان تفرّد الـ slug
@@ -122,7 +123,7 @@ router.put(
     if (!checkResourceOwnership(category.user_id, req, res)) return;
 
     const { name } = req.body;
-    const image = req.file ? req.file.url : (req.body.image || category.image || '');
+    const image = req.file ? req.file.url : (req.body.image !== undefined ? (sanitizeSingleImageUrl(req.body.image) || '') : (category.image || ''));
     const result = await db.query(
       'UPDATE categories SET name = $1, image = $2 WHERE id = $3 RETURNING *',
       [name.trim(), image, req.params.id]
