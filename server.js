@@ -71,6 +71,26 @@ const allowedOrigins = new Set(
     .filter(Boolean)
 );
 
+// السماح التلقائي للنطاق الحالي بالاتصال بنفسه (Same-Origin) ونطاقات Render والتطوير المحلي
+app.use((req, res, next) => {
+  const origin = req.get('origin');
+  if (origin) {
+    try {
+      const parsedOrigin = new URL(origin);
+      if (
+        parsedOrigin.host === req.get('host') ||
+        parsedOrigin.hostname.endsWith('.onrender.com') ||
+        parsedOrigin.hostname === 'localhost' ||
+        parsedOrigin.hostname === '127.0.0.1' ||
+        parsedOrigin.hostname === '192.168.1.5'
+      ) {
+        allowedOrigins.add(origin);
+      }
+    } catch (e) {}
+  }
+  next();
+});
+
 if (!isProduction) {
   for (const hostname of ['localhost', '127.0.0.1', '192.168.1.5']) {
     for (const port of [3000, 3001, 3003, 3005, 8081, 8082, 8083, 8084, 8085, 19006, 19007]) {
@@ -82,10 +102,21 @@ if (!isProduction) {
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin || allowedOrigins.has(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
+      return callback(null, true);
     }
+    try {
+      const parsed = new URL(origin);
+      if (
+        parsed.hostname.endsWith('.onrender.com') ||
+        parsed.hostname === 'localhost' ||
+        parsed.hostname === '127.0.0.1' ||
+        parsed.hostname === '192.168.1.5'
+      ) {
+        return callback(null, true);
+      }
+    } catch (e) {}
+
+    callback(new Error('Not allowed by CORS'));
   },
   credentials: true
 }));
