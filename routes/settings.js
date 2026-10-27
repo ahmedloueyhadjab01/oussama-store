@@ -7,13 +7,14 @@ const { ensureFinancialArchive } = require('../db');
 
 const router = express.Router();
 
-const socialKeys = ['social_whatsapp', 'social_instagram', 'social_facebook', 'social_tiktok', 'social_telegram'];
+const socialKeys = ['social_whatsapp', 'social_instagram', 'social_facebook', 'social_tiktok', 'social_telegram', 'store_phone', 'store_email', 'store_name', 'store_logo'];
 
 function isValidSocialUrl(key, val) {
   if (!val) return true;
   const str = String(val).trim();
   if (str.length > 500) return false;
   if (/[<>"'\s]/.test(str)) return false;
+  if (key === 'store_phone' || key === 'store_email' || key === 'store_name' || key === 'store_logo') return true;
   if (key === 'social_whatsapp') {
     if (/^\+?[0-9]{6,20}$/.test(str)) return true;
     try {
